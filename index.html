@@ -707,13 +707,13 @@
 
           <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="checkbox" id="filterID175" checked onchange="runTruckMatch()"> 1-3/4" ID
+              <input type="checkbox" id="filterID175" checked onchange="runTruckMatch()"> 1-3/4 in ID
             </label>
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="checkbox" id="filterID200" checked onchange="runTruckMatch()"> 2.0" ID
+              <input type="checkbox" id="filterID200" checked onchange="runTruckMatch()"> 2.0 in ID
             </label>
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="checkbox" id="filterID262" onchange="runTruckMatch()"> 2-5/8" ID
+              <input type="checkbox" id="filterID262" onchange="runTruckMatch()"> 2-5/8 in ID
             </label>
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer; margin-left: auto;">
               <input type="checkbox" id="filterHighCycleOnly" onchange="runTruckMatch()"> High-Cycle (25k+) Only
@@ -912,8 +912,8 @@
             <!-- Model Specs Badge -->
             <div id="mfgSpecBadge" style="margin-top: 8px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; flex-wrap: wrap;">
               <span>R-Value: <strong id="badgeRVal" style="color: var(--accent);">R-16.0</strong></span>
-              <span>Core: <strong id="badgeCore">1-3/4" Polyurethane</strong></span>
-              <span>Density: <strong id="badgeDensity" class="mono">2.20 lbs/sq.ft</strong></span>
+              <span>Core: <strong id="badgeCore">1-3/4 in Polyurethane</strong></span>
+              <span>Density: <strong id="badgeDensity" class="mono">2.20 lbs/sq ft</strong></span>
             </div>
           </div>
 
@@ -1192,10 +1192,10 @@
           <div style="flex: 1; min-width: 200px;">
             <div class="field-label">Inside Diameter</div>
             <select class="input-select" id="directIDSelect" onchange="runDirectIPPT()">
-              <option value="2.0" selected>2.0" Standard</option>
-              <option value="1.75">1-3/4" Residential</option>
-              <option value="2.625">2-5/8" Commercial</option>
-              <option value="3.75">3-3/4" Industrial</option>
+              <option value="2.0" selected>2.0in Standard</option>
+              <option value="1.75">1-3/4in Residential</option>
+              <option value="2.625">2-5/8in Commercial</option>
+              <option value="3.75">3-3/4in Industrial</option>
             </select>
           </div>
         </div>
@@ -1289,7 +1289,7 @@
         <div style="border: 2px solid #000; padding: 12px; border-radius: 6px; margin-bottom: 16px; background: #fafafa;">
           <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; color: #d97706;">Recommended / Selected Spring Package</div>
           <div style="font-size: 15px; font-weight: 700;" id="printSpringSpecs">
-            (2) Springs: .250 Wire x 2.0" ID x 32.0" Length
+            (2) Springs: .250 Wire x 2.0 in ID x 32.0" Length
           </div>
           <div style="font-size: 12px; color: #555; margin-top: 4px;" id="printSpringCycle">
             Rated Cycles: ~10,000 cycles | IPPT per spring: 18.3
@@ -1361,8 +1361,8 @@
         circumference: 12.56,
         turnsPerFt: 1.0,
         deadTurns: 0.6,
-        maxHt: "8'1"",
-        cable: "1/8"",
+        maxHt: '8ft 1in',
+        cable: '1/8in',
         crossRef: "Apco 400-8, Canimex 400-8, DNS 400-8, SSC 400-8",
         desc: "Most widely installed residential standard lift drum"
       },
@@ -1373,8 +1373,8 @@
         circumference: 12.56,
         turnsPerFt: 1.0,
         deadTurns: 0.7,
-        maxHt: "12'1"",
-        cable: "1/8" or 5/32"",
+        maxHt: '12ft 1in',
+        cable: '1/8in or 5/32in',
         crossRef: "Apco 400-12, Canimex 400-12, DNS 400-12, SSC 400-12",
         desc: "Standard commercial & high residential doors up to 12ft"
       },
@@ -1385,8 +1385,8 @@
         circumference: 12.56,
         turnsPerFt: 1.0,
         deadTurns: 0.8,
-        maxHt: "18'1"",
-        cable: "5/32"",
+        maxHt: '18ft 1in',
+        cable: '5/32in',
         crossRef: "Canimex TF 400-18, Apco 400-18",
         desc: "Tall commercial standard lift installations"
       },
@@ -1397,8 +1397,8 @@
         circumference: 16.50,
         turnsPerFt: 0.8,
         deadTurns: 0.8,
-        maxHt: "18'1"",
-        cable: "3/16"",
+        maxHt: '18ft 1in',
+        cable: '3/16in',
         crossRef: "Apco 5250, Canimex 5250, DNS 5250, SSC 5250",
         desc: "Heavy commercial doors exceeding 800-1000+ lbs"
       },
@@ -1409,56 +1409,56 @@
         circumference: 25.12,
         turnsPerFt: 0.5,
         deadTurns: 1.0,
-        maxHt: "32'0"",
-        cable: "1/4"",
+        maxHt: '32ft 0in',
+        cable: '1/4in',
         crossRef: "Apco 800-32, OMI 800-32",
         desc: "Massive industrial warehouse doors"
       },
       "54-HL": {
-        name: "High Lift 54 (Up to 54" HL)",
+        name: 'High Lift 54 (Up to 54in HL)',
         type: "High Lift",
         radius: 2.10,
         circumference: 13.20,
         turnsPerFt: 1.05,
         deadTurns: 0.7,
-        maxHt: "14'0" (54" High Lift)",
-        cable: "1/8" or 5/32"",
+        maxHt: '14ft (54in HL)',
+        cable: '1/8in or 5/32in',
         crossRef: "Apco 5250-54, DNS 54, OMI 54, SSC 54-HL",
         desc: "Common residential & shop car-lift ceiling conversion"
       },
       "120-HL": {
-        name: "High Lift 120 (Up to 120" HL)",
+        name: 'High Lift 120 (Up to 120in HL)',
         type: "High Lift",
         radius: 2.75,
         circumference: 17.20,
         turnsPerFt: 0.9,
         deadTurns: 0.8,
-        maxHt: "16'0" (120" High Lift)",
-        cable: "3/16"",
+        maxHt: '16ft (120in HL)',
+        cable: '3/16in',
         crossRef: "Apco 5750-120, OMI 120, DNS 120, SSC 120-HL, M146-3050",
         desc: "Commercial high lift buildings with ceiling heights up to 22ft"
       },
       "164-HL": {
-        name: "High Lift 164 (Up to 164" HL)",
+        name: 'High Lift 164 (Up to 164in HL)',
         type: "High Lift",
         radius: 3.20,
         circumference: 19.50,
         turnsPerFt: 0.85,
         deadTurns: 0.9,
-        maxHt: "18'0" (164" High Lift)",
-        cable: "3/16"",
+        maxHt: '18ft (164in HL)',
+        cable: '3/16in',
         crossRef: "Apco 164, OMI 164, DNS 164",
         desc: "Extreme high clearance agricultural & industrial shops"
       },
       "220-HL": {
-        name: "High Lift 220 (Up to 220" HL)",
+        name: 'High Lift 220 (Up to 220in HL)',
         type: "High Lift",
         radius: 3.60,
         circumference: 22.00,
         turnsPerFt: 0.8,
         deadTurns: 1.0,
-        maxHt: "22'0" (220" High Lift)",
-        cable: "1/4"",
+        maxHt: '22ft (220in HL)',
+        cable: '1/4in',
         crossRef: "Apco 220, OMI 220, SSC 220-HL",
         desc: "Heavy manufacturing and truck repair bays"
       },
@@ -1469,8 +1469,8 @@
         circumference: 14.50,
         turnsPerFt: 1.1,
         deadTurns: 0.5,
-        maxHt: "11'0"",
-        cable: "3/16"",
+        maxHt: '11ft 0in',
+        cable: '3/16in',
         crossRef: "OMI VL-11, Canimex VL-11, Apco 850-11, SSC VL-11",
         desc: "Tapered spiral drum for straight vertical wall track"
       },
@@ -1481,8 +1481,8 @@
         circumference: 18.00,
         turnsPerFt: 0.95,
         deadTurns: 0.6,
-        maxHt: "18'0"",
-        cable: "3/16" or 1/4"",
+        maxHt: '18ft 0in',
+        cable: '3/16in or 1/4in',
         crossRef: "OMI VL-18, Canimex VL-18, Apco 1100-18, SSC VL-18",
         desc: "Commercial loading docks with straight vertical wall rise"
       },
@@ -1493,8 +1493,8 @@
         circumference: 22.50,
         turnsPerFt: 0.8,
         deadTurns: 0.8,
-        maxHt: "28'0"",
-        cable: "1/4"",
+        maxHt: '28ft 0in',
+        cable: '1/4in',
         crossRef: "OMI VL-28, Canimex VL-28, Apco 1400-28",
         desc: "Overhead crane bays and heavy industrial aircraft doors"
       }
@@ -1787,7 +1787,7 @@
       }
 
       displayCards.forEach(opt => {
-        const idLabel = opt.id === 2.625 ? '2-5/8"' : opt.id === 1.75 ? '1-3/4"' : '2.0"';
+        const idLabel = opt.id === 2.625 ? "2-5/8\" ID" : opt.id === 1.75 ? "1-3/4\" ID" : "2.0\" ID";
         const card = document.createElement('div');
         card.style.background = 'var(--bg-card-sub)';
         card.style.border = '1px solid var(--border-color)';
@@ -1904,7 +1904,7 @@
       const od = parseFloat(document.getElementById('measuredOD').value);
       const wire = parseFloat(document.getElementById('odWireSelect').value);
       const id = od - (2 * wire);
-      document.getElementById('calculatedIDResult').innerText = id.toFixed(3) + '" (Approx. ' + (Math.abs(id - 2.0) < 0.1 ? 'Standard 2.0" ID' : Math.abs(id - 1.75) < 0.1 ? 'Standard 1-3/4" ID' : id.toFixed(2) + '" ID') + ')';
+      document.getElementById('calculatedIDResult').innerText = id.toFixed(3) + '" (Approx. ' + (Math.abs(id - 2.0) < 0.1 ? 'Standard 2.0 in ID' : Math.abs(id - 1.75) < 0.1 ? 'Standard 1-3/4 in ID' : id.toFixed(2) + '" ID') + ')';
     }
 
     // Tab Navigation
@@ -2067,47 +2067,47 @@
     // Comprehensive Manufacturer Door Model Weights Database
     const DOOR_MODELS = [
       // Garaga
-      { mfg: "Garaga", model: "Standard+ (1-3/4" Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Garaga", model: "Acadia 138 (1-3/8" Polyurethane, R-12)", density: 1.85, rVal: "R-12", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
-      { mfg: "Garaga", model: "Triforce (2" Polystyrene Steel Back, R-10)", density: 1.70, rVal: "R-10", type: "3-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Garaga", model: "G-5000 (Commercial 1-3/4" Polyurethane)", density: 2.65, rVal: "R-16", type: "Commercial Sandwich", constructionVal: "commercial-heavy" },
+      { mfg: "Garaga", model: "Standard+ (1-3/4 in Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Garaga", model: "Acadia 138 (1-3/8 in Polyurethane, R-12)", density: 1.85, rVal: "R-12", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
+      { mfg: "Garaga", model: "Triforce (2in Polystyrene Steel Back, R-10)", density: 1.70, rVal: "R-10", type: "3-Layer Polystyrene", constructionVal: "poly-vinyl" },
+      { mfg: "Garaga", model: "G-5000 (Commercial 1-3/4 in Polyurethane)", density: 2.65, rVal: "R-16", type: "Commercial Sandwich", constructionVal: "commercial-heavy" },
       { mfg: "Garaga", model: "California (Full-View Aluminum Frame)", density: 3.35, rVal: "N/A", type: "Aluminum Full-View", constructionVal: "fullview-glass" },
 
       // Steel-Craft (Western Canada staple)
-      { mfg: "Steel-Craft", model: "ThermoCraft T-16 (1-3/4" Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Steel-Craft", model: "ThermoCraft T-12 (1-1/8" Polyurethane, R-10)", density: 1.80, rVal: "R-10", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
-      { mfg: "Steel-Craft", model: "CarriageCraft / RanchCraft (1-3/4" R-16)", density: 2.25, rVal: "R-16", type: "3-Layer Decorative", constructionVal: "foamed-3layer" },
+      { mfg: "Steel-Craft", model: "ThermoCraft T-16 (1-3/4 in Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Steel-Craft", model: "ThermoCraft T-12 (1-1/8 in Polyurethane, R-10)", density: 1.80, rVal: "R-10", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
+      { mfg: "Steel-Craft", model: "CarriageCraft / RanchCraft (1-3/4in R-16)", density: 2.25, rVal: "R-16", type: "3-Layer Decorative", constructionVal: "foamed-3layer" },
       { mfg: "Steel-Craft", model: "SC-Industrial / TD-134 (Commercial Polyurethane)", density: 2.70, rVal: "R-16", type: "Commercial Sandwich", constructionVal: "commercial-heavy" },
 
       // Clopay
       { mfg: "Clopay", model: "Classic Steel Model 1000 (Single Layer 25ga Pan)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
       { mfg: "Clopay", model: "Classic Steel Model 2000 (Double Layer Vinyl Back)", density: 1.65, rVal: "R-6.5", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
       { mfg: "Clopay", model: "Classic / Gallery Model 3000 (Intellicore R-18.4)", density: 2.25, rVal: "R-18.4", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Clopay", model: "Commercial 3720 (2" Polyurethane Heavy)", density: 2.80, rVal: "R-18.4", type: "Commercial Heavy", constructionVal: "commercial-heavy" },
-      { mfg: "Clopay", model: "Avante (Full-View Aluminum, 1/8" Glass)", density: 3.40, rVal: "N/A", type: "Full-View Aluminum", constructionVal: "fullview-glass" },
+      { mfg: "Clopay", model: "Commercial 3720 (2in Polyurethane Heavy)", density: 2.80, rVal: "R-18.4", type: "Commercial Heavy", constructionVal: "commercial-heavy" },
+      { mfg: "Clopay", model: "Avante (Full-View Aluminum, 1/8 in Glass)", density: 3.40, rVal: "N/A", type: "Full-View Aluminum", constructionVal: "fullview-glass" },
 
       // Hormann
       { mfg: "Hormann", model: "Gemini 2100 (Single Layer 25ga Pan)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
       { mfg: "Hormann", model: "Orion 4200 (Double Layer Polystyrene)", density: 1.65, rVal: "R-8.9", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Hormann", model: "Taurus 4250 (1-3/4" Polyurethane R-16.1)", density: 2.20, rVal: "R-16.1", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Hormann", model: "Taurus 4250 (1-3/4 in Polyurethane R-16.1)", density: 2.20, rVal: "R-16.1", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
       { mfg: "Hormann", model: "SR 9000 (Commercial Heavy Duty)", density: 2.85, rVal: "R-17.5", type: "Commercial Heavy", constructionVal: "commercial-heavy" },
 
       // Wayne Dalton
       { mfg: "Wayne Dalton", model: "Classic 8000 / 8100 (Single Layer Pan 25ga)", density: 1.20, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
-      { mfg: "Wayne Dalton", model: "Classic 8300 (1-3/8" Polyurethane, R-12.12)", density: 1.85, rVal: "R-12.1", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
-      { mfg: "Wayne Dalton", model: "Classic 8500 (2" Polyurethane, R-16.22)", density: 2.30, rVal: "R-16.2", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Wayne Dalton", model: "Classic 8300 (1-3/8 in Polyurethane, R-12.12)", density: 1.85, rVal: "R-12.1", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
+      { mfg: "Wayne Dalton", model: "Classic 8500 (2in Polyurethane, R-16.22)", density: 2.30, rVal: "R-16.2", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
       { mfg: "Wayne Dalton", model: "Model 9100 / 9605 (Pinch-Resistant Steel Back)", density: 1.60, rVal: "R-9.0", type: "Patented Core", constructionVal: "poly-vinyl" },
 
       // Amarr
       { mfg: "Amarr", model: "Lincoln 1000 (Single Layer Pan 25ga)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
       { mfg: "Amarr", model: "Lincoln 2000 (Double Layer 25ga + Vinyl Back)", density: 1.60, rVal: "R-6.6", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Amarr", model: "Olympus / Lincoln 3000 (2" Polyurethane R-19.4)", density: 2.30, rVal: "R-19.4", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Amarr", model: "Olympus / Lincoln 3000 (2in Polyurethane R-19.4)", density: 2.30, rVal: "R-19.4", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
       { mfg: "Amarr", model: "Heritage (Heavy 24ga Steel Pan / Sandwich)", density: 1.75, rVal: "R-9.0", type: "24ga Heavy Steel", constructionVal: "poly-vinyl" },
 
       // C.H.I.
-      { mfg: "C.H.I.", model: "Model 2283 / 2216 (2" Polyurethane R-17.5)", density: 2.25, rVal: "R-17.5", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "C.H.I.", model: "Model 2283 / 2216 (2in Polyurethane R-17.5)", density: 2.25, rVal: "R-17.5", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
       { mfg: "C.H.I.", model: "Model 2250 (Single Layer Steel Pan 25ga)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
-      { mfg: "C.H.I.", model: "Model 3285 / 3216 (Commercial 2" Polyurethane)", density: 2.75, rVal: "R-17.5", type: "Commercial Heavy", constructionVal: "commercial-heavy" }
+      { mfg: "C.H.I.", model: "Model 3285 / 3216 (Commercial 2in Polyurethane)", density: 2.75, rVal: "R-17.5", type: "Commercial Heavy", constructionVal: "commercial-heavy" }
     ];
 
     let customDensityOverride = null;
