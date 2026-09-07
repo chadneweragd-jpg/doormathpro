@@ -1375,18 +1375,110 @@
       document.getElementById('printTotalIPPT').innerText = totalIPPT.toFixed(1);
       document.getElementById('printTurns').innerText = `${turns.toFixed(1)} turns (${Math.round(turns * 4)} quarter turns)`;
 
-      // Generate 3 standard engineering options
+      // Dynamically select realistic, field-practical spring wire sizes
       const container = document.getElementById('engineeredOptionsContainer');
       container.innerHTML = '';
 
-      const targetOptions = [
-        { title: "Standard 10,000 Cycle Residential Pair", wire: 0.250, name: ".250", id: 2.0, targetCycles: "10,000" },
-        { title: "High-Cycle 25,000 Cycle Heavy-Duty Pair", wire: 0.262, name: ".262", id: 2.0, targetCycles: "25,000" },
-        { title: "Commercial 50,000+ Cycle Long-Life Pair", wire: 0.273, name: ".273", id: 2.625, targetCycles: "50,000" }
-      ];
+      // Find all realistic pair options (lengths between 22" and 42")
+      const candidatePairs = [];
+      [2.0, 1.75, 2.625].forEach(tid => {
+        WIRE_SPECS.forEach(w => {
+          const len = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (tid + w.wire) * eachIPPT);
+          if (len >= 22.0 && len <= 44.0) {
+            const cycles = estimateCycles(w.wire, tid, len, eachIPPT, turns);
+            candidatePairs.push({
+              wire: w.wire,
+              name: w.name,
+              color: w.color,
+              id: tid,
+              len: len,
+              cycles: cycles,
+              diffFromStandard: Math.abs(len - 31.0)
+            });
+          }
+        });
+      });
 
-      targetOptions.forEach(opt => {
-        const len = (E_MODULUS * Math.pow(opt.wire, 5)) / (10.8 * (opt.id + opt.wire) * eachIPPT);
+      // Sort by closest to standard 30-32 inch residential length
+      candidatePairs.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
+
+      // Pick Standard (10k-15k) and High-Cycle (25k+)
+      const standardPair = candidatePairs.find(c => c.cycles <= 15000 && c.id === 2.0) || candidatePairs.find(c => c.cycles <= 20000) || candidatePairs[0];
+      const highCyclePair = candidatePairs.find(c => c.cycles >= 25000 && c.wire > (standardPair ? standardPair.wire : 0)) || candidatePairs.find(c => c.cycles >= 25000) || candidatePairs[1];
+
+      // Also find Single Spring alternative (lengths 26" to 38")
+      let singleOption = null;
+      if (weight <= 190) {
+        const candidateSingles = [];
+        [2.0, 1.75].forEach(tid => {
+          WIRE_SPECS.forEach(w => {
+            const len = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (tid + w.wire) * totalIPPT);
+            if (len >= 25.0 && len <= 40.0) {
+              const cycles = estimateCycles(w.wire, tid, len, totalIPPT, turns);
+              candidateSingles.push({
+                wire: w.wire,
+                name: w.name,
+                color: w.color,
+                id: tid,
+                len: len,
+                cycles: cycles,
+                diffFromStandard: Math.abs(len - 32.0)
+              });
+            }
+          });
+        });
+        candidateSingles.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
+        if (candidateSingles.length > 0) singleOption = candidateSingles[0];
+      }
+
+      const displayCards = [];
+      if (standardPair) {
+        displayCards.push({
+          title: "Standard Residential Pair (Recommended)",
+          badge: standardPair.cycles >= 25000 ? "25k High" : standardPair.cycles >= 15000 ? "15k Std" : "10k Std",
+          badgeClass: standardPair.cycles >= 25000 ? "green" : "gray",
+          count: 2,
+          wire: standardPair.wire,
+          name: standardPair.name,
+          color: standardPair.color,
+          id: standardPair.id,
+          len: standardPair.len,
+          cycles: standardPair.cycles
+        });
+      }
+
+      if (highCyclePair && highCyclePair !== standardPair) {
+        displayCards.push({
+          title: "High-Cycle Extended Life Pair",
+          badge: highCyclePair.cycles >= 50000 ? "50k+ Com" : "25k High",
+          badgeClass: highCyclePair.cycles >= 50000 ? "purple" : "green",
+          count: 2,
+          wire: highCyclePair.wire,
+          name: highCyclePair.name,
+          color: highCyclePair.color,
+          id: highCyclePair.id,
+          len: highCyclePair.len,
+          cycles: highCyclePair.cycles
+        });
+      }
+
+      if (singleOption) {
+        displayCards.push({
+          title: "Single Spring Alternative (Economy)",
+          badge: singleOption.cycles >= 15000 ? "15k Std" : "10k Std",
+          badgeClass: "gray",
+          count: 1,
+          wire: singleOption.wire,
+          name: singleOption.name,
+          color: singleOption.color,
+          id: singleOption.id,
+          len: singleOption.len,
+          cycles: singleOption.cycles
+        });
+      }
+
+      displayCards.forEach(opt => {
+        const idLabel = opt.id === 2.625 ? '2-5/8"' : opt.id === 1.75 ? '1-3/4"' : '2.0"';
         const card = document.createElement('div');
         card.style.background = 'var(--bg-card-sub)';
         card.style.border = '1px solid var(--border-color)';
@@ -1395,14 +1487,14 @@
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
             <div style="font-weight:700; font-size:14px;">${opt.title}</div>
-            <span class="badge ${opt.targetCycles === '10,000' ? 'gray' : opt.targetCycles === '25,000' ? 'green' : 'purple'}">${opt.targetCycles} Cycles</span>
+            <span class="badge ${opt.badgeClass}">~${opt.cycles.toLocaleString()} Cycles</span>
           </div>
           <div style="font-size:16px; font-weight:800; color:var(--accent); font-family:ui-monospace, monospace; margin: 4px 0;">
-            (2) Springs: ${opt.name} x ${opt.id === 2.625 ? '2-5/8"' : '2.0"'} ID x ${len.toFixed(1)}" Cut Length
+            (${opt.count}) Spring${opt.count > 1 ? 's' : ''}: ${opt.name} (${opt.color}) x ${idLabel} ID x ${opt.len.toFixed(1)}" Cut Length
           </div>
           <div style="font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-            <span>IPPT per spring: ${eachIPPT.toFixed(1)} | Balance: 100%</span>
-            <button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${opt.wire}, ${opt.id}, ${len.toFixed(1)}, ${parseInt(opt.targetCycles.replace(',', ''))}, '${opt.name}', 2); openSpecSheet();">Use on Spec Sheet →</button>
+            <span>IPPT: ${(opt.count === 2 ? eachIPPT : totalIPPT).toFixed(1)} ${opt.count === 2 ? 'each' : 'total'} | Turns: ${turns.toFixed(1)}</span>
+            <button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${opt.wire}, ${opt.id}, ${opt.len.toFixed(1)}, ${opt.cycles}, '${opt.name}', ${opt.count}); openSpecSheet();">Use on Spec Sheet →</button>
           </div>
         `;
         container.appendChild(card);
