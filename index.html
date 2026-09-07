@@ -1062,21 +1062,32 @@
             <span class="badge green" id="matchCountBadge">8 Matches</span>
           </div>
 
+          <!-- Live Selected Confirmation Banner -->
+          <div id="selectedNotificationBanner" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <div style="font-size: 13px; font-weight: 700; color: #34d399; display: flex; align-items: center; gap: 6px;">
+              <span>✅ Loaded into Spec Sheet:</span>
+              <span id="bannerSelectedText" class="mono" style="color: #fff;"></span>
+            </div>
+            <button class="btn-action primary" style="padding: 4px 10px; font-size: 11px;" onclick="openSpecSheet()">View Spec Sheet 📄</button>
+          </div>
+
           <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="checkbox" id="filterID175" checked onchange="runTruckMatch()"> 1-3/4 in ID
+              <input type="checkbox" id="filterID175" checked onchange="runTruckMatch()"> 1-3/4" ID
             </label>
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="checkbox" id="filterID200" checked onchange="runTruckMatch()"> 2.0 in ID
+              <input type="checkbox" id="filterID200" checked onchange="runTruckMatch()"> 2.0" ID
             </label>
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
-              <input type="checkbox" id="filterID262" onchange="runTruckMatch()"> 2-5/8 in ID
+              <input type="checkbox" id="filterID262" checked onchange="runTruckMatch()"> 2-5/8" (Commercial)
+            </label>
+            <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" id="filterID375" onchange="runTruckMatch()"> 3-3/4" (Heavy Commercial)
             </label>
             <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer; margin-left: auto;">
               <input type="checkbox" id="filterHighCycleOnly" onchange="runTruckMatch()"> High-Cycle (25k+) Only
             </label>
           </div>
-
           <div class="table-container">
             <table class="data-table">
               <thead>
@@ -1721,9 +1732,15 @@
   </div>
 
   <footer>
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: gap; gap: 14px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; align-items: center;">
       <div><strong>DoorMathPro</strong> — Pure Client-Side Garage Door Engineering Suite</div>
-      <div>Designed for Field Techs & Commercial Estimators | ASTM A229 Standards</div>
+      <div>
+        <a href="javascript:void(0)" onclick="openWaiverModal()" style="color: #f59e0b; font-weight: 700; text-decoration: underline;">⚠️ Safety Warning & Liability Waiver</a>
+      </div>
+      <div>ASTM A229 & DASMA Engineering Standards</div>
+    </div>
+    <div style="max-width: 900px; margin: 12px auto 0 auto; font-size: 11px; color: #64748b; line-height: 1.4;">
+      <strong>PROFESSIONAL USE ONLY:</strong> Overhead garage door counterbalance springs, cables, and brackets operate under extreme mechanical tension. Improper adjustment, installation, or release can cause severe personal injury or death. Calculations provided by DoorMathPro are estimates for qualified technicians only. Users assume full liability for physical installation.
     </div>
   </footer>
 
@@ -1750,7 +1767,9 @@
       { wire: 0.331, name: ".331", color: "Green", coils20: 6.62 },
       { wire: 0.343, name: ".343", color: "Blue", coils20: 6.86 },
       { wire: 0.362, name: ".362", color: "Black", coils20: 7.24 },
-      { wire: 0.375, name: ".375", color: "Orange", coils20: 7.50 }
+      { wire: 0.375, name: ".375", color: "Orange", coils20: 7.50 },
+      { wire: 0.390, name: ".390", color: "Yellow", coils20: 7.80 },
+      { wire: 0.406, name: ".406", color: "White", coils20: 8.12 }
     ];
 
     // Comprehensive Reverse-Engineered Drum Database
@@ -1954,10 +1973,12 @@
       const show262 = document.getElementById('filterID262').checked;
       const highCycleOnly = document.getElementById('filterHighCycleOnly').checked;
 
+      const show375 = document.getElementById('filterID375') ? document.getElementById('filterID375').checked : false;
       const targetIDs = [];
       if (show175) targetIDs.push(1.75);
       if (show200) targetIDs.push(2.00);
       if (show262) targetIDs.push(2.625);
+      if (show375) targetIDs.push(3.75);
 
       const matches = [];
 
@@ -2017,7 +2038,7 @@
           <td class="mono font-bold" style="color:var(--accent);">${m.length.toFixed(1)}"</td>
           <td class="mono">${m.ippt.toFixed(1)}</td>
           <td>${cycleBadge}</td>
-          <td><button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${m.wire}, ${m.id}, ${m.length.toFixed(1)}, ${m.cycles}, '${m.name}', ${targetSpringCount})">Select</button></td>
+          <td><button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${m.wire}, ${m.id}, ${m.length.toFixed(1)}, ${m.cycles}, '${m.name}', ${targetSpringCount}, this)">Select</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -2029,11 +2050,44 @@
       }
     }
 
-    function selectReplacement(wire, id, len, cycles, name, count) {
+
+    function selectDuplexSpec(outerWire, outerID, innerWire, innerID, length, totalIPPT) {
+      document.getElementById('printSpringSpecs').innerHTML = `
+        (2) Duplex Assemblies: Outer ${outerWire} x 3-3/4" ID + Inner ${innerWire} x 2-5/8" ID x ${length}" Cut Length (Opposite Hand Wound)
+      `;
+      document.getElementById('printSpringCycle').innerText = `Rated Cycles: ~25,000+ cycles | Combined Duplex IPPT: ${totalIPPT} per assembly`;
+    }
+
+    function selectReplacement(wire, id, len, cycles, name, count, btnEl) {
       selectedReplacement = { wire, id, len, cycles, name, count };
+      const idStr = id === 2.625 ? '2-5/8"' : id === 3.75 ? '3-3/4"' : id === 1.75 ? '1-3/4"' : '2.0"';
+      
       // Update print spec sheet preview
-      document.getElementById('printSpringSpecs').innerText = `(${count}) Springs: ${name} Wire x ${id}" ID x ${len}" Cut Length`;
+      document.getElementById('printSpringSpecs').innerText = `(${count}) Springs: ${name} Wire x ${idStr} ID x ${len}" Cut Length`;
       document.getElementById('printSpringCycle').innerText = `Rated Cycles: ~${cycles.toLocaleString()} cycles | Total Balanced System`;
+
+      // Visual row selection in table
+      document.querySelectorAll('#truckMatrixBody tr').forEach(tr => tr.classList.remove('selected'));
+      document.querySelectorAll('#truckMatrixBody button').forEach(b => {
+        b.innerText = 'Select';
+        b.style.background = '';
+        b.style.color = '';
+      });
+
+      if (btnEl) {
+        const row = btnEl.closest('tr');
+        if (row) row.classList.add('selected');
+        btnEl.innerText = 'Selected ✓';
+        btnEl.style.background = '#10b981';
+        btnEl.style.color = '#000';
+      }
+
+      // Show alert confirmation banner
+      const banner = document.getElementById('selectedNotificationBanner');
+      if (banner) {
+        banner.style.display = 'flex';
+        document.getElementById('bannerSelectedText').innerText = `(${count}) ${name} x ${idStr} x ${len}" (~${cycles.toLocaleString()} cycles)`;
+      }
     }
 
     function setOldSpringCount(cnt) {
@@ -2187,6 +2241,19 @@
         });
       }
 
+      // Commercial Duplex Option (Nested Inner 2-5/8" + Outer 3-3/4" Spring)
+      const duplexOption = calculateDuplexPair(eachIPPT, 36.0);
+      if (duplexOption) {
+        displayCards.push({
+          title: "Commercial Duplex Assembly (Nested Inner + Outer)",
+          badge: "Duplex 25k+",
+          badgeClass: "purple",
+          count: 2,
+          isDuplex: true,
+          duplexData: duplexOption
+        });
+      }
+
       displayCards.forEach(opt => {
         const idLabel = opt.id === 2.625 ? "2-5/8\" ID" : opt.id === 1.75 ? "1-3/4\" ID" : "2.0\" ID";
         const card = document.createElement('div');
@@ -2331,6 +2398,14 @@
     }
 
     // Modal Control
+
+    function openWaiverModal() {
+      document.getElementById('waiverModal').classList.add('open');
+    }
+    function closeWaiverModal() {
+      document.getElementById('waiverModal').classList.remove('open');
+    }
+
     function openSpecSheet() {
       document.getElementById('printDate').innerText = new Date().toISOString().split('T')[0];
       document.getElementById('specModal').classList.add('open');
@@ -2592,6 +2667,52 @@
       });
     }
 
+
+
+    // Commercial Duplex Spring Engineering (Nested Springs)
+    function calculateDuplexPair(targetIPPT, desiredLength = 36.0) {
+      // Outer Spring: 3-3/4" ID, Inner Spring: 2-5/8" ID
+      const outerID = 3.75;
+      const innerID = 2.625;
+      const commWires = [0.250, 0.262, 0.273, 0.283, 0.295, 0.306, 0.312, 0.331, 0.343, 0.362, 0.375, 0.390, 0.406];
+
+      let bestMatch = null;
+      let minDiff = 999.0;
+
+      commWires.forEach(wOut => {
+        commWires.forEach(wIn => {
+          if (wIn <= wOut) {
+            const ipptOut = (E_MODULUS * Math.pow(wOut, 5)) / (10.8 * (outerID + wOut) * desiredLength);
+            const ipptIn = (E_MODULUS * Math.pow(wIn, 5)) / (10.8 * (innerID + wIn) * desiredLength);
+            const total = ipptOut + ipptIn;
+            const diff = Math.abs(total - targetIPPT);
+
+            if (diff < minDiff && diff / targetIPPT < 0.05) {
+              minDiff = diff;
+              const wOutObj = WIRE_SPECS.find(x => Math.abs(x.wire - wOut) < 0.001) || { name: wOut.toFixed(3), color: "" };
+              const wInObj = WIRE_SPECS.find(x => Math.abs(x.wire - wIn) < 0.001) || { name: wIn.toFixed(3), color: "" };
+              bestMatch = {
+                outerWire: wOut,
+                outerName: wOutObj.name,
+                outerColor: wOutObj.color,
+                outerID: outerID,
+                outerIPPT: ipptOut,
+                innerWire: wIn,
+                innerName: wInObj.name,
+                innerColor: wInObj.color,
+                innerID: innerID,
+                innerIPPT: ipptIn,
+                totalIPPT: total,
+                length: desiredLength,
+                cycles: 25000
+              };
+            }
+          }
+        });
+      });
+
+      return bestMatch;
+    }
 
     // AI Photo Door Scanner Logic
     let lastAIAnalysis = null;
@@ -2968,6 +3089,39 @@ Guidelines:
       <button class="btn-action primary" style="padding: 10px 14px; border-radius: 8px;" onclick="sendChatMessage()">
         Send
       </button>
+    </div>
+  </div>
+
+
+  <!-- Safety Warning & Legal Waiver Modal -->
+  <div class="modal-backdrop" id="waiverModal">
+    <div class="modal-box" style="max-width: 550px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="font-size: 17px; font-weight: 800; color: #f59e0b; display: flex; align-items: center; gap: 6px;">
+          ⚠️ Safety Warning & Liability Disclaimer
+        </h3>
+        <button onclick="closeWaiverModal()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">✕</button>
+      </div>
+      
+      <div style="font-size: 13px; color: #cbd5e1; line-height: 1.6; display: flex; flex-direction: column; gap: 12px;">
+        <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px; color: #fca5a5; font-weight: 600;">
+          EXTREME TENSION HAZARD: Garage door torsion springs store hundreds of foot-pounds of torque capable of causing severe trauma, amputation, or fatal injuries.
+        </div>
+        
+        <p>
+          <strong>1. Qualified Professional Use Exclusively:</strong> All calculation engines, spring sizing tables, drum models, and guidance provided on <strong>DoorMathPro</strong> are intended strictly for trained, professional commercial and residential overhead door technicians and estimators.
+        </p>
+        <p>
+          <strong>2. Theoretical Engineering Estimates:</strong> Calculations are derived from ASTM A229 spring steel standards and manufacturer nominal specifications. Actual job-site door weight, track pitch, cable stretch, and friction vary. The technician must independently verify balance and torque with proper winding tools.
+        </p>
+        <p>
+          <strong>3. Complete Disclaimer of Liability:</strong> By using this website, the user, installer, and employing contractor agree that DoorMathPro, its creators, and hosting providers assume <strong>zero liability</strong> for property damage, hardware failure, installation errors, or bodily injuries arising from the use of this tool.
+        </p>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; margin-top: 18px;">
+        <button class="btn-action primary" onclick="closeWaiverModal()">I Understand & Acknowledge</button>
+      </div>
     </div>
   </div>
 
