@@ -559,7 +559,7 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      z-index: 45;
+      z-index: 99999;
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: #000;
       border: none;
@@ -591,7 +591,7 @@
       border: 1px solid var(--border-color);
       border-radius: 16px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-      z-index: 45;
+      z-index: 99999;
       flex-direction: column;
       overflow: hidden;
       animation: popUp 0.2s ease;
@@ -702,6 +702,9 @@
         </div>
       </a>
       <div class="header-actions">
+        <button class="btn-action" onclick="toggleChatbot()" style="background: rgba(245, 158, 11, 0.15); color: var(--accent); border-color: rgba(245, 158, 11, 0.4); font-weight: 700;">
+          💬 AI Assistant
+        </button>
         <button class="btn-action" onclick="openAISettingsModal()" title="Configure AI Vision Scanner">
           ⚙️ AI Setup
         </button>
@@ -730,6 +733,9 @@
       </button>
       <button class="tab-btn" onclick="switchTab('quick-tools')">
         📏 Field Quick Tools
+      </button>
+      <button class="tab-btn" onclick="toggleChatbot()" style="color: var(--accent);">
+        🤖 DoorTech AI Chat
       </button>
     </nav>
 
