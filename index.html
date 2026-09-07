@@ -2,7 +2,7 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>DoorMathPro — Professional Garage Door Spring & Engineering Suite</title>
   <meta name="description" content="Field-ready garage door spring calculator, truck stock conversion matcher, IPPT sizer, door weight estimator, and DASMA reference suite.">
   <meta name="theme-color" content="#f59e0b">
@@ -684,6 +684,156 @@
     .chip-btn:hover {
       color: var(--accent);
       border-color: var(--accent);
+    }
+
+
+    /* ===================================================
+       MOBILE-FIRST RESPONSIVE OPTIMIZATIONS (< 640px)
+       =================================================== */
+    @media (max-width: 640px) {
+      .app-container {
+        padding: 8px 10px 90px 10px;
+      }
+      
+      /* Compact Mobile Header */
+      header {
+        padding: 10px 12px;
+      }
+      .brand-logo {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+      }
+      .brand-title {
+        font-size: 16px;
+      }
+      .brand-badge {
+        font-size: 9px;
+        padding: 1px 5px;
+      }
+      .header-actions {
+        gap: 6px;
+      }
+      .btn-action {
+        padding: 6px 10px;
+        font-size: 11px;
+      }
+      #onlineText {
+        display: none; /* Icon-only on mobile */
+      }
+
+      /* Compact Cards */
+      .card {
+        padding: 14px 12px;
+        border-radius: 12px;
+      }
+      .card-header {
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .card-title {
+        font-size: 15px;
+      }
+      .card-subtitle {
+        font-size: 11px;
+      }
+
+      /* Stepper & Form Controls (16px prevents iOS zoom) */
+      .stepper-control {
+        border-radius: 8px;
+      }
+      .stepper-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+      }
+      .stepper-input {
+        font-size: 16px;
+      }
+      select.input-select {
+        height: 44px;
+        font-size: 14px;
+        padding: 0 10px;
+      }
+      .field-label {
+        font-size: 12px;
+      }
+
+      /* Metric Cards Grid */
+      .metric-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .metric-card {
+        padding: 10px 10px;
+      }
+      .metric-label {
+        font-size: 10px;
+      }
+      .metric-val {
+        font-size: 18px;
+      }
+      .metric-sub {
+        font-size: 10px;
+      }
+
+      /* Responsive Touch-Friendly Tables */
+      .table-container {
+        border-radius: 8px;
+        -webkit-overflow-scrolling: touch;
+      }
+      table.data-table th, table.data-table td {
+        padding: 8px 8px;
+        font-size: 11px;
+      }
+
+      /* Native Mobile Bottom Sheet Chatbot */
+      .chatbot-fab {
+        bottom: 16px;
+        right: 16px;
+        padding: 10px 16px;
+        font-size: 13px;
+      }
+      .chatbot-window {
+        bottom: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 85vh !important;
+        max-height: 85vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        border-bottom: none !important;
+      }
+
+      /* Mobile Spec Sheet Modal */
+      .modal-box {
+        padding: 16px 12px;
+        border-radius: 12px;
+        max-height: 94vh;
+      }
+      .spec-sheet-print {
+        padding: 14px 10px;
+      }
+      .spec-sheet-print div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Tab Bar on Mobile */
+      .tab-nav {
+        margin: 10px 0 14px 0;
+        padding: 4px;
+        gap: 4px;
+      }
+      .tab-btn {
+        min-width: 120px;
+        padding: 8px 10px;
+        font-size: 12px;
+      }
     }
 
 </style>
