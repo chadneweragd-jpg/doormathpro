@@ -310,6 +310,8 @@
     .stepper-btn {
       width: 48px;
       height: 48px;
+      flex-shrink: 0;
+      min-width: 44px;
       background: transparent;
       border: none;
       color: var(--text-muted);
@@ -1110,22 +1112,20 @@
             </div>
           </div>
 
-          <div class="form-row-2">
-            <div class="field-group">
-              <div class="field-label">Door Width (ft)</div>
-              <div class="stepper-control">
-                <button class="stepper-btn" onclick="stepVal('doorWidth', -1)">−</button>
-                <input type="number" class="stepper-input mono" id="doorWidth" value="16" oninput="runSpringSizer()">
-                <button class="stepper-btn" onclick="stepVal('doorWidth', 1)">+</button>
-              </div>
+          <div class="field-group">
+            <div class="field-label">Door Width (ft)</div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('doorWidth', -1)">−</button>
+              <input type="number" class="stepper-input mono" id="doorWidth" value="16" oninput="runSpringSizer()">
+              <button class="stepper-btn" onclick="stepVal('doorWidth', 1)">+</button>
             </div>
-            <div class="field-group">
-              <div class="field-label">Door Height (ft)</div>
-              <div class="stepper-control">
-                <button class="stepper-btn" onclick="stepVal('doorHeight', -1)">−</button>
-                <input type="number" class="stepper-input mono" id="doorHeight" value="7" oninput="runSpringSizer()">
-                <button class="stepper-btn" onclick="stepVal('doorHeight', 1)">+</button>
-              </div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Door Height (ft)</div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('doorHeight', -1)">−</button>
+              <input type="number" class="stepper-input mono" id="doorHeight" value="7" oninput="runSpringSizer()">
+              <button class="stepper-btn" onclick="stepVal('doorHeight', 1)">+</button>
             </div>
           </div>
 

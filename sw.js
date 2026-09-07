@@ -1,4 +1,4 @@
-const CACHE_NAME = 'doormathpro-v11';
+const CACHE_NAME = 'doormathpro-v12';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
