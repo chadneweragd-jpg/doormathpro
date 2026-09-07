@@ -788,13 +788,44 @@
 
           <div class="field-group">
             <div class="field-label">Cable Drum Model</div>
-            <select class="input-select" id="drumModel" onchange="runSpringSizer()">
-              <option value="400-8" selected>Standard Lift — OMI 400-8 (up to 8' high)</option>
-              <option value="400-12">Standard Lift — OMI 400-12 (up to 12' high)</option>
-              <option value="5250">Commercial Standard — OMI 5250 (up to 18' high)</option>
-              <option value="54-HL">High Lift — HL 54 (up to 54" high lift)</option>
-              <option value="VL-11">Vertical Lift — OMI VL 11</option>
+            <select class="input-select" id="drumModel" onchange="handleDrumChange()">
+              <optgroup label="── Standard Lift (Residential & Commercial) ──">
+                <option value="400-8" selected>OMI / Apco / Canimex 400-8 (Up to 8' Door)</option>
+                <option value="400-12">OMI / Apco / Canimex 400-12 (Up to 12' Door)</option>
+                <option value="400-18">Canimex / Apco 400-18 (Up to 18' Commercial)</option>
+                <option value="5250">OMI / Apco 5250 Heavy Commercial (Up to 18' Door)</option>
+                <option value="800-32">Industrial 800-32 Heavy Bay (Up to 32' Door)</option>
+              </optgroup>
+              <optgroup label="── High Lift (HL Drums) ──">
+                <option value="54-HL">54-HL / Apco 5250-54 / DNS 54 (Up to 54" High Lift)</option>
+                <option value="120-HL">120-HL / Apco 5750-120 / DNS 120 (Up to 120" High Lift)</option>
+                <option value="164-HL">164-HL / OMI 164 (Up to 164" High Lift)</option>
+                <option value="220-HL">220-HL / OMI 220 (Up to 220" High Lift)</option>
+              </optgroup>
+              <optgroup label="── Vertical Lift (VL Full Spiral) ──">
+                <option value="VL-11">OMI VL-11 / Canimex VL-11 / Apco 850-11 (Up to 11' Door)</option>
+                <option value="VL-18">OMI VL-18 / Canimex VL-18 / Apco 1100-18 (Up to 18' Door)</option>
+                <option value="VL-28">OMI VL-28 / Canimex VL-28 (Up to 28' Door)</option>
+              </optgroup>
             </select>
+            <!-- Dynamic Drum Specs Pill -->
+            <div id="drumSpecsPill" style="margin-top: 8px; padding: 10px 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+              <span><strong>Cable Size:</strong> <span id="pillCable" class="mono">1/8"</span></span>
+              <span><strong>Circumference:</strong> <span id="pillCircum" class="mono">12.56"</span></span>
+              <span><strong>Cross-Ref:</strong> <span id="pillCrossRef" style="color: var(--text-dim);">Apco 400-8, Canimex, DNS</span></span>
+            </div>
+            <!-- High lift extra field if HL selected -->
+            <div id="highLiftFieldGroup" style="display: none; margin-top: 12px;">
+              <div class="field-label">
+                <span>High Lift Distance (Inches)</span>
+                <span class="val-hint mono" id="hlInchesHint">36" HL</span>
+              </div>
+              <div class="stepper-control">
+                <button class="stepper-btn" onclick="stepVal('highLiftInches', -2)">−</button>
+                <input type="number" class="stepper-input mono" id="highLiftInches" value="36" oninput="runSpringSizer()">
+                <button class="stepper-btn" onclick="stepVal('highLiftInches', 2)">+</button>
+              </div>
+            </div>
           </div>
 
           <div class="field-group">
@@ -847,8 +878,42 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Sectional Door Construction Specs</div>
-              <div class="card-subtitle">Estimate dead weight from panel structure, gauge, and hardware</div>
+              <div class="card-title">Sectional Door Weight Calculator</div>
+              <div class="card-subtitle">Select your manufacturer model preset or customize construction specs</div>
+            </div>
+          </div>
+
+          <!-- Fast Manufacturer Preset Picker -->
+          <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 14px; margin-bottom: 18px;">
+            <div style="font-weight: 700; font-size: 13px; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+              ⚡ Select Factory Model Preset (Clopay, Garaga, Steel-Craft, Hörmann, Wayne Dalton, Amarr, C.H.I.)
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Manufacturer</label>
+                <select class="input-select" id="mfgSelect" onchange="handleMfgChange()" style="height: 42px; font-size: 13px; padding: 0 10px;">
+                  <option value="custom">-- Custom / Generic Build --</option>
+                  <option value="Clopay">Clopay</option>
+                  <option value="Garaga" selected>Garaga</option>
+                  <option value="Steel-Craft">Steel-Craft</option>
+                  <option value="Hormann">Hörmann</option>
+                  <option value="Wayne Dalton">Wayne Dalton</option>
+                  <option value="Amarr">Amarr / Entrematic</option>
+                  <option value="C.H.I.">C.H.I. Overhead Doors</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Door Model Series</label>
+                <select class="input-select" id="modelSelect" onchange="handleModelSelect()" style="height: 42px; font-size: 13px; padding: 0 10px;">
+                  <!-- Dynamically populated via JS -->
+                </select>
+              </div>
+            </div>
+            <!-- Model Specs Badge -->
+            <div id="mfgSpecBadge" style="margin-top: 8px; font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; flex-wrap: wrap;">
+              <span>R-Value: <strong id="badgeRVal" style="color: var(--accent);">R-16.0</strong></span>
+              <span>Core: <strong id="badgeCore">1-3/4" Polyurethane</strong></span>
+              <span>Density: <strong id="badgeDensity" class="mono">2.20 lbs/sq.ft</strong></span>
             </div>
           </div>
 
@@ -1076,6 +1141,111 @@
           </div>
         </div>
       </div>
+
+      <!-- NEW MODULE: SSC-Style Drum Comparison & Cross-Reference Explorer -->
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🥁 Comprehensive Drum Comparison & Cross-Reference Explorer</div>
+            <div class="card-subtitle">Reverse-engineered industry database comparing OMI, Apco, Canimex (Torque Force), DNS & SSC</div>
+          </div>
+          <input type="text" id="drumSearchInput" placeholder="Search drum (e.g. 54, 5250, Canimex, 120, VL)..." oninput="filterDrumTable()" style="background: var(--bg-card-sub); border: 1px solid var(--border-color); color: var(--text-main); font-size: 12px; padding: 6px 12px; border-radius: 6px; outline: none; width: 220px;">
+        </div>
+
+        <div class="table-container">
+          <table class="data-table" id="drumComparisonTable">
+            <thead>
+              <tr>
+                <th>Drum Model</th>
+                <th>Lift Type</th>
+                <th>Max Height</th>
+                <th>Cable Size</th>
+                <th>Moment Arm</th>
+                <th>Cable Travel / Turn</th>
+                <th>Cross-Reference Part Numbers</th>
+              </tr>
+            </thead>
+            <tbody id="drumTableBody">
+              <!-- Populated dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- NEW MODULE: Springs by Direct IPPT Lookup -->
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🎯 Springs by Direct IPPT Lookup (SSC Style)</div>
+            <div class="card-subtitle">Input an exact target IPPT to view all engineered wire and length matches</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 14px; align-items: flex-end; margin-bottom: 14px; flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 200px;">
+            <div class="field-label">Target IPPT Value</div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('directIPPTInput', -0.5); runDirectIPPT();">−</button>
+              <input type="number" step="0.1" class="stepper-input mono" id="directIPPTInput" value="18.5" oninput="runDirectIPPT()">
+              <button class="stepper-btn" onclick="stepVal('directIPPTInput', 0.5); runDirectIPPT();">+</button>
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 200px;">
+            <div class="field-label">Inside Diameter</div>
+            <select class="input-select" id="directIDSelect" onchange="runDirectIPPT()">
+              <option value="2.0" selected>2.0" Standard</option>
+              <option value="1.75">1-3/4" Residential</option>
+              <option value="2.625">2-5/8" Commercial</option>
+              <option value="3.75">3-3/4" Industrial</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Wire Gauge</th>
+                <th>Inside Diameter</th>
+                <th>Cut Length</th>
+                <th>Exact IPPT</th>
+                <th>Cycle Rating</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="directIPPTBody">
+              <!-- Populated via JS -->
+            </tbody>
+          </table>
+        </div>
+
+      <!-- NEW MODULE: Manufacturer Model Weight Catalog -->
+      <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+          <div>
+            <div class="card-title">📚 Manufacturer Model Weight & Density Catalog</div>
+            <div class="card-subtitle">Benchmarked factory specs across major Canadian & US overhead door manufacturers</div>
+          </div>
+          <input type="text" id="mfgSearchInput" placeholder="Search model (e.g. Standard+, T-16, Clopay, 8300)..." oninput="filterMfgTable()" style="background: var(--bg-card-sub); border: 1px solid var(--border-color); color: var(--text-main); font-size: 12px; padding: 6px 12px; border-radius: 6px; outline: none; width: 220px;">
+        </div>
+
+        <div class="table-container">
+          <table class="data-table" id="mfgCatalogTable">
+            <thead>
+              <tr>
+                <th>Manufacturer</th>
+                <th>Model / Series</th>
+                <th>R-Value</th>
+                <th>Construction Type</th>
+                <th>Weight / Sq.Ft</th>
+                <th>Typical 8x7 Wt</th>
+                <th>Typical 16x7 Wt</th>
+              </tr>
+            </thead>
+            <tbody id="mfgTableBody">
+              <!-- Populated dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -1182,13 +1352,152 @@
       { wire: 0.375, name: ".375", color: "Orange", coils20: 7.50 }
     ];
 
-    // Drum Models Specs
+    // Comprehensive Reverse-Engineered Drum Database
     const DRUM_SPECS = {
-      "400-8": { radius: 1.95, turnsPerFt: 1.0, deadTurns: 0.6, maxHt: 8 },
-      "400-12": { radius: 1.95, turnsPerFt: 1.0, deadTurns: 0.7, maxHt: 12 },
-      "5250": { radius: 2.50, turnsPerFt: 0.8, deadTurns: 0.8, maxHt: 18 },
-      "54-HL": { radius: 2.10, turnsPerFt: 1.05, deadTurns: 0.7, maxHt: 14 },
-      "VL-11": { radius: 2.30, turnsPerFt: 1.1, deadTurns: 0.5, maxHt: 11 }
+      "400-8": {
+        name: "OMI 400-8 (Standard Lift)",
+        type: "Standard Lift",
+        radius: 1.95,
+        circumference: 12.56,
+        turnsPerFt: 1.0,
+        deadTurns: 0.6,
+        maxHt: "8'1"",
+        cable: "1/8"",
+        crossRef: "Apco 400-8, Canimex 400-8, DNS 400-8, SSC 400-8",
+        desc: "Most widely installed residential standard lift drum"
+      },
+      "400-12": {
+        name: "OMI 400-12 (Standard Lift 12ft)",
+        type: "Standard Lift",
+        radius: 1.95,
+        circumference: 12.56,
+        turnsPerFt: 1.0,
+        deadTurns: 0.7,
+        maxHt: "12'1"",
+        cable: "1/8" or 5/32"",
+        crossRef: "Apco 400-12, Canimex 400-12, DNS 400-12, SSC 400-12",
+        desc: "Standard commercial & high residential doors up to 12ft"
+      },
+      "400-18": {
+        name: "Canimex 400-18 (Standard Lift 18ft)",
+        type: "Standard Lift",
+        radius: 1.95,
+        circumference: 12.56,
+        turnsPerFt: 1.0,
+        deadTurns: 0.8,
+        maxHt: "18'1"",
+        cable: "5/32"",
+        crossRef: "Canimex TF 400-18, Apco 400-18",
+        desc: "Tall commercial standard lift installations"
+      },
+      "5250": {
+        name: "OMI 5250 (Commercial Heavy)",
+        type: "Standard Lift",
+        radius: 2.50,
+        circumference: 16.50,
+        turnsPerFt: 0.8,
+        deadTurns: 0.8,
+        maxHt: "18'1"",
+        cable: "3/16"",
+        crossRef: "Apco 5250, Canimex 5250, DNS 5250, SSC 5250",
+        desc: "Heavy commercial doors exceeding 800-1000+ lbs"
+      },
+      "800-32": {
+        name: "Industrial 800-32 (Large Bay)",
+        type: "Standard Lift",
+        radius: 3.85,
+        circumference: 25.12,
+        turnsPerFt: 0.5,
+        deadTurns: 1.0,
+        maxHt: "32'0"",
+        cable: "1/4"",
+        crossRef: "Apco 800-32, OMI 800-32",
+        desc: "Massive industrial warehouse doors"
+      },
+      "54-HL": {
+        name: "High Lift 54 (Up to 54" HL)",
+        type: "High Lift",
+        radius: 2.10,
+        circumference: 13.20,
+        turnsPerFt: 1.05,
+        deadTurns: 0.7,
+        maxHt: "14'0" (54" High Lift)",
+        cable: "1/8" or 5/32"",
+        crossRef: "Apco 5250-54, DNS 54, OMI 54, SSC 54-HL",
+        desc: "Common residential & shop car-lift ceiling conversion"
+      },
+      "120-HL": {
+        name: "High Lift 120 (Up to 120" HL)",
+        type: "High Lift",
+        radius: 2.75,
+        circumference: 17.20,
+        turnsPerFt: 0.9,
+        deadTurns: 0.8,
+        maxHt: "16'0" (120" High Lift)",
+        cable: "3/16"",
+        crossRef: "Apco 5750-120, OMI 120, DNS 120, SSC 120-HL, M146-3050",
+        desc: "Commercial high lift buildings with ceiling heights up to 22ft"
+      },
+      "164-HL": {
+        name: "High Lift 164 (Up to 164" HL)",
+        type: "High Lift",
+        radius: 3.20,
+        circumference: 19.50,
+        turnsPerFt: 0.85,
+        deadTurns: 0.9,
+        maxHt: "18'0" (164" High Lift)",
+        cable: "3/16"",
+        crossRef: "Apco 164, OMI 164, DNS 164",
+        desc: "Extreme high clearance agricultural & industrial shops"
+      },
+      "220-HL": {
+        name: "High Lift 220 (Up to 220" HL)",
+        type: "High Lift",
+        radius: 3.60,
+        circumference: 22.00,
+        turnsPerFt: 0.8,
+        deadTurns: 1.0,
+        maxHt: "22'0" (220" High Lift)",
+        cable: "1/4"",
+        crossRef: "Apco 220, OMI 220, SSC 220-HL",
+        desc: "Heavy manufacturing and truck repair bays"
+      },
+      "VL-11": {
+        name: "Vertical Lift 11 (Full Vertical 11ft)",
+        type: "Vertical Lift",
+        radius: 2.30,
+        circumference: 14.50,
+        turnsPerFt: 1.1,
+        deadTurns: 0.5,
+        maxHt: "11'0"",
+        cable: "3/16"",
+        crossRef: "OMI VL-11, Canimex VL-11, Apco 850-11, SSC VL-11",
+        desc: "Tapered spiral drum for straight vertical wall track"
+      },
+      "VL-18": {
+        name: "Vertical Lift 18 (Full Vertical 18ft)",
+        type: "Vertical Lift",
+        radius: 2.85,
+        circumference: 18.00,
+        turnsPerFt: 0.95,
+        deadTurns: 0.6,
+        maxHt: "18'0"",
+        cable: "3/16" or 1/4"",
+        crossRef: "OMI VL-18, Canimex VL-18, Apco 1100-18, SSC VL-18",
+        desc: "Commercial loading docks with straight vertical wall rise"
+      },
+      "VL-28": {
+        name: "Vertical Lift 28 (Full Vertical 28ft)",
+        type: "Vertical Lift",
+        radius: 3.50,
+        circumference: 22.50,
+        turnsPerFt: 0.8,
+        deadTurns: 0.8,
+        maxHt: "28'0"",
+        cable: "1/4"",
+        crossRef: "OMI VL-28, Canimex VL-28, Apco 1400-28",
+        desc: "Overhead crane bays and heavy industrial aircraft doors"
+      }
     };
 
     // State Variables
@@ -1518,7 +1827,7 @@
       const struts = parseInt(document.getElementById('estStruts').value) || 0;
 
       const sqft = w * h;
-      let density = 1.65; // default sandwich
+      let density = customDensityOverride !== null ? customDensityOverride : 1.65;
 
       if (construction === 'pan-25') density = 1.25;
       else if (construction === 'pan-24') density = 1.40;
@@ -1651,13 +1960,249 @@
       });
     }
 
+
+    function handleDrumChange() {
+      const drumKey = document.getElementById('drumModel').value;
+      const d = DRUM_SPECS[drumKey] || DRUM_SPECS["400-8"];
+      
+      // Update info pill
+      document.getElementById('pillCable').innerText = d.cable;
+      document.getElementById('pillCircum').innerText = d.circumference + '"';
+      document.getElementById('pillCrossRef').innerText = d.crossRef;
+
+      // Show/hide High Lift input
+      const hlGroup = document.getElementById('highLiftFieldGroup');
+      if (d.type === 'High Lift') {
+        hlGroup.style.display = 'block';
+      } else {
+        hlGroup.style.display = 'none';
+      }
+
+      runSpringSizer();
+    }
+
+    function populateDrumTable() {
+      const tbody = document.getElementById('drumTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      Object.keys(DRUM_SPECS).forEach(k => {
+        const d = DRUM_SPECS[k];
+        const tr = document.createElement('tr');
+        tr.dataset.search = (d.name + ' ' + d.type + ' ' + d.crossRef + ' ' + k).toLowerCase();
+        tr.innerHTML = `
+          <td><strong style="color:var(--accent);">${k}</strong> <span style="font-size:11px; color:var(--text-muted);">(${d.name.split(' ')[0]})</span></td>
+          <td><span class="badge ${d.type === 'Standard Lift' ? 'gray' : d.type === 'High Lift' ? 'amber' : 'purple'}">${d.type}</span></td>
+          <td class="mono">${d.maxHt}</td>
+          <td class="mono">${d.cable}</td>
+          <td class="mono">${d.radius.toFixed(2)}"</td>
+          <td class="mono">${d.circumference.toFixed(2)}"</td>
+          <td style="font-size:11px; color:var(--text-muted);">${d.crossRef}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterDrumTable() {
+      const query = (document.getElementById('drumSearchInput').value || '').toLowerCase();
+      const rows = document.querySelectorAll('#drumTableBody tr');
+      rows.forEach(r => {
+        const text = r.dataset.search || '';
+        r.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+
+    // Springs by Direct IPPT Lookup (SSC Style)
+    function runDirectIPPT() {
+      const targetIPPT = parseFloat(document.getElementById('directIPPTInput').value) || 18.5;
+      const targetID = parseFloat(document.getElementById('directIDSelect').value) || 2.0;
+      const tbody = document.getElementById('directIPPTBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const results = [];
+      WIRE_SPECS.forEach(w => {
+        // L = (E * d^5) / (10.8 * (ID + d) * IPPT)
+        const L = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (targetID + w.wire) * targetIPPT);
+        if (L >= 18.0 && L <= 58.0) {
+          const cycles = estimateCycles(w.wire, targetID, L, targetIPPT, 7.6);
+          results.push({
+            wire: w.wire,
+            name: w.name,
+            color: w.color,
+            id: targetID,
+            length: L,
+            cycles: cycles
+          });
+        }
+      });
+
+      results.sort((a, b) => Math.abs(a.length - 32) - Math.abs(b.length - 32));
+
+      if (results.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:15px; color:var(--text-dim);">No wire size produces a realistic cut length for this IPPT and ID. Try changing ID.</td></tr>';
+        return;
+      }
+
+      results.forEach(r => {
+        const tr = document.createElement('tr');
+        let cycleBadge = '<span class="badge gray">10k Std</span>';
+        if (r.cycles >= 50000) cycleBadge = '<span class="badge purple">50k+ Com</span>';
+        else if (r.cycles >= 25000) cycleBadge = '<span class="badge green">25k High</span>';
+        else if (r.cycles >= 15000) cycleBadge = '<span class="badge amber">15k Plus</span>';
+
+        tr.innerHTML = `
+          <td><span class="mono font-bold">${r.name}</span> <span style="font-size:11px; color:var(--text-muted);">(${r.color})</span></td>
+          <td>${r.id === 2.625 ? '2-5/8"' : r.id === 1.75 ? '1-3/4"' : r.id === 3.75 ? '3-3/4"' : '2.0"'}</td>
+          <td class="mono font-bold" style="color:var(--accent);">${r.length.toFixed(1)}"</td>
+          <td class="mono">${targetIPPT.toFixed(1)}</td>
+          <td>${cycleBadge}</td>
+          <td><button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${r.wire}, ${r.id}, ${r.length.toFixed(1)}, ${r.cycles}, '${r.name}', 2); openSpecSheet();">Use on Spec Sheet →</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+
+    // Comprehensive Manufacturer Door Model Weights Database
+    const DOOR_MODELS = [
+      // Garaga
+      { mfg: "Garaga", model: "Standard+ (1-3/4" Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Garaga", model: "Acadia 138 (1-3/8" Polyurethane, R-12)", density: 1.85, rVal: "R-12", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
+      { mfg: "Garaga", model: "Triforce (2" Polystyrene Steel Back, R-10)", density: 1.70, rVal: "R-10", type: "3-Layer Polystyrene", constructionVal: "poly-vinyl" },
+      { mfg: "Garaga", model: "G-5000 (Commercial 1-3/4" Polyurethane)", density: 2.65, rVal: "R-16", type: "Commercial Sandwich", constructionVal: "commercial-heavy" },
+      { mfg: "Garaga", model: "California (Full-View Aluminum Frame)", density: 3.35, rVal: "N/A", type: "Aluminum Full-View", constructionVal: "fullview-glass" },
+
+      // Steel-Craft (Western Canada staple)
+      { mfg: "Steel-Craft", model: "ThermoCraft T-16 (1-3/4" Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Steel-Craft", model: "ThermoCraft T-12 (1-1/8" Polyurethane, R-10)", density: 1.80, rVal: "R-10", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
+      { mfg: "Steel-Craft", model: "CarriageCraft / RanchCraft (1-3/4" R-16)", density: 2.25, rVal: "R-16", type: "3-Layer Decorative", constructionVal: "foamed-3layer" },
+      { mfg: "Steel-Craft", model: "SC-Industrial / TD-134 (Commercial Polyurethane)", density: 2.70, rVal: "R-16", type: "Commercial Sandwich", constructionVal: "commercial-heavy" },
+
+      // Clopay
+      { mfg: "Clopay", model: "Classic Steel Model 1000 (Single Layer 25ga Pan)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
+      { mfg: "Clopay", model: "Classic Steel Model 2000 (Double Layer Vinyl Back)", density: 1.65, rVal: "R-6.5", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
+      { mfg: "Clopay", model: "Classic / Gallery Model 3000 (Intellicore R-18.4)", density: 2.25, rVal: "R-18.4", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Clopay", model: "Commercial 3720 (2" Polyurethane Heavy)", density: 2.80, rVal: "R-18.4", type: "Commercial Heavy", constructionVal: "commercial-heavy" },
+      { mfg: "Clopay", model: "Avante (Full-View Aluminum, 1/8" Glass)", density: 3.40, rVal: "N/A", type: "Full-View Aluminum", constructionVal: "fullview-glass" },
+
+      // Hormann
+      { mfg: "Hormann", model: "Gemini 2100 (Single Layer 25ga Pan)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
+      { mfg: "Hormann", model: "Orion 4200 (Double Layer Polystyrene)", density: 1.65, rVal: "R-8.9", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
+      { mfg: "Hormann", model: "Taurus 4250 (1-3/4" Polyurethane R-16.1)", density: 2.20, rVal: "R-16.1", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Hormann", model: "SR 9000 (Commercial Heavy Duty)", density: 2.85, rVal: "R-17.5", type: "Commercial Heavy", constructionVal: "commercial-heavy" },
+
+      // Wayne Dalton
+      { mfg: "Wayne Dalton", model: "Classic 8000 / 8100 (Single Layer Pan 25ga)", density: 1.20, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
+      { mfg: "Wayne Dalton", model: "Classic 8300 (1-3/8" Polyurethane, R-12.12)", density: 1.85, rVal: "R-12.1", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
+      { mfg: "Wayne Dalton", model: "Classic 8500 (2" Polyurethane, R-16.22)", density: 2.30, rVal: "R-16.2", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Wayne Dalton", model: "Model 9100 / 9605 (Pinch-Resistant Steel Back)", density: 1.60, rVal: "R-9.0", type: "Patented Core", constructionVal: "poly-vinyl" },
+
+      // Amarr
+      { mfg: "Amarr", model: "Lincoln 1000 (Single Layer Pan 25ga)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
+      { mfg: "Amarr", model: "Lincoln 2000 (Double Layer 25ga + Vinyl Back)", density: 1.60, rVal: "R-6.6", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
+      { mfg: "Amarr", model: "Olympus / Lincoln 3000 (2" Polyurethane R-19.4)", density: 2.30, rVal: "R-19.4", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "Amarr", model: "Heritage (Heavy 24ga Steel Pan / Sandwich)", density: 1.75, rVal: "R-9.0", type: "24ga Heavy Steel", constructionVal: "poly-vinyl" },
+
+      // C.H.I.
+      { mfg: "C.H.I.", model: "Model 2283 / 2216 (2" Polyurethane R-17.5)", density: 2.25, rVal: "R-17.5", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
+      { mfg: "C.H.I.", model: "Model 2250 (Single Layer Steel Pan 25ga)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
+      { mfg: "C.H.I.", model: "Model 3285 / 3216 (Commercial 2" Polyurethane)", density: 2.75, rVal: "R-17.5", type: "Commercial Heavy", constructionVal: "commercial-heavy" }
+    ];
+
+    let customDensityOverride = null;
+
+    function handleMfgChange() {
+      const mfg = document.getElementById('mfgSelect').value;
+      const modelSelect = document.getElementById('modelSelect');
+      modelSelect.innerHTML = '';
+
+      if (mfg === 'custom') {
+        modelSelect.innerHTML = '<option value="custom">Custom Configuration</option>';
+        customDensityOverride = null;
+        document.getElementById('mfgSpecBadge').style.display = 'none';
+        calculateDoorWeight();
+        return;
+      }
+
+      document.getElementById('mfgSpecBadge').style.display = 'flex';
+      const models = DOOR_MODELS.filter(m => m.mfg === mfg);
+      models.forEach((m, idx) => {
+        const opt = document.createElement('option');
+        opt.value = m.model;
+        opt.innerText = m.model;
+        modelSelect.appendChild(opt);
+      });
+
+      handleModelSelect();
+    }
+
+    function handleModelSelect() {
+      const selectedModelName = document.getElementById('modelSelect').value;
+      const modelObj = DOOR_MODELS.find(m => m.model === selectedModelName);
+      if (modelObj) {
+        customDensityOverride = modelObj.density;
+        document.getElementById('badgeRVal').innerText = modelObj.rVal;
+        document.getElementById('badgeCore').innerText = modelObj.type;
+        document.getElementById('badgeDensity').innerText = modelObj.density.toFixed(2) + " lbs/sq.ft";
+        
+        // Auto-select corresponding generic construction
+        if (modelObj.constructionVal) {
+          document.getElementById('estConstruction').value = modelObj.constructionVal;
+        }
+      } else {
+        customDensityOverride = null;
+      }
+      calculateDoorWeight();
+    }
+
+    function populateMfgTable() {
+      const tbody = document.getElementById('mfgTableBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      DOOR_MODELS.forEach(m => {
+        const sqft8x7 = 56;
+        const sqft16x7 = 112;
+        const wt8x7 = Math.round(sqft8x7 * m.density + 18);
+        const wt16x7 = Math.round(sqft16x7 * m.density + 26 + 24); // with 2 struts
+
+        const tr = document.createElement('tr');
+        tr.dataset.search = (m.mfg + ' ' + m.model + ' ' + m.type + ' ' + m.rVal).toLowerCase();
+        tr.innerHTML = `
+          <td><strong>${m.mfg}</strong></td>
+          <td style="color: var(--accent); font-weight: 600;">${m.model}</td>
+          <td><span class="badge ${m.rVal.includes('16') || m.rVal.includes('18') || m.rVal.includes('19') ? 'green' : 'gray'}">${m.rVal}</span></td>
+          <td style="font-size: 11px; color: var(--text-muted);">${m.type}</td>
+          <td class="mono font-bold">${m.density.toFixed(2)} lbs</td>
+          <td class="mono">~${wt8x7} lbs</td>
+          <td class="mono font-bold" style="color: #38bdf8;">~${wt16x7} lbs</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterMfgTable() {
+      const query = (document.getElementById('mfgSearchInput').value || '').toLowerCase();
+      const rows = document.querySelectorAll('#mfgTableBody tr');
+      rows.forEach(r => {
+        const text = r.dataset.search || '';
+        r.style.display = text.includes(query) ? '' : 'none';
+      });
+    }
+
     // Initial calculation on page load
     window.addEventListener('DOMContentLoaded', () => {
+      populateDrumTable();
+      handleDrumChange();
+      handleMfgChange();
+      populateMfgTable();
       runTruckMatch();
       runSpringSizer();
       calculateDoorWeight();
       calcTwentyCoil();
       calcODtoID();
+      runDirectIPPT();
       updateOnlineStatus();
     });
   </script>
