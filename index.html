@@ -553,7 +553,140 @@
     footer a:hover {
       text-decoration: underline;
     }
-  </style>
+  
+    /* Floating AI Chatbot Widget */
+    .chatbot-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 45;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      border: none;
+      border-radius: 50px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 25px rgba(245, 158, 11, 0.4);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .chatbot-fab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 30px rgba(245, 158, 11, 0.6);
+    }
+    .chatbot-window {
+      display: none;
+      position: fixed;
+      bottom: 84px;
+      right: 24px;
+      width: 380px;
+      max-width: calc(100vw - 32px);
+      height: 540px;
+      max-height: calc(100vh - 120px);
+      background: #111827;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      z-index: 45;
+      flex-direction: column;
+      overflow: hidden;
+      animation: popUp 0.2s ease;
+    }
+    .chatbot-window.open {
+      display: flex;
+    }
+    @keyframes popUp {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .chat-header {
+      background: #172033;
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: #0b0f19;
+    }
+    .chat-bubble {
+      max-width: 82%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .chat-bubble.ai {
+      background: #1e293b;
+      color: #f8fafc;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .chat-bubble.user {
+      background: var(--accent);
+      color: #000;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      font-weight: 600;
+    }
+    .chat-input-row {
+      padding: 12px;
+      border-top: 1px solid var(--border-color);
+      background: #111827;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .chat-input {
+      flex: 1;
+      background: #172033;
+      border: 1px solid var(--border-color);
+      color: #f8fafc;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      outline: none;
+    }
+    .chat-input:focus {
+      border-color: var(--accent);
+    }
+    .chip-container {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 0 10px 0;
+      scrollbar-width: none;
+    }
+    .chip-container::-webkit-scrollbar { display: none; }
+    .chip-btn {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .chip-btn:hover {
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+</style>
 </head>
 <body>
 
@@ -2437,6 +2570,96 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       alert(`Applied ${lastAIAnalysis.manufacturer} ${lastAIAnalysis.model} (${lastAIAnalysis.density || 2.2} lbs/sq ft) to calculator.`);
     }
 
+
+    // AI Troubleshooting Chatbot Logic
+    let isChatOpen = false;
+
+    function toggleChatbot() {
+      isChatOpen = !isChatOpen;
+      const win = document.getElementById('chatbotWindow');
+      win.classList.toggle('open', isChatOpen);
+      if (isChatOpen) {
+        document.getElementById('chatTextInput').focus();
+      }
+    }
+
+    function handleChatKeyDown(e) {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    function sendSuggestedQuestion(q) {
+      document.getElementById('chatTextInput').value = q;
+      sendChatMessage();
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatTextInput');
+      const text = (input.value || '').trim();
+      if (!text) return;
+
+      const apiKey = localStorage.getItem('doormath_gemini_key');
+      if (!apiKey) {
+        openAISettingsModal();
+        alert('Please enter your free Google AI Studio API key in AI Setup to activate DoorTech AI chat.');
+        return;
+      }
+
+      input.value = '';
+      const chatBody = document.getElementById('chatBody');
+
+      // Append User message
+      const userBubble = document.createElement('div');
+      userBubble.className = 'chat-bubble user';
+      userBubble.innerText = text;
+      chatBody.appendChild(userBubble);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      // Append Loading AI bubble
+      const aiBubble = document.createElement('div');
+      aiBubble.className = 'chat-bubble ai';
+      aiBubble.innerText = 'Thinking...';
+      chatBody.appendChild(aiBubble);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      const systemPrompt = `You are DoorTech AI, a veteran commercial and residential garage door installer, service technician, and estimator with 25 years of field experience in North America.
+You provide direct, highly practical, field-tested troubleshooting advice for overhead doors, torsion springs, cable drums (standard lift, high lift, vertical lift), track clearances (12", 15", low headroom), operators (LiftMaster, Hormann, Manaras), and hardware.
+Guidelines:
+1. Keep answers concise, direct, bulleted, and scannable for a tech on a ladder.
+2. Safety first: remind technicians about winding bar safety and extreme spring tension when applicable.
+3. If asked to calculate exact spring sizes, remind them to use the built-in DoorMathPro tabs above for mathematical precision.`;
+
+      try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  { text: systemPrompt + "\n\nUser Question: " + text }
+                ]
+              }
+            ]
+          })
+        });
+
+        const data = await response.json();
+        if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+          const reply = data.candidates[0].content.parts[0].text;
+          aiBubble.innerHTML = reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        } else {
+          aiBubble.innerText = 'Sorry, could not process request. Please check your API key.';
+        }
+      } catch (err) {
+        console.error('Chat error:', err);
+        aiBubble.innerText = 'Connection error: ' + (err.message || 'Check network.');
+      }
+
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
     // Initial calculation on page load
     window.addEventListener('DOMContentLoaded', () => {
       populateDrumTable();
@@ -2479,6 +2702,47 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
         <button class="btn-action" onclick="closeAISettingsModal()">Cancel</button>
         <button class="btn-action primary" onclick="saveAISettings()">Save API Key</button>
       </div>
+    </div>
+  </div>
+
+
+  <!-- Floating AI Assistant Button -->
+  <button class="chatbot-fab no-print" onclick="toggleChatbot()">
+    💬 AI Tech Assistant
+  </button>
+
+  <!-- Floating Chatbot Window -->
+  <div class="chatbot-window no-print" id="chatbotWindow">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 14px; color: #000; font-weight: 900;">🤖</div>
+        <div>
+          <div style="font-size: 14px; font-weight: 800;">DoorTech AI</div>
+          <div style="font-size: 11px; color: var(--success); display: flex; align-items: center; gap: 4px;">
+            <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--success); display: inline-block;"></span> Online Troubleshooting
+          </div>
+        </div>
+      </div>
+      <button onclick="toggleChatbot()" style="background: none; border: none; font-size: 18px; color: var(--text-muted); cursor: pointer;">✕</button>
+    </div>
+
+    <div class="chat-body" id="chatBody">
+      <div class="chip-container">
+        <button class="chip-btn" onclick="sendSuggestedQuestion('Why is my door heavy off the floor but hot at the top?')">💡 Door heavy off floor?</button>
+        <button class="chip-btn" onclick="sendSuggestedQuestion('Which winding cone goes on the left side of standard torsion?')">💡 Which winding cone on left?</button>
+        <button class="chip-btn" onclick="sendSuggestedQuestion('How do I tell if a door has standard lift or high lift drums?')">💡 High lift vs standard drum?</button>
+      </div>
+      
+      <div class="chat-bubble ai">
+        👋 Hey! I am your <strong>DoorTech AI</strong> field assistant. Ask me anything about garage door diagnostics, cable jump troubleshooting, track clearances, or model identification.
+      </div>
+    </div>
+
+    <div class="chat-input-row">
+      <input type="text" class="chat-input" id="chatTextInput" placeholder="Ask a field question..." onkeydown="handleChatKeyDown(event)">
+      <button class="btn-action primary" style="padding: 10px 14px; border-radius: 8px;" onclick="sendChatMessage()">
+        Send
+      </button>
     </div>
   </div>
 
