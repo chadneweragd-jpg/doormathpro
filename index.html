@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DoorMathPro — Professional Garage Door Spring & Engineering Suite</title>
+  <meta name="description" content="Field-ready garage door spring calculator, truck stock conversion matcher, IPPT sizer, door weight estimator, and DASMA reference suite.">
+  <meta name="theme-color" content="#f59e0b">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <style>
+    :root {
+      --bg-main: #090d16;
+      --bg-card: #111827;
+      --bg-card-sub: #172033;
+      --border-color: #1f293d;
+      --border-active: #f59e0b;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --accent-glow: rgba(245, 158, 11, 0.2);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --blue: #38bdf8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Monospace for numbers */
+    .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    /* Container */
+    .app-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 12px 16px 80px 16px;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 14px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      backdrop-filter: blur(12px);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-logo {
+      background: linear-gradient(135deg, #f59e0b, #b45309);
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 20px;
+      color: #000;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .brand-title {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-badge {
+      background: #f59e0b20;
+      color: var(--accent);
+      border: 1px solid #f59e0b40;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-action {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn-action:hover {
+      background: #1e293b;
+      border-color: var(--text-dim);
+    }
+    .btn-action.primary {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+    .btn-action.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    /* Offline indicator */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      display: inline-block;
+      box-shadow: 0 0 8px var(--success);
+    }
+    .status-dot.offline {
+      background: #f43f5e;
+      box-shadow: 0 0 8px #f43f5e;
+    }
+
+    /* Tabs Navigation */
+    .tab-nav {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin: 16px 0 20px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tab-nav::-webkit-scrollbar {
+      display: none;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 140px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.03);
+    }
+    .tab-btn.active {
+      background: var(--bg-card-sub);
+      color: var(--accent);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Tab Panels */
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 860px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-main);
+    }
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Input Field & Stepper Ergonomics */
+    .field-group {
+      margin-bottom: 16px;
+    }
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .field-label span.val-hint {
+      color: var(--accent);
+      font-family: ui-monospace, monospace;
+    }
+    .stepper-control {
+      display: flex;
+      align-items: stretch;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.15s ease;
+    }
+    .stepper-control:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+    .stepper-btn {
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      transition: background 0.1s;
+    }
+    .stepper-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+    .stepper-btn:active {
+      background: var(--accent);
+      color: #000;
+    }
+    .stepper-input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      padding: 0 8px;
+      outline: none;
+    }
+    select.input-select {
+      width: 100%;
+      height: 48px;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 0 14px;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11.5l-5-5h10l-5 5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+    select.input-select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    /* Metric Callout Cards */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .metric-card {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 14px;
+      position: relative;
+    }
+    .metric-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .metric-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+    .metric-val.highlight {
+      color: var(--accent);
+    }
+    .metric-val.success {
+      color: var(--success);
+    }
+    .metric-sub {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 1px;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card-sub);
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    table.data-table th {
+      background: #1e293b;
+      color: var(--text-muted);
+      padding: 10px 12px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+    table.data-table td {
+      padding: 11px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+      white-space: nowrap;
+    }
+    table.data-table tr:hover td {
+      background: rgba(245, 158, 11, 0.05);
+      cursor: pointer;
+    }
+    table.data-table tr.selected td {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .badge.green {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge.amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .badge.purple {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .badge.gray {
+      background: rgba(148, 163, 184, 0.15);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    /* Segmented Controls / Toggles */
+    .segmented-control {
+      display: flex;
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+      margin-bottom: 16px;
+    }
+    .segment-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .segment-btn.active {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Modal / Spec Sheet */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 650px;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 24px;
+      position: relative;
+    }
+    .spec-sheet-print {
+      background: #fff;
+      color: #000;
+      padding: 24px;
+      border-radius: 8px;
+      font-family: inherit;
+    }
+
+    /* Print Stylesheet */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      .spec-sheet-print, .spec-sheet-print * {
+        visibility: visible;
+      }
+      .spec-sheet-print {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      padding: 24px 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="brand">
+        <div class="brand-logo">⚙️</div>
+        <div>
+          <div class="brand-title">
+            DoorMathPro <span class="brand-badge">PRO v1.0</span>
+          </div>
+        </div>
+      </a>
+      <div class="header-actions">
+        <button class="btn-action" id="statusIndicator">
+          <span class="status-dot" id="onlineDot"></span>
+          <span id="onlineText">Field Ready</span>
+        </button>
+        <button class="btn-action primary" onclick="openSpecSheet()">
+          📄 Spec Sheet
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Navigation Tabs -->
+  <div class="app-container">
+    <nav class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('truck-stock')">
+        🔄 Truck Stock Matcher
+      </button>
+      <button class="tab-btn" onclick="switchTab('spring-sizer')">
+        ⚖️ Door to Spring Sizer
+      </button>
+      <button class="tab-btn" onclick="switchTab('weight-est')">
+        🚪 Door Weight Estimator
+      </button>
+      <button class="tab-btn" onclick="switchTab('quick-tools')">
+        📏 Field Quick Tools
+      </button>
+    </nav>
+
+    <!-- TAB 1: TRUCK STOCK MATCHER -->
+    <section id="pane-truck-stock" class="tab-pane active">
+      <div class="grid-2">
+        <!-- Input Existing Spring -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Existing / Broken Spring Setup</div>
+              <div class="card-subtitle">Measure the broken spring specs to calculate replacement wire</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Current Configuration</div>
+            <div class="segmented-control" id="oldSpringCountGroup">
+              <button class="segment-btn active" onclick="setOldSpringCount(1)">1 Single Spring</button>
+              <button class="segment-btn" onclick="setOldSpringCount(2)">2 Spring Pair</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">
+              <span>Wire Size (Inches)</span>
+              <span class="val-hint" id="oldWireColorBadge">Gold</span>
+            </div>
+            <select class="input-select" id="oldWireSelect" onchange="runTruckMatch()">
+              <option value="0.192">.192 (Orange)</option>
+              <option value="0.207">.207 (Yellow)</option>
+              <option value="0.218">.218 (White)</option>
+              <option value="0.225">.225 (Red)</option>
+              <option value="0.234">.234 (Brown)</option>
+              <option value="0.243">.243 (Green)</option>
+              <option value="0.250" selected>.250 (Gold)</option>
+              <option value="0.262">.262 (Blue)</option>
+              <option value="0.273">.273 (Black)</option>
+              <option value="0.283">.283 (Orange)</option>
+              <option value="0.295">.295 (Yellow)</option>
+              <option value="0.306">.306 (White)</option>
+              <option value="0.312">.312 (Red)</option>
+              <option value="0.331">.331 (Green)</option>
+              <option value="0.343">.343 (Blue)</option>
+              <option value="0.362">.362 (Black)</option>
+              <option value="0.375">.375 (Orange)</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Inside Diameter (ID)</div>
+            <select class="input-select" id="oldIDSelect" onchange="runTruckMatch()">
+              <option value="1.75">1-3/4" (1.75") Residential</option>
+              <option value="2.00" selected>2" (2.00") Standard</option>
+              <option value="2.25">2-1/4" (2.25")</option>
+              <option value="2.625">2-5/8" (2.625") Commercial</option>
+              <option value="3.75">3-3/4" (3.75") Industrial</option>
+              <option value="6.00">6" (6.00") Heavy Industrial</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">
+              <span>Active Spring Length (Inches)</span>
+              <span class="val-hint" id="oldLengthDisplay">32.0"</span>
+            </div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepLength(-0.5)">−</button>
+              <input type="number" step="0.25" class="stepper-input mono" id="oldLengthInput" value="32.0" oninput="runTruckMatch()">
+              <button class="stepper-btn" onclick="stepLength(0.5)">+</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Target Conversion Setup</div>
+            <div class="segmented-control" id="targetSpringCountGroup">
+              <button class="segment-btn active" onclick="setTargetSpringCount(2)">Convert to 2-Spring Pair (Recommended)</button>
+              <button class="segment-btn" onclick="setTargetSpringCount(1)">Keep Single Spring</button>
+            </div>
+          </div>
+
+          <!-- Existing Metrics -->
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Spring IPPT</div>
+              <div class="metric-val mono highlight" id="oldSingleIPPT">35.8</div>
+              <div class="metric-sub">inch-lbs/turn</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Total System IPPT</div>
+              <div class="metric-val mono" id="oldTotalIPPT">35.8</div>
+              <div class="metric-sub">Target balance force</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Baseline Cycles</div>
+              <div class="metric-val mono success" id="oldCycles">~10,000</div>
+              <div class="metric-sub">Standard DASMA</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Truck Stock Replacement Matrix -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Available Truck Stock Matcher</div>
+              <div class="card-subtitle">Live alternatives matching target IPPT across wire on your truck</div>
+            </div>
+            <span class="badge green" id="matchCountBadge">8 Matches</span>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+            <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" id="filterID175" checked onchange="runTruckMatch()"> 1-3/4" ID
+            </label>
+            <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" id="filterID200" checked onchange="runTruckMatch()"> 2.0" ID
+            </label>
+            <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer;">
+              <input type="checkbox" id="filterID262" onchange="runTruckMatch()"> 2-5/8" ID
+            </label>
+            <label style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; cursor: pointer; margin-left: auto;">
+              <input type="checkbox" id="filterHighCycleOnly" onchange="runTruckMatch()"> High-Cycle (25k+) Only
+            </label>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Wire Size</th>
+                  <th>ID</th>
+                  <th>Cut Length</th>
+                  <th>IPPT (Each)</th>
+                  <th>Cycle Life</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="truckMatrixBody">
+                <!-- Populated dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top: 10px; font-size: 11px; color: var(--text-dim);">
+            💡 <strong>Pro-Tip:</strong> Tap "Select" on any row to automatically load that replacement into your printable job spec sheet.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: DOOR TO SPRING SIZER -->
+    <section id="pane-spring-sizer" class="tab-pane">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Door & Track Specifications</div>
+              <div class="card-subtitle">Calculate required counterbalance IPPT from door dimensions</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="field-group">
+              <div class="field-label">Door Width (ft)</div>
+              <div class="stepper-control">
+                <button class="stepper-btn" onclick="stepVal('doorWidth', -1)">−</button>
+                <input type="number" class="stepper-input mono" id="doorWidth" value="16" oninput="runSpringSizer()">
+                <button class="stepper-btn" onclick="stepVal('doorWidth', 1)">+</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Door Height (ft)</div>
+              <div class="stepper-control">
+                <button class="stepper-btn" onclick="stepVal('doorHeight', -1)">−</button>
+                <input type="number" class="stepper-input mono" id="doorHeight" value="7" oninput="runSpringSizer()">
+                <button class="stepper-btn" onclick="stepVal('doorHeight', 1)">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">
+              <span>Total Door Dead Weight (lbs)</span>
+              <a href="javascript:void(0)" onclick="switchTab('weight-est')" style="color: var(--accent); font-size: 12px; text-decoration: none;">Don't know? Estimate weight →</a>
+            </div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('doorWeight', -5)">−</button>
+              <input type="number" class="stepper-input mono" id="doorWeight" value="145" oninput="runSpringSizer()">
+              <button class="stepper-btn" onclick="stepVal('doorWeight', 5)">+</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Cable Drum Model</div>
+            <select class="input-select" id="drumModel" onchange="runSpringSizer()">
+              <option value="400-8" selected>Standard Lift — OMI 400-8 (up to 8' high)</option>
+              <option value="400-12">Standard Lift — OMI 400-12 (up to 12' high)</option>
+              <option value="5250">Commercial Standard — OMI 5250 (up to 18' high)</option>
+              <option value="54-HL">High Lift — HL 54 (up to 54" high lift)</option>
+              <option value="VL-11">Vertical Lift — OMI VL 11</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Track Configuration & Radius</div>
+            <select class="input-select" id="trackRadius" onchange="runSpringSizer()">
+              <option value="15" selected>15" Radius Track (Standard Residential/Commercial)</option>
+              <option value="12">12" Radius Track (Low Clearance)</option>
+              <option value="LHR-F">Low Headroom (Front Mount Springs)</option>
+              <option value="LHR-R">Low Headroom (Rear Mount Springs)</option>
+            </select>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Turns of Wind</div>
+              <div class="metric-val mono highlight" id="sizerTurns">7.6</div>
+              <div class="metric-sub" id="sizerTurnsSub">7 turns + 2 quarter turns</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Required Total IPPT</div>
+              <div class="metric-val mono" id="sizerTotalIPPT">36.5</div>
+              <div class="metric-sub">inch-lbs / turn</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Per Spring (Pair)</div>
+              <div class="metric-val mono success" id="sizerEachIPPT">18.3</div>
+              <div class="metric-sub">target for 2 springs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Engineered Spring Recommendations</div>
+              <div class="card-subtitle">Standard, High-Cycle, and Commercial options</div>
+            </div>
+          </div>
+
+          <div id="engineeredOptionsContainer" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: DOOR WEIGHT ESTIMATOR -->
+    <section id="pane-weight-est" class="tab-pane">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Sectional Door Construction Specs</div>
+              <div class="card-subtitle">Estimate dead weight from panel structure, gauge, and hardware</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+            <div class="field-group">
+              <div class="field-label">Width (ft)</div>
+              <input type="number" class="input-select mono" id="estWidth" value="16" oninput="calculateDoorWeight()">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Height (ft)</div>
+              <input type="number" class="input-select mono" id="estHeight" value="7" oninput="calculateDoorWeight()">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Sections</div>
+              <input type="number" class="input-select mono" id="estSections" value="4" oninput="calculateDoorWeight()">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Door Construction & Core</div>
+            <select class="input-select" id="estConstruction" onchange="calculateDoorWeight()">
+              <option value="pan-25">Single-Layer Steel Pan (25 Gauge) — ~1.25 lbs/sq ft</option>
+              <option value="pan-24">Heavy-Duty Steel Pan (24 Gauge) — ~1.40 lbs/sq ft</option>
+              <option value="poly-vinyl" selected>Two-Layer Sandwich (Steel + Polystyrene Core) — ~1.65 lbs/sq ft</option>
+              <option value="foamed-3layer">Three-Layer Sandwich (Polyurethane Foamed-in-Place, R-16) — ~2.20 lbs/sq ft</option>
+              <option value="commercial-heavy">Commercial Heavy Steel 20-Gauge Sandwich — ~2.85 lbs/sq ft</option>
+              <option value="fullview-glass">Aluminum Full-View Sectional — ~3.40 lbs/sq ft</option>
+              <option value="wood-solid">Solid Wood Overlay / Cedar Carriage — ~4.50 lbs/sq ft</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Window / Glass Lites</div>
+            <select class="input-select" id="estGlass" onchange="calculateDoorWeight()">
+              <option value="none">No Glass (Solid Panels)</option>
+              <option value="4-single" selected>1 Section with 4 Insulated Windows (+20 lbs)</option>
+              <option value="4-heavy">1 Section with 4 Laminated / Double Glass (+35 lbs)</option>
+              <option value="full-glass-row">Full Glass Row Across Entire Width (+60 lbs)</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Struts & Reinforcement</div>
+            <select class="input-select" id="estStruts" onchange="calculateDoorWeight()">
+              <option value="0">No Struts</option>
+              <option value="1">1x 2-1/4" Top Strut (+12 lbs)</option>
+              <option value="2" selected>2x 2-1/4" U-Bar Struts (+24 lbs)</option>
+              <option value="3">3x Heavy Wind-Load Struts (+40 lbs)</option>
+              <option value="4">4x Heavy Commercial Truss Struts (+60 lbs)</option>
+            </select>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Estimated Dead Weight</div>
+              <div class="metric-val mono highlight" id="estTotalWeight">168 lbs</div>
+              <div class="metric-sub">Ready for counterbalance</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Per Section Weight</div>
+              <div class="metric-val mono" id="estSectionWeight">42 lbs</div>
+              <div class="metric-sub">4 sections total</div>
+            </div>
+          </div>
+
+          <button class="btn-action primary" style="width: 100%; justify-content: center; padding: 12px;" onclick="applyEstimatedWeightToSizer()">
+            ✅ Apply this 168 lbs Weight to Spring Sizer →
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Dead Weight Breakdown</div>
+              <div class="card-subtitle">Component weight distribution</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">Base Panel Assembly:</span>
+              <span class="mono" id="breakdownPanels" style="font-weight: 700;">124 lbs</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">Hinges, End Stiles & Rollers:</span>
+              <span class="mono" id="breakdownHardware" style="font-weight: 700;">20 lbs</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">Window Inserts / Glass:</span>
+              <span class="mono" id="breakdownGlass" style="font-weight: 700;">20 lbs</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+              <span style="color: var(--text-muted);">Reinforcement Struts:</span>
+              <span class="mono" id="breakdownStruts" style="font-weight: 700;">24 lbs</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-top: 2px solid var(--border-color); font-size: 16px;">
+              <span style="font-weight: 800; color: var(--accent);">Total Scale Weight:</span>
+              <span class="mono" id="breakdownTotal" style="font-weight: 800; color: var(--accent);">188 lbs</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 18px; padding: 12px; border-radius: 8px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); font-size: 12px; color: var(--blue);">
+            ℹ️ <strong>Field Tip:</strong> When replacing springs on an existing door, always weigh the door with an analog scale under the bottom section before ordering to account for water absorption in older wood or uncalibrated replacement hardware.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: FIELD QUICK TOOLS -->
+    <section id="pane-quick-tools" class="tab-pane">
+      <div class="grid-2">
+        <!-- 20-Coil Wire Gauge Finder -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">20-Coil Wire Size Identifier</div>
+              <div class="card-subtitle">Measure 20 consecutive coils tightly with a tape measure</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">
+              <span>Measured 20-Coil Length</span>
+              <span class="val-hint mono" id="twentyCoilDisplay">5.00" (5 inches)</span>
+            </div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepTwentyCoil(-0.0625)">−</button>
+              <input type="number" step="0.0625" class="stepper-input mono" id="twentyCoilInput" value="5.00" oninput="calcTwentyCoil()">
+              <button class="stepper-btn" onclick="stepTwentyCoil(0.0625)">+</button>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Identified Wire Gauge</div>
+              <div class="metric-val mono highlight" id="coilWireResult">.250</div>
+              <div class="metric-sub" id="coilFractionResult">5-0/16"</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">DASMA Color Code</div>
+              <div class="metric-val" id="coilColorResult" style="font-size: 18px; font-weight: 700; color: #f59e0b;">Gold / Orange</div>
+              <div class="metric-sub">Standard Paint Marker</div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tape Measurement</th>
+                  <th>Wire Size</th>
+                  <th>Color Code</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>4-1/8" (4.125")</td><td class="mono font-bold">.207</td><td><span class="badge" style="background:#fef08a; color:#854d0e;">Yellow</span></td></tr>
+                <tr><td>4-3/8" (4.375")</td><td class="mono font-bold">.218</td><td><span class="badge gray">White</span></td></tr>
+                <tr><td>4-1/2" (4.500")</td><td class="mono font-bold">.225</td><td><span class="badge" style="background:#fecaca; color:#991b1b;">Red</span></td></tr>
+                <tr><td>4-11/16" (4.687")</td><td class="mono font-bold">.234</td><td><span class="badge" style="background:#fed7aa; color:#9a3412;">Brown</span></td></tr>
+                <tr><td>4-7/8" (4.875")</td><td class="mono font-bold">.243</td><td><span class="badge green">Green</span></td></tr>
+                <tr class="selected"><td>5-0/0" (5.000")</td><td class="mono font-bold">.250</td><td><span class="badge amber">Gold</span></td></tr>
+                <tr><td>5-1/4" (5.250")</td><td class="mono font-bold">.262</td><td><span class="badge" style="background:#bae6fd; color:#0369a1;">Blue</span></td></tr>
+                <tr><td>5-7/16" (5.437")</td><td class="mono font-bold">.273</td><td><span class="badge" style="background:#334155; color:#f8fafc;">Black</span></td></tr>
+                <tr><td>5-11/16" (5.687")</td><td class="mono font-bold">.283</td><td><span class="badge" style="background:#fed7aa; color:#ea580c;">Orange</span></td></tr>
+                <tr><td>6-1/4" (6.250")</td><td class="mono font-bold">.312</td><td><span class="badge" style="background:#fecaca; color:#991b1b;">Red</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- OD to ID Converter & Track Clearance -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">OD to ID Converter & Headroom Clearance</div>
+              <div class="card-subtitle">Calculate inside diameter from outside caliper measurement</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="field-group">
+              <div class="field-label">Outside Diameter (OD)</div>
+              <input type="number" step="0.05" class="input-select mono" id="measuredOD" value="2.50" oninput="calcODtoID()">
+            </div>
+            <div class="field-group">
+              <div class="field-label">Wire Gauge</div>
+              <select class="input-select" id="odWireSelect" onchange="calcODtoID()">
+                <option value="0.218">.218</option>
+                <option value="0.225">.225</option>
+                <option value="0.234">.234</option>
+                <option value="0.243">.243</option>
+                <option value="0.250" selected>.250</option>
+                <option value="0.262">.262</option>
+                <option value="0.273">.273</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="metric-card" style="margin-bottom: 20px;">
+            <div class="metric-label">Calculated Inside Diameter (ID)</div>
+            <div class="metric-val mono highlight" id="calculatedIDResult">2.00" (Standard 2" ID)</div>
+            <div class="metric-sub">Formula: ID = OD − (2 × wire diameter)</div>
+          </div>
+
+          <!-- Headroom Quick Guide -->
+          <div class="card-header" style="margin-top: 14px; margin-bottom: 10px;">
+            <div class="card-title" style="font-size: 14px;">Minimum Headroom Clearances</div>
+          </div>
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Track Radius / Mount</th>
+                  <th>Headroom (Manual)</th>
+                  <th>With Trolley Opener</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>12" Radius Standard</td><td>10 inches</td><td>12 inches</td></tr>
+                <tr><td>15" Radius Standard</td><td>12 inches</td><td>14 inches</td></tr>
+                <tr><td>Low Headroom (Front Mount)</td><td>7.5 inches</td><td>9.5 inches</td></tr>
+                <tr><td>Low Headroom (Rear Mount)</td><td>4.5 inches</td><td>6.5 inches</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Job Spec Sheet Modal -->
+  <div class="modal-backdrop" id="specModal">
+    <div class="modal-box">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;" class="no-print">
+        <h3 style="font-size: 18px; font-weight: 800;">📄 Job Specification Sheet</h3>
+        <button onclick="closeSpecSheet()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">✕</button>
+      </div>
+
+      <!-- Printable area -->
+      <div class="spec-sheet-print" id="printableSpecSheet">
+        <div style="border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <h1 style="font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">DOORMATH PRO</h1>
+            <div style="font-size: 12px; color: #555;">Torsion Counterbalance & Spring Engineering Specification</div>
+          </div>
+          <div style="text-align: right; font-size: 11px; color: #555;">
+            <div>Date: <span id="printDate">2026-09-06</span></div>
+            <div>Generated by DoorMathPro.com</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; font-size: 13px;">
+          <div style="border: 1px solid #ddd; padding: 10px; border-radius: 6px;">
+            <div style="font-weight: 700; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-bottom: 6px; text-transform: uppercase; font-size: 11px; color: #555;">Job & Door Details</div>
+            <div><strong>Door Dimensions:</strong> <span id="printDoorSize">16'0" W x 7'0" H</span></div>
+            <div><strong>Scale Dead Weight:</strong> <span id="printDoorWeight">145 lbs</span></div>
+            <div><strong>Cable Drum:</strong> <span id="printDrum">OMI 400-8 (Standard Lift)</span></div>
+            <div><strong>Track Radius:</strong> <span id="printTrack">15" Standard</span></div>
+          </div>
+          <div style="border: 1px solid #ddd; padding: 10px; border-radius: 6px;">
+            <div style="font-weight: 700; border-bottom: 1px solid #eee; padding-bottom: 4px; margin-bottom: 6px; text-transform: uppercase; font-size: 11px; color: #555;">System Counterbalance Math</div>
+            <div><strong>Total Required IPPT:</strong> <span id="printTotalIPPT" style="font-weight: 700;">36.5</span></div>
+            <div><strong>Turns of Wind:</strong> <span id="printTurns" style="font-weight: 700; color: #d97706;">7.6 turns (30 quarter turns)</span></div>
+            <div><strong>Balance Safety Factor:</strong> Within +/- 1%</div>
+          </div>
+        </div>
+
+        <div style="border: 2px solid #000; padding: 12px; border-radius: 6px; margin-bottom: 16px; background: #fafafa;">
+          <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; color: #d97706;">Recommended / Selected Spring Package</div>
+          <div style="font-size: 15px; font-weight: 700;" id="printSpringSpecs">
+            (2) Springs: .250 Wire x 2.0" ID x 32.0" Length
+          </div>
+          <div style="font-size: 12px; color: #555; margin-top: 4px;" id="printSpringCycle">
+            Rated Cycles: ~10,000 cycles | IPPT per spring: 18.3
+          </div>
+        </div>
+
+        <div style="font-size: 11px; border: 1px dashed #aaa; padding: 10px; border-radius: 6px; margin-bottom: 16px;">
+          <strong>Field Technician Verification Checklist:</strong>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px;">
+            <div>[ ] Cables inspected for fraying & set screw torque checked</div>
+            <div>[ ] Drums locked securely to torsion shaft keyway</div>
+            <div>[ ] Left & right winding directions confirmed (red/black cones)</div>
+            <div>[ ] Door balances neutrally at mid-travel (waist height)</div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 20px; font-size: 12px;">
+          <div>Technician Signature: _______________________</div>
+          <div>Customer Sign-off: _______________________</div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;" class="no-print">
+        <button class="btn-action" onclick="closeSpecSheet()">Close</button>
+        <button class="btn-action primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: gap; gap: 14px;">
+      <div><strong>DoorMathPro</strong> — Pure Client-Side Garage Door Engineering Suite</div>
+      <div>Designed for Field Techs & Commercial Estimators | ASTM A229 Standards</div>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    // ASTM A229 Modulus of Elasticity in Bending
+    const E_MODULUS = 28500000.0;
+
+    // Standard Wire Gauges and Colors
+    const WIRE_SPECS = [
+      { wire: 0.192, name: ".192", color: "Orange", coils20: 3.84 },
+      { wire: 0.207, name: ".207", color: "Yellow", coils20: 4.14 },
+      { wire: 0.218, name: ".218", color: "White", coils20: 4.36 },
+      { wire: 0.225, name: ".225", color: "Red", coils20: 4.50 },
+      { wire: 0.234, name: ".234", color: "Brown", coils20: 4.68 },
+      { wire: 0.243, name: ".243", color: "Green", coils20: 4.86 },
+      { wire: 0.250, name: ".250", color: "Gold", coils20: 5.00 },
+      { wire: 0.262, name: ".262", color: "Blue", coils20: 5.24 },
+      { wire: 0.273, name: ".273", color: "Black", coils20: 5.46 },
+      { wire: 0.283, name: ".283", color: "Orange", coils20: 5.66 },
+      { wire: 0.295, name: ".295", color: "Yellow", coils20: 5.90 },
+      { wire: 0.306, name: ".306", color: "White", coils20: 6.12 },
+      { wire: 0.312, name: ".312", color: "Red", coils20: 6.24 },
+      { wire: 0.331, name: ".331", color: "Green", coils20: 6.62 },
+      { wire: 0.343, name: ".343", color: "Blue", coils20: 6.86 },
+      { wire: 0.362, name: ".362", color: "Black", coils20: 7.24 },
+      { wire: 0.375, name: ".375", color: "Orange", coils20: 7.50 }
+    ];
+
+    // Drum Models Specs
+    const DRUM_SPECS = {
+      "400-8": { radius: 1.95, turnsPerFt: 1.0, deadTurns: 0.6, maxHt: 8 },
+      "400-12": { radius: 1.95, turnsPerFt: 1.0, deadTurns: 0.7, maxHt: 12 },
+      "5250": { radius: 2.50, turnsPerFt: 0.8, deadTurns: 0.8, maxHt: 18 },
+      "54-HL": { radius: 2.10, turnsPerFt: 1.05, deadTurns: 0.7, maxHt: 14 },
+      "VL-11": { radius: 2.30, turnsPerFt: 1.1, deadTurns: 0.5, maxHt: 11 }
+    };
+
+    // State Variables
+    let oldSpringCount = 1;
+    let targetSpringCount = 2;
+    let selectedReplacement = null;
+
+    // Calculate Single Spring IPPT
+    function calcSingleIPPT(wire, id, length) {
+      const meanDiameter = id + wire;
+      return (E_MODULUS * Math.pow(wire, 5)) / (10.8 * meanDiameter * length);
+    }
+
+    // Estimate Cycle Life
+    function estimateCycles(wire, id, length, ippt, turns = 7.5) {
+      const maxMoment = ippt * turns;
+      const bendingStress = (32 * maxMoment) / (Math.PI * Math.pow(wire, 3));
+      const tensileStrength = 275000 - 280000 * wire;
+      const ratio = bendingStress / tensileStrength;
+      
+      if (ratio < 0.65) return 50000;
+      if (ratio < 0.73) return 25000;
+      if (ratio < 0.82) return 15000;
+      if (ratio < 0.90) return 10000;
+      return 7500;
+    }
+
+    // TAB 1: Run Truck Stock Matcher
+    function runTruckMatch() {
+      const wire = parseFloat(document.getElementById('oldWireSelect').value);
+      const id = parseFloat(document.getElementById('oldIDSelect').value);
+      const length = parseFloat(document.getElementById('oldLengthInput').value);
+
+      document.getElementById('oldLengthDisplay').innerText = length.toFixed(1) + '"';
+      const wireObj = WIRE_SPECS.find(w => Math.abs(w.wire - wire) < 0.001);
+      document.getElementById('oldWireColorBadge').innerText = wireObj ? wireObj.color : '';
+
+      const singleIPPT = calcSingleIPPT(wire, id, length);
+      const totalSystemIPPT = singleIPPT * oldSpringCount;
+
+      document.getElementById('oldSingleIPPT').innerText = singleIPPT.toFixed(1);
+      document.getElementById('oldTotalIPPT').innerText = totalSystemIPPT.toFixed(1);
+      
+      const oldCycleEst = estimateCycles(wire, id, length, singleIPPT);
+      document.getElementById('oldCycles').innerText = "~" + oldCycleEst.toLocaleString();
+
+      // Required IPPT per replacement spring
+      const targetIPPTPerSpring = totalSystemIPPT / targetSpringCount;
+
+      // Filter settings
+      const show175 = document.getElementById('filterID175').checked;
+      const show200 = document.getElementById('filterID200').checked;
+      const show262 = document.getElementById('filterID262').checked;
+      const highCycleOnly = document.getElementById('filterHighCycleOnly').checked;
+
+      const targetIDs = [];
+      if (show175) targetIDs.push(1.75);
+      if (show200) targetIDs.push(2.00);
+      if (show262) targetIDs.push(2.625);
+
+      const matches = [];
+
+      WIRE_SPECS.forEach(w => {
+        targetIDs.forEach(tid => {
+          // Calculate length required to hit targetIPPTPerSpring
+          // L = (E * d^5) / (10.8 * (ID + d) * IPPT)
+          const targetL = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (tid + w.wire) * targetIPPTPerSpring);
+
+          // Only keep practical spring lengths between 18" and 60"
+          if (targetL >= 18.0 && targetL <= 58.0) {
+            const cycles = estimateCycles(w.wire, tid, targetL, targetIPPTPerSpring);
+            if (!highCycleOnly || cycles >= 25000) {
+              matches.push({
+                wire: w.wire,
+                name: w.name,
+                color: w.color,
+                id: tid,
+                length: targetL,
+                ippt: targetIPPTPerSpring,
+                cycles: cycles
+              });
+            }
+          }
+        });
+      });
+
+      // Sort by practicality (closest to standard 28-36 inch length)
+      matches.sort((a, b) => Math.abs(a.length - 32) - Math.abs(b.length - 32));
+
+      document.getElementById('matchCountBadge').innerText = matches.length + " Matches";
+
+      const tbody = document.getElementById('truckMatrixBody');
+      tbody.innerHTML = '';
+
+      if (matches.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px; color: var(--text-dim);">No truck stock configurations fit this exact window. Try adjusting filters or ID options.</td></tr>';
+        return;
+      }
+
+      matches.forEach((m, idx) => {
+        const tr = document.createElement('tr');
+        if (idx === 0) tr.classList.add('selected');
+
+        let cycleBadge = '<span class="badge gray">10k Std</span>';
+        if (m.cycles >= 50000) {
+          cycleBadge = '<span class="badge purple">50k+ Com</span>';
+        } else if (m.cycles >= 25000) {
+          cycleBadge = '<span class="badge green">25k High</span>';
+        } else if (m.cycles >= 15000) {
+          cycleBadge = '<span class="badge amber">15k Plus</span>';
+        }
+
+        tr.innerHTML = `
+          <td><span class="mono font-bold">${m.name}</span> <span style="font-size:11px; color:var(--text-muted);">(${m.color})</span></td>
+          <td>${m.id === 2.625 ? '2-5/8"' : m.id === 1.75 ? '1-3/4"' : '2.0"'}</td>
+          <td class="mono font-bold" style="color:var(--accent);">${m.length.toFixed(1)}"</td>
+          <td class="mono">${m.ippt.toFixed(1)}</td>
+          <td>${cycleBadge}</td>
+          <td><button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${m.wire}, ${m.id}, ${m.length.toFixed(1)}, ${m.cycles}, '${m.name}', ${targetSpringCount})">Select</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Default select the first row
+      if (matches.length > 0 && !selectedReplacement) {
+        const first = matches[0];
+        selectReplacement(first.wire, first.id, first.length.toFixed(1), first.cycles, first.name, targetSpringCount);
+      }
+    }
+
+    function selectReplacement(wire, id, len, cycles, name, count) {
+      selectedReplacement = { wire, id, len, cycles, name, count };
+      // Update print spec sheet preview
+      document.getElementById('printSpringSpecs').innerText = `(${count}) Springs: ${name} Wire x ${id}" ID x ${len}" Cut Length`;
+      document.getElementById('printSpringCycle').innerText = `Rated Cycles: ~${cycles.toLocaleString()} cycles | Total Balanced System`;
+    }
+
+    function setOldSpringCount(cnt) {
+      oldSpringCount = cnt;
+      const btns = document.getElementById('oldSpringCountGroup').querySelectorAll('.segment-btn');
+      btns[0].classList.toggle('active', cnt === 1);
+      btns[1].classList.toggle('active', cnt === 2);
+      runTruckMatch();
+    }
+
+    function setTargetSpringCount(cnt) {
+      targetSpringCount = cnt;
+      const btns = document.getElementById('targetSpringCountGroup').querySelectorAll('.segment-btn');
+      btns[0].classList.toggle('active', cnt === 2);
+      btns[1].classList.toggle('active', cnt === 1);
+      runTruckMatch();
+    }
+
+    function stepLength(delta) {
+      const input = document.getElementById('oldLengthInput');
+      let val = Math.max(12, Math.min(72, parseFloat(input.value) + delta));
+      input.value = val.toFixed(1);
+      runTruckMatch();
+    }
+
+    // TAB 2: Spring Sizer Logic
+    function runSpringSizer() {
+      const height = parseFloat(document.getElementById('doorHeight').value);
+      const width = parseFloat(document.getElementById('doorWidth').value);
+      const weight = parseFloat(document.getElementById('doorWeight').value);
+      const drum = document.getElementById('drumModel').value;
+
+      const drumInfo = DRUM_SPECS[drum] || DRUM_SPECS["400-8"];
+      const turns = (height * drumInfo.turnsPerFt) + drumInfo.deadTurns;
+      const totalIPPT = (weight * drumInfo.radius) / turns;
+      const eachIPPT = totalIPPT / 2.0;
+
+      document.getElementById('sizerTurns').innerText = turns.toFixed(1);
+      const fullTurns = Math.floor(turns);
+      const quarterTurns = Math.round((turns - fullTurns) * 4);
+      document.getElementById('sizerTurnsSub').innerText = `${fullTurns} turns + ${quarterTurns} quarter turns (${Math.round(turns * 4)} total)`;
+      document.getElementById('sizerTotalIPPT').innerText = totalIPPT.toFixed(1);
+      document.getElementById('sizerEachIPPT').innerText = eachIPPT.toFixed(1);
+
+      // Populate spec sheet defaults
+      document.getElementById('printDoorSize').innerText = `${width}'0" W x ${height}'0" H`;
+      document.getElementById('printDoorWeight').innerText = `${weight} lbs`;
+      document.getElementById('printDrum').innerText = drum;
+      document.getElementById('printTotalIPPT').innerText = totalIPPT.toFixed(1);
+      document.getElementById('printTurns').innerText = `${turns.toFixed(1)} turns (${Math.round(turns * 4)} quarter turns)`;
+
+      // Generate 3 standard engineering options
+      const container = document.getElementById('engineeredOptionsContainer');
+      container.innerHTML = '';
+
+      const targetOptions = [
+        { title: "Standard 10,000 Cycle Residential Pair", wire: 0.250, name: ".250", id: 2.0, targetCycles: "10,000" },
+        { title: "High-Cycle 25,000 Cycle Heavy-Duty Pair", wire: 0.262, name: ".262", id: 2.0, targetCycles: "25,000" },
+        { title: "Commercial 50,000+ Cycle Long-Life Pair", wire: 0.273, name: ".273", id: 2.625, targetCycles: "50,000" }
+      ];
+
+      targetOptions.forEach(opt => {
+        const len = (E_MODULUS * Math.pow(opt.wire, 5)) / (10.8 * (opt.id + opt.wire) * eachIPPT);
+        const card = document.createElement('div');
+        card.style.background = 'var(--bg-card-sub)';
+        card.style.border = '1px solid var(--border-color)';
+        card.style.borderRadius = '10px';
+        card.style.padding = '14px';
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <div style="font-weight:700; font-size:14px;">${opt.title}</div>
+            <span class="badge ${opt.targetCycles === '10,000' ? 'gray' : opt.targetCycles === '25,000' ? 'green' : 'purple'}">${opt.targetCycles} Cycles</span>
+          </div>
+          <div style="font-size:16px; font-weight:800; color:var(--accent); font-family:ui-monospace, monospace; margin: 4px 0;">
+            (2) Springs: ${opt.name} x ${opt.id === 2.625 ? '2-5/8"' : '2.0"'} ID x ${len.toFixed(1)}" Cut Length
+          </div>
+          <div style="font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+            <span>IPPT per spring: ${eachIPPT.toFixed(1)} | Balance: 100%</span>
+            <button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${opt.wire}, ${opt.id}, ${len.toFixed(1)}, ${parseInt(opt.targetCycles.replace(',', ''))}, '${opt.name}', 2); openSpecSheet();">Use on Spec Sheet →</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function stepVal(id, delta) {
+      const el = document.getElementById(id);
+      let val = Math.max(1, parseFloat(el.value) + delta);
+      el.value = val;
+      runSpringSizer();
+    }
+
+    // TAB 3: Door Weight Estimator Logic
+    function calculateDoorWeight() {
+      const w = parseFloat(document.getElementById('estWidth').value) || 16;
+      const h = parseFloat(document.getElementById('estHeight').value) || 7;
+      const sections = parseInt(document.getElementById('estSections').value) || 4;
+      const construction = document.getElementById('estConstruction').value;
+      const glass = document.getElementById('estGlass').value;
+      const struts = parseInt(document.getElementById('estStruts').value) || 0;
+
+      const sqft = w * h;
+      let density = 1.65; // default sandwich
+
+      if (construction === 'pan-25') density = 1.25;
+      else if (construction === 'pan-24') density = 1.40;
+      else if (construction === 'poly-vinyl') density = 1.65;
+      else if (construction === 'foamed-3layer') density = 2.20;
+      else if (construction === 'commercial-heavy') density = 2.85;
+      else if (construction === 'fullview-glass') density = 3.40;
+      else if (construction === 'wood-solid') density = 4.50;
+
+      const basePanels = sqft * density;
+      const hardwareWeight = 14 + (sections * 2) + (w > 12 ? 6 : 0);
+
+      let glassWeight = 0;
+      if (glass === '4-single') glassWeight = 20;
+      else if (glass === '4-heavy') glassWeight = 35;
+      else if (glass === 'full-glass-row') glassWeight = 60;
+
+      const strutWeight = struts * (w * 0.85);
+
+      const totalWeight = Math.round(basePanels + hardwareWeight + glassWeight + strutWeight);
+
+      document.getElementById('estTotalWeight').innerText = totalWeight + " lbs";
+      document.getElementById('estSectionWeight').innerText = Math.round(totalWeight / sections) + " lbs";
+
+      document.getElementById('breakdownPanels').innerText = Math.round(basePanels) + " lbs";
+      document.getElementById('breakdownHardware').innerText = Math.round(hardwareWeight) + " lbs";
+      document.getElementById('breakdownGlass').innerText = Math.round(glassWeight) + " lbs";
+      document.getElementById('breakdownStruts').innerText = Math.round(strutWeight) + " lbs";
+      document.getElementById('breakdownTotal').innerText = totalWeight + " lbs";
+    }
+
+    function applyEstimatedWeightToSizer() {
+      const weightText = document.getElementById('estTotalWeight').innerText;
+      const weight = parseInt(weightText);
+      const w = document.getElementById('estWidth').value;
+      const h = document.getElementById('estHeight').value;
+
+      document.getElementById('doorWeight').value = weight;
+      document.getElementById('doorWidth').value = w;
+      document.getElementById('doorHeight').value = h;
+
+      switchTab('spring-sizer');
+      runSpringSizer();
+    }
+
+    // TAB 4: Quick Tools Logic
+    function calcTwentyCoil() {
+      const val = parseFloat(document.getElementById('twentyCoilInput').value);
+      document.getElementById('twentyCoilDisplay').innerText = val.toFixed(4) + '"';
+
+      // Find closest wire
+      let closest = WIRE_SPECS[0];
+      let minDiff = 999;
+      WIRE_SPECS.forEach(w => {
+        const diff = Math.abs(w.coils20 - val);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closest = w;
+        }
+      });
+
+      document.getElementById('coilWireResult').innerText = closest.name;
+      document.getElementById('coilColorResult').innerText = closest.color;
+    }
+
+    function stepTwentyCoil(delta) {
+      const el = document.getElementById('twentyCoilInput');
+      let val = Math.max(3.5, Math.min(8.0, parseFloat(el.value) + delta));
+      el.value = val.toFixed(4);
+      calcTwentyCoil();
+    }
+
+    function calcODtoID() {
+      const od = parseFloat(document.getElementById('measuredOD').value);
+      const wire = parseFloat(document.getElementById('odWireSelect').value);
+      const id = od - (2 * wire);
+      document.getElementById('calculatedIDResult').innerText = id.toFixed(3) + '" (Approx. ' + (Math.abs(id - 2.0) < 0.1 ? 'Standard 2.0" ID' : Math.abs(id - 1.75) < 0.1 ? 'Standard 1-3/4" ID' : id.toFixed(2) + '" ID') + ')';
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+
+      if (tabId === 'truck-stock') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('pane-truck-stock').classList.add('active');
+      } else if (tabId === 'spring-sizer') {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('pane-spring-sizer').classList.add('active');
+        runSpringSizer();
+      } else if (tabId === 'weight-est') {
+        document.querySelectorAll('.tab-btn')[2].classList.add('active');
+        document.getElementById('pane-weight-est').classList.add('active');
+        calculateDoorWeight();
+      } else if (tabId === 'quick-tools') {
+        document.querySelectorAll('.tab-btn')[3].classList.add('active');
+        document.getElementById('pane-quick-tools').classList.add('active');
+      }
+    }
+
+    // Modal Control
+    function openSpecSheet() {
+      document.getElementById('printDate').innerText = new Date().toISOString().split('T')[0];
+      document.getElementById('specModal').classList.add('open');
+    }
+    function closeSpecSheet() {
+      document.getElementById('specModal').classList.remove('open');
+    }
+
+    // Offline / Online Status
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    function updateOnlineStatus() {
+      const dot = document.getElementById('onlineDot');
+      const text = document.getElementById('onlineText');
+      if (navigator.onLine) {
+        dot.classList.remove('offline');
+        text.innerText = "Field Ready";
+      } else {
+        dot.classList.add('offline');
+        text.innerText = "Offline (Cached)";
+      }
+    }
+
+    // Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration skipped', err));
+      });
+    }
+
+    // Initial calculation on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      runTruckMatch();
+      runSpringSizer();
+      calculateDoorWeight();
+      calcTwentyCoil();
+      calcODtoID();
+      updateOnlineStatus();
+    });
+  </script>
+</body>
+</html>
