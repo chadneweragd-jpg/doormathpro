@@ -901,6 +901,148 @@
       }
     }
 
+
+    /* Hero / Landing Page Section */
+    .hero-section {
+      background: linear-gradient(180deg, rgba(17, 24, 39, 0.8) 0%, rgba(9, 13, 22, 0.95) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px 20px 20px 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      position: relative;
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.3);
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 6px var(--accent);
+    }
+    .hero-title {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 10px;
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 680px;
+      margin: 0 auto 16px auto;
+    }
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .hero-cta-btn {
+      padding: 10px 22px !important;
+      font-size: 14px !important;
+      font-weight: 800 !important;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    }
+    .hero-trust {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .hero-features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .hero-feature-card {
+      background: var(--bg-card-sub);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .hero-feature-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    }
+    .feature-icon {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+    .feature-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 3px;
+    }
+    .feature-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+    .hero-tagline {
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 20px;
+      }
+      .hero-subtitle {
+        font-size: 13px;
+      }
+      .hero-features-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .hero-feature-card {
+        padding: 10px 10px;
+      }
+      .feature-name {
+        font-size: 12px;
+      }
+      .feature-desc {
+        font-size: 10px;
+      }
+      .hero-trust {
+        font-size: 11px;
+        gap: 6px;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -934,8 +1076,72 @@
     </div>
   </header>
 
-  <!-- Main Navigation Tabs -->
   <div class="app-container">
+    <!-- Hero / Landing Page Section -->
+    <section class="hero-section" id="hero-landing">
+      <div class="hero-badge">
+        <span class="pulse-dot"></span> Free Trade Suite • Field-Ready
+      </div>
+      <h1 class="hero-title">
+        Free Garage Door Spring & Engineering Calculator Suite
+      </h1>
+      <p class="hero-subtitle">
+        Built for field techs and commercial estimators. Calculate IPPT, cross-reference truck stock, and generate job specs in seconds — no manual math, no guesswork.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn-action primary hero-cta-btn" onclick="scrollToTools()">
+          ⚡ Start Calculating
+        </button>
+        <button class="btn-action" onclick="openSpecSheet()">
+          📄 View Spec Sheet
+        </button>
+      </div>
+
+      <div class="hero-trust">
+        <span>🔒 100% Client-Side</span>
+        <span>•</span>
+        <span>🚫 No Signup Required</span>
+        <span>•</span>
+        <span>📐 DASMA & ASTM A229 Standards</span>
+        <span>•</span>
+        <span>📶 Runs Offline</span>
+      </div>
+
+      <!-- Feature Highlight Cards -->
+      <div class="hero-features-grid">
+        <div class="hero-feature-card" onclick="switchTab('spring-sizer'); scrollToTools();">
+          <div class="feature-icon">⚖️</div>
+          <div class="feature-name">Spring Wire & IPPT Sizer</div>
+          <div class="feature-desc">Exact counterbalance torque & DASMA cycle ratings across 12 standard, high-lift & vertical drums.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('truck-stock'); scrollToTools();">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-name">Truck Stock Cross-Matcher</div>
+          <div class="feature-desc">Live matrix converting broken springs to any wire gauge available on your truck shelves.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('weight-est'); scrollToTools();">
+          <div class="feature-icon">🚪</div>
+          <div class="feature-name">Door Weight & AI Scanner</div>
+          <div class="feature-desc">30+ factory models (Garaga, Steel-Craft, Amarr, Clopay) plus camera vision ID.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="openSpecSheet();">
+          <div class="feature-icon">📄</div>
+          <div class="feature-name">Printable Job Spec Sheets</div>
+          <div class="feature-desc">1-click professional work order with torque checks and customer balance sign-off.</div>
+        </div>
+      </div>
+
+      <div class="hero-tagline">
+        🔧 Built by a tech, for techs.
+      </div>
+    </section>
+
+    <!-- Main Navigation Tabs -->
+    <div id="tools-anchor"></div>
     <nav class="tab-nav">
       <button class="tab-btn active" onclick="switchTab('truck-stock')">
         🔄 Truck Stock Matcher
@@ -2375,6 +2581,14 @@
       document.getElementById('calculatedIDResult').innerText = id.toFixed(3) + '" (Approx. ' + (Math.abs(id - 2.0) < 0.1 ? 'Standard 2.0 in ID' : Math.abs(id - 1.75) < 0.1 ? 'Standard 1-3/4 in ID' : id.toFixed(2) + '" ID') + ')';
     }
 
+
+    function scrollToTools() {
+      const anchor = document.getElementById('tools-anchor');
+      if (anchor) {
+        anchor.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
     // Tab Navigation
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -2574,11 +2788,15 @@
       { mfg: "Wayne Dalton", model: "Classic 8500 (2in Polyurethane, R-16.22)", density: 2.30, rVal: "R-16.2", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
       { mfg: "Wayne Dalton", model: "Model 9100 / 9605 (Pinch-Resistant Steel Back)", density: 1.60, rVal: "R-9.0", type: "Patented Core", constructionVal: "poly-vinyl" },
 
-      // Amarr
+      // Amarr (Expanded Complete Model Lineup)
+      { mfg: "Amarr", model: "Designer's Choice / Olympus (2in Polyurethane R-19.4)", density: 2.30, rVal: "R-19.4", type: "3-Layer Polyurethane (Flush/Woodgrain/Panel)", constructionVal: "foamed-3layer" },
+      { mfg: "Amarr", model: "Heritage Flush / Plank (24ga Heavy Steel, Woodgrain)", density: 1.75, rVal: "R-9.0", type: "Heavy 24ga Steel (Flush/Plank Woodtone)", constructionVal: "poly-vinyl" },
+      { mfg: "Amarr", model: "Classica (3-Section Tall Carriage Design)", density: 2.15, rVal: "R-13.3", type: "3-Section Carriage (Polyurethane)", constructionVal: "foamed-3layer" },
       { mfg: "Amarr", model: "Lincoln 1000 (Single Layer Pan 25ga)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
       { mfg: "Amarr", model: "Lincoln 2000 (Double Layer 25ga + Vinyl Back)", density: 1.60, rVal: "R-6.6", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Amarr", model: "Olympus / Lincoln 3000 (2in Polyurethane R-19.4)", density: 2.30, rVal: "R-19.4", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Amarr", model: "Heritage (Heavy 24ga Steel Pan / Sandwich)", density: 1.75, rVal: "R-9.0", type: "24ga Heavy Steel", constructionVal: "poly-vinyl" },
+      { mfg: "Amarr", model: "Lincoln 3000 / Olympus (1-3/8in Polyurethane R-13.35)", density: 1.95, rVal: "R-13.3", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
+      { mfg: "Amarr", model: "Horizon / Vista (Modern Aluminum Full-View / Flush)", density: 3.30, rVal: "N/A", type: "Modern Aluminum & Glass", constructionVal: "fullview-glass" },
+      { mfg: "Amarr", model: "Amarr 2400 / 2700 (Commercial Ribbed / Flush Steel)", density: 2.50, rVal: "R-14.8", type: "Commercial Polyurethane", constructionVal: "commercial-heavy" },
 
       // C.H.I.
       { mfg: "C.H.I.", model: "Model 2283 / 2216 (2in Polyurethane R-17.5)", density: 2.25, rVal: "R-17.5", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
@@ -2804,17 +3022,30 @@
         statusText.innerText = 'Analyzing with Gemini Vision AI...';
 
         const promptText = `
-You are a master overhead garage door technician with 25 years of experience identifying doors across Canada and the United States (specifically Garaga, Steel-Craft, Clopay, Hormann, Wayne Dalton, Amarr, and C.H.I.).
-Analyze this photo of a garage door (looking for manufacturer ink stamps, stickers, serial numbers, DASMA certification tags, and the section joint/thermal break profile).
+You are an expert commercial and residential garage door master inspector with 25 years of field experience in North America.
+Analyze this photo of a garage door. Identify the exact manufacturer (Garaga, Steel-Craft, Amarr, Clopay, Hormann, Wayne Dalton, or C.H.I.) and model series.
 
-Known reference models:
-- Garaga: Standard+ (R-16, 1-3/4" polyurethane), Acadia 138 (R-12), Triforce, G-5000
-- Steel-Craft: ThermoCraft T-16 (R-16, 1-3/4"), ThermoCraft T-12, SC-Industrial, CarriageCraft
-- Clopay: Classic 1000 (pan), 2000 (vinyl back), 3000 / Gallery (Intellicore R-18.4), Commercial 3720
-- Hormann: Gemini 2100, Orion 4200, Taurus 4250 (R-16.1), SR 9000
-- Wayne Dalton: Classic 8000/8100, Classic 8300 (R-12), Classic 8500 (R-16.2), 9100/9605
-- Amarr: Lincoln 1000/2000, Olympus / Lincoln 3000 (R-19.4)
-- C.H.I.: Model 2283/2216 (R-17.5), 2250 (pan)
+CRITICAL FIELD IDENTIFICATION RULES:
+1. WOODGRAIN / FLUSH / PLANK TEXTURE DISAMBIGUATION:
+   - AMARR: Often features woodtone/driftwood grain prints (Weathered Gray, Dark Oak, Golden Oak, Walnut) across "Amarr Designer's Choice", "Amarr Olympus", and "Amarr Heritage Flush / Plank". Check for Amarr's signature SafeGuard pinch-protection joint contour and low-profile flush hinges. Do NOT mistake Amarr woodtone doors for C.H.I. Planks!
+   - C.H.I.: Planks / Model 2283 Accent Woodtones feature micro-grooved horizontal planks with standard tongue-and-groove joints. Only classify as C.H.I. if C.H.I. end stiles, hardware, or exact plank grooves are evident.
+   - CLOPAY: Ultra-Grain prints on Modern Steel or Gallery (Intellicore R-18.4).
+   - GARAGA / STEEL-CRAFT: Standard+ and ThermoCraft T-16 with woodgrain or composite overlays.
+
+2. HARDWARE & JOINT HALLMARKS:
+   - Amarr: Patented SafeGuard pinch-protection section joint profiles, tamper-resistant bottom brackets, center hinge embossments, Winston-Salem/Lawrence plant stencils.
+   - Wayne Dalton: Teardrop pinch-resistant joints, integral hinge pockets, TorqueMaster springs.
+   - Garaga: High-spec dual-seal continuous polyurethane thermal break, heavy 14ga commercial end stiles.
+   - Steel-Craft: Patented WeatherLock interlocking tongue-and-groove joint, Edmonton factory tags.
+
+Reference model database:
+- Amarr: Designer's Choice / Olympus (R-19.4 2" polyurethane, flush/woodtone), Heritage Flush/Plank (24ga steel R-9.0), Classica (3-section), Lincoln 1000/2000/3000, Horizon/Vista
+- C.H.I.: Model 2283/2216 Planks (R-17.5), 5283/5983 Carriage, 2250 Pan
+- Garaga: Standard+ (R-16, 1-3/4"), Acadia 138 (R-12), Triforce, G-5000
+- Steel-Craft: ThermoCraft T-16 (R-16, 1-3/4"), T-12, CarriageCraft, SC-Industrial
+- Clopay: Classic / Gallery 3000 (R-18.4 Intellicore), Modern Steel, 1000/2000, Commercial 3720
+- Hormann: Taurus 4250 (R-16.1), Orion 4200, Gemini 2100, SR 9000
+- Wayne Dalton: Classic 8300 (R-12.1), 8500 (R-16.2), 8000/8100, 9100/9605
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {
