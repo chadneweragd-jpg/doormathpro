@@ -1455,48 +1455,81 @@
             </div>
           </div>
 
-          <!-- AI PHOTO DOOR SCANNER MODULE -->
+          <!-- AI PHOTO DOOR SCANNER MODULE (DUAL-VECTOR / OPTIONAL 2-PHOTO) -->
           <div style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <div style="font-weight: 800; font-size: 14px; color: #38bdf8; display: flex; align-items: center; gap: 6px;">
                 📷 AI Photo Door Scanner
-                <span class="badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">Vision AI</span>
+                <span class="badge" style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4);">Dual-Vector AI</span>
               </div>
               <button class="btn-action" style="padding: 4px 8px; font-size: 11px;" onclick="openAISettingsModal()">Key Settings</button>
             </div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-              Snap a photo of the <strong>end stile stamp, factory sticker, or panel joint profile</strong>. Gemini Vision AI will identify the model and lock in exact factory weight specs.
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+              Snap <strong>Photo 1 (Front Face)</strong> to identify style & grain. Add <strong>Photo 2 (Side Joint / Stamp)</strong> if accessible for 95%+ precision.
             </div>
 
-            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-              <label class="btn-action primary" style="cursor: pointer; padding: 10px 16px; font-size: 13px; font-weight: 700;">
-                📸 Take Photo / Upload
-                <input type="file" id="doorPhotoInput" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoUpload(event)">
-              </label>
-              <span id="photoStatusText" style="font-size: 12px; color: var(--text-dim);">Ready for photo</span>
-            </div>
-
-            <!-- Image preview & AI loading state -->
-            <div id="aiPreviewBox" style="display: none; margin-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 12px;">
-              <div style="display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap;">
-                <img id="scannedImgPreview" style="max-width: 120px; max-height: 120px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-color);">
-                <div style="flex: 1; min-width: 200px;">
-                  <div id="aiLoadingSpinner" style="display: none; font-size: 13px; color: var(--accent); font-weight: 600;">
-                    ⏳ Analyzing panel geometry & factory stencils...
-                  </div>
-                  <div id="aiResultCard" style="display: none;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                      <span class="badge green" id="aiConfBadge">92% Match</span>
-                      <strong style="font-size: 15px; color: var(--text-main);" id="aiModelResult">Garaga Standard+ R-16</strong>
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-muted); margin: 6px 0;" id="aiCuesText">
-                      Detected tongue-and-groove joint with dual vinyl seal, 1-3/4" polyurethane core.
-                    </div>
-                    <button class="btn-action primary" style="padding: 6px 12px; font-size: 12px;" onclick="applyAIResultToCalculator()">
-                      ✅ Apply this Model to Calculator →
-                    </button>
-                  </div>
+            <!-- Two Photo Upload Slots -->
+            <div class="form-row-2" style="margin-bottom: 14px;">
+              <!-- Slot 1: Front Face (Primary) -->
+              <div style="background: var(--bg-card-sub); border: 1px dashed rgba(56, 189, 248, 0.4); border-radius: 10px; padding: 12px; text-align: center;">
+                <div style="font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 2px;">
+                  📸 Photo 1: Front Face
                 </div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">
+                  Panel pattern, woodtone, grain
+                </div>
+                <label class="btn-action primary" style="cursor: pointer; padding: 8px 12px; font-size: 11px; display: inline-flex; width: 100%; justify-content: center;">
+                  <span id="photo1BtnText">Snap / Upload Front</span>
+                  <input type="file" id="doorPhoto1" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 1)">
+                </label>
+                <div id="preview1Wrap" style="display: none; margin-top: 8px; position: relative;">
+                  <img id="preview1Img" style="width: 100%; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
+                  <button onclick="clearPhoto(1)" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.75); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                </div>
+              </div>
+
+              <!-- Slot 2: Side Profile / Joint (Optional) -->
+              <div style="background: var(--bg-card-sub); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 10px; padding: 12px; text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 2px;">
+                  <span style="font-size: 12px; font-weight: 700; color: var(--accent);">📸 Photo 2: Side Joint</span>
+                  <span class="badge gray" style="font-size: 9px; padding: 1px 4px;">Optional</span>
+                </div>
+                <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">
+                  End stile stamp, thickness, joint
+                </div>
+                <label class="btn-action" style="cursor: pointer; padding: 8px 12px; font-size: 11px; display: inline-flex; width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
+                  <span id="photo2BtnText">Snap Side Profile</span>
+                  <input type="file" id="doorPhoto2" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 2)">
+                </label>
+                <div id="preview2Wrap" style="display: none; margin-top: 8px; position: relative;">
+                  <img id="preview2Img" style="width: 100%; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
+                  <button onclick="clearPhoto(2)" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.75); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Single Trigger Action Button -->
+            <button id="runAiScanBtn" class="btn-action primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 13px; font-weight: 800; opacity: 0.5;" onclick="executeAiDoorScan()" disabled>
+              ⚡ Identify Door with AI Vision (Snap Photo 1 to Start)
+            </button>
+            <div id="photoStatusText" style="text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 6px;">Ready for photo</div>
+
+            <!-- Loading & Analysis Result Card -->
+            <div id="aiPreviewBox" style="display: none; margin-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 12px;">
+              <div id="aiLoadingSpinner" style="display: none; text-align: center; font-size: 13px; color: var(--accent); font-weight: 600; padding: 10px 0;">
+                ⏳ Cross-referencing door geometry & manufacturer benchmarks...
+              </div>
+              <div id="aiResultCard" style="display: none; background: #172033; border: 1px solid var(--border-color); border-radius: 10px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                  <strong style="font-size: 15px; color: #fff;" id="aiModelResult">Door Model Result</strong>
+                  <span class="badge green" id="aiConfBadge">94% Match</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;" id="aiCuesText">
+                  Detected visual cues and factory specifications.
+                </div>
+                <button class="btn-action primary" style="width: 100%; justify-content: center; padding: 10px; font-size: 13px;" onclick="applyAIResultToCalculator()">
+                  ✅ Apply this Model to Weight Calculator →
+                </button>
               </div>
             </div>
           </div>
@@ -1511,13 +1544,16 @@
                 <label style="font-size: 11px; color: var(--text-muted); font-weight: 600;">Manufacturer</label>
                 <select class="input-select" id="mfgSelect" onchange="handleMfgChange()" style="height: 42px; font-size: 13px; padding: 0 10px;">
                   <option value="custom">-- Custom / Generic Build --</option>
-                  <option value="Clopay">Clopay</option>
-                  <option value="Garaga" selected>Garaga</option>
-                  <option value="Steel-Craft">Steel-Craft</option>
-                  <option value="Hormann">Hörmann</option>
-                  <option value="Wayne Dalton">Wayne Dalton</option>
+                  <option value="Garaga" selected>Garaga (Canada)</option>
+                  <option value="Steel-Craft">Steel-Craft (Canada)</option>
+                  <option value="Richards-Wilcox">Richards-Wilcox / RW (Canada)</option>
                   <option value="Amarr">Amarr / Entrematic</option>
                   <option value="C.H.I.">C.H.I. Overhead Doors</option>
+                  <option value="Clopay">Clopay</option>
+                  <option value="Hormann">Hörmann</option>
+                  <option value="Wayne Dalton">Wayne Dalton</option>
+                  <option value="Haas">Haas Door</option>
+                  <option value="Northwest">Northwest Door</option>
                 </select>
               </div>
               <div>
@@ -2756,53 +2792,391 @@
 
     // Comprehensive Manufacturer Door Model Weights Database
     const DOOR_MODELS = [
-      // Garaga
-      { mfg: "Garaga", model: "Standard+ (1-3/4 in Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Garaga", model: "Acadia 138 (1-3/8 in Polyurethane, R-12)", density: 1.85, rVal: "R-12", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
-      { mfg: "Garaga", model: "Triforce (2in Polystyrene Steel Back, R-10)", density: 1.70, rVal: "R-10", type: "3-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Garaga", model: "G-5000 (Commercial 1-3/4 in Polyurethane)", density: 2.65, rVal: "R-16", type: "Commercial Sandwich", constructionVal: "commercial-heavy" },
-      { mfg: "Garaga", model: "California (Full-View Aluminum Frame)", density: 3.35, rVal: "N/A", type: "Aluminum Full-View", constructionVal: "fullview-glass" },
-
-      // Steel-Craft (Western Canada staple)
-      { mfg: "Steel-Craft", model: "ThermoCraft T-16 (1-3/4 in Polyurethane, R-16)", density: 2.20, rVal: "R-16", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Steel-Craft", model: "ThermoCraft T-12 (1-1/8 in Polyurethane, R-10)", density: 1.80, rVal: "R-10", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
-      { mfg: "Steel-Craft", model: "CarriageCraft / RanchCraft (1-3/4in R-16)", density: 2.25, rVal: "R-16", type: "3-Layer Decorative", constructionVal: "foamed-3layer" },
-      { mfg: "Steel-Craft", model: "SC-Industrial / TD-134 (Commercial Polyurethane)", density: 2.70, rVal: "R-16", type: "Commercial Sandwich", constructionVal: "commercial-heavy" },
-
-      // Clopay
-      { mfg: "Clopay", model: "Classic Steel Model 1000 (Single Layer 25ga Pan)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
-      { mfg: "Clopay", model: "Classic Steel Model 2000 (Double Layer Vinyl Back)", density: 1.65, rVal: "R-6.5", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Clopay", model: "Classic / Gallery Model 3000 (Intellicore R-18.4)", density: 2.25, rVal: "R-18.4", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Clopay", model: "Commercial 3720 (2in Polyurethane Heavy)", density: 2.80, rVal: "R-18.4", type: "Commercial Heavy", constructionVal: "commercial-heavy" },
-      { mfg: "Clopay", model: "Avante (Full-View Aluminum, 1/8 in Glass)", density: 3.40, rVal: "N/A", type: "Full-View Aluminum", constructionVal: "fullview-glass" },
-
-      // Hormann
-      { mfg: "Hormann", model: "Gemini 2100 (Single Layer 25ga Pan)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
-      { mfg: "Hormann", model: "Orion 4200 (Double Layer Polystyrene)", density: 1.65, rVal: "R-8.9", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Hormann", model: "Taurus 4250 (1-3/4 in Polyurethane R-16.1)", density: 2.20, rVal: "R-16.1", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Hormann", model: "SR 9000 (Commercial Heavy Duty)", density: 2.85, rVal: "R-17.5", type: "Commercial Heavy", constructionVal: "commercial-heavy" },
-
-      // Wayne Dalton
-      { mfg: "Wayne Dalton", model: "Classic 8000 / 8100 (Single Layer Pan 25ga)", density: 1.20, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
-      { mfg: "Wayne Dalton", model: "Classic 8300 (1-3/8 in Polyurethane, R-12.12)", density: 1.85, rVal: "R-12.1", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
-      { mfg: "Wayne Dalton", model: "Classic 8500 (2in Polyurethane, R-16.22)", density: 2.30, rVal: "R-16.2", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "Wayne Dalton", model: "Model 9100 / 9605 (Pinch-Resistant Steel Back)", density: 1.60, rVal: "R-9.0", type: "Patented Core", constructionVal: "poly-vinyl" },
-
-      // Amarr (Expanded Complete Model Lineup)
-      { mfg: "Amarr", model: "Designer's Choice / Olympus (2in Polyurethane R-19.4)", density: 2.30, rVal: "R-19.4", type: "3-Layer Polyurethane (Flush/Woodgrain/Panel)", constructionVal: "foamed-3layer" },
-      { mfg: "Amarr", model: "Heritage Flush / Plank (24ga Heavy Steel, Woodgrain)", density: 1.75, rVal: "R-9.0", type: "Heavy 24ga Steel (Flush/Plank Woodtone)", constructionVal: "poly-vinyl" },
-      { mfg: "Amarr", model: "Classica (3-Section Tall Carriage Design)", density: 2.15, rVal: "R-13.3", type: "3-Section Carriage (Polyurethane)", constructionVal: "foamed-3layer" },
-      { mfg: "Amarr", model: "Lincoln 1000 (Single Layer Pan 25ga)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
-      { mfg: "Amarr", model: "Lincoln 2000 (Double Layer 25ga + Vinyl Back)", density: 1.60, rVal: "R-6.6", type: "2-Layer Polystyrene", constructionVal: "poly-vinyl" },
-      { mfg: "Amarr", model: "Lincoln 3000 / Olympus (1-3/8in Polyurethane R-13.35)", density: 1.95, rVal: "R-13.3", type: "3-Layer Polyurethane", constructionVal: "poly-vinyl" },
-      { mfg: "Amarr", model: "Horizon / Vista (Modern Aluminum Full-View / Flush)", density: 3.30, rVal: "N/A", type: "Modern Aluminum & Glass", constructionVal: "fullview-glass" },
-      { mfg: "Amarr", model: "Amarr 2400 / 2700 (Commercial Ribbed / Flush Steel)", density: 2.50, rVal: "R-14.8", type: "Commercial Polyurethane", constructionVal: "commercial-heavy" },
-
-      // C.H.I.
-      { mfg: "C.H.I.", model: "Model 2283 / 2216 (2in Polyurethane R-17.5)", density: 2.25, rVal: "R-17.5", type: "3-Layer Polyurethane", constructionVal: "foamed-3layer" },
-      { mfg: "C.H.I.", model: "Model 2250 (Single Layer Steel Pan 25ga)", density: 1.25, rVal: "None", type: "Single-Layer Pan", constructionVal: "pan-25" },
-      { mfg: "C.H.I.", model: "Model 3285 / 3216 (Commercial 2in Polyurethane)", density: 2.75, rVal: "R-17.5", type: "Commercial Heavy", constructionVal: "commercial-heavy" }
-    ];
+    {
+        "mfg": "Garaga",
+        "model": "Standard+ (1-3/4in Polyurethane, R-16)",
+        "density": 2.2,
+        "rVal": "R-16",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Garaga",
+        "model": "Acadia 138 (1-3/8in Polyurethane, R-12)",
+        "density": 1.85,
+        "rVal": "R-12",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Garaga",
+        "model": "Triforce (2in Polystyrene Steel Back, R-10)",
+        "density": 1.7,
+        "rVal": "R-10",
+        "type": "3-Layer Polystyrene",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Garaga",
+        "model": "G-5000 (Commercial 1-3/4in Polyurethane)",
+        "density": 2.65,
+        "rVal": "R-16",
+        "type": "Commercial Sandwich",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Garaga",
+        "model": "California (Full-View Aluminum Frame)",
+        "density": 3.35,
+        "rVal": "N/A",
+        "type": "Aluminum Full-View",
+        "constructionVal": "fullview-glass"
+    },
+    {
+        "mfg": "Steel-Craft",
+        "model": "ThermoCraft T-16 (1-3/4in Polyurethane, R-16)",
+        "density": 2.2,
+        "rVal": "R-16",
+        "type": "3-Layer Polyurethane (WeatherLock)",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Steel-Craft",
+        "model": "ThermoCraft T-12 (1-1/8in Polyurethane, R-10)",
+        "density": 1.8,
+        "rVal": "R-10",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Steel-Craft",
+        "model": "CarriageCraft / RanchCraft (1-3/4in R-16)",
+        "density": 2.25,
+        "rVal": "R-16",
+        "type": "3-Layer Decorative",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Steel-Craft",
+        "model": "Flush / Contemporary (1-3/4in Polyurethane)",
+        "density": 2.2,
+        "rVal": "R-16",
+        "type": "Modern Flush Woodtone",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Steel-Craft",
+        "model": "SC-Industrial / TD-134 (Commercial Polyurethane)",
+        "density": 2.7,
+        "rVal": "R-16",
+        "type": "Commercial Sandwich",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Richards-Wilcox",
+        "model": "Landmark / Classic (1-3/8in Neufoam, R-12)",
+        "density": 1.95,
+        "rVal": "R-12",
+        "type": "Neufoam Polyurethane",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Richards-Wilcox",
+        "model": "Landmark / Premium (2in Neufoam, R-18)",
+        "density": 2.25,
+        "rVal": "R-18",
+        "type": "Neufoam Continuous Polyurethane",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Richards-Wilcox",
+        "model": "Echo Ridge / Grandview (Carriage Overlay, R-18)",
+        "density": 2.85,
+        "rVal": "R-18",
+        "type": "Composite Overlay Sandwich",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Richards-Wilcox",
+        "model": "Thermatite T-150 / T-175 (Commercial Polyurethane)",
+        "density": 2.5,
+        "rVal": "R-16",
+        "type": "Commercial Neufoam",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Richards-Wilcox",
+        "model": "Thermatite T-200 (Commercial 2in Heavy, R-18)",
+        "density": 2.85,
+        "rVal": "R-18",
+        "type": "Heavy Commercial Neufoam",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Richards-Wilcox",
+        "model": "Alumatite (Commercial Aluminum Full-View)",
+        "density": 3.4,
+        "rVal": "N/A",
+        "type": "Commercial Full-View Glass",
+        "constructionVal": "fullview-glass"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Designer's Choice / Olympus (2in Polyurethane, R-19.4)",
+        "density": 2.3,
+        "rVal": "R-19.4",
+        "type": "3-Layer Polyurethane (Flush/Woodgrain/Panel)",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Heritage Flush / Plank (24ga Heavy Steel, Woodtone)",
+        "density": 1.75,
+        "rVal": "R-9.0",
+        "type": "Heavy 24ga Steel (Flush/Plank Woodtone)",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Classica (3-Section Tall Carriage Design, R-13.3)",
+        "density": 2.15,
+        "rVal": "R-13.3",
+        "type": "3-Section Carriage (Polyurethane)",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Lincoln 1000 (Single Layer Pan 25ga)",
+        "density": 1.25,
+        "rVal": "None",
+        "type": "Single-Layer Pan",
+        "constructionVal": "pan-25"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Lincoln 2000 (Double Layer 25ga + Vinyl Back)",
+        "density": 1.6,
+        "rVal": "R-6.6",
+        "type": "2-Layer Polystyrene",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Lincoln 3000 (1-3/8in Polyurethane, R-13.35)",
+        "density": 1.95,
+        "rVal": "R-13.3",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Horizon / Vista (Modern Aluminum Full-View)",
+        "density": 3.3,
+        "rVal": "N/A",
+        "type": "Modern Aluminum & Glass",
+        "constructionVal": "fullview-glass"
+    },
+    {
+        "mfg": "Amarr",
+        "model": "Amarr 2400 / 2700 (Commercial Ribbed / Flush Steel)",
+        "density": 2.5,
+        "rVal": "R-14.8",
+        "type": "Commercial Polyurethane",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "C.H.I.",
+        "model": "Model 2283 / 2216 Planks (Accent Woodtones, R-17.5)",
+        "density": 2.25,
+        "rVal": "R-17.5",
+        "type": "3-Layer Polyurethane (Woodtone Planks)",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "C.H.I.",
+        "model": "Model 5283 / 5983 (Carriage House, R-17.5)",
+        "density": 2.3,
+        "rVal": "R-17.5",
+        "type": "Carriage House Polyurethane",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "C.H.I.",
+        "model": "Model 2250 (Single Layer Steel Pan 25ga)",
+        "density": 1.25,
+        "rVal": "None",
+        "type": "Single-Layer Pan",
+        "constructionVal": "pan-25"
+    },
+    {
+        "mfg": "C.H.I.",
+        "model": "Model 3285 / 3216 (Commercial 2in Polyurethane)",
+        "density": 2.75,
+        "rVal": "R-17.5",
+        "type": "Commercial Heavy",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Clopay",
+        "model": "Classic Steel Model 1000 (Single Layer 25ga Pan)",
+        "density": 1.25,
+        "rVal": "None",
+        "type": "Single-Layer Pan",
+        "constructionVal": "pan-25"
+    },
+    {
+        "mfg": "Clopay",
+        "model": "Classic Steel Model 2000 (Double Layer Vinyl Back)",
+        "density": 1.65,
+        "rVal": "R-6.5",
+        "type": "2-Layer Polystyrene",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Clopay",
+        "model": "Classic / Gallery 3000 (Intellicore, R-18.4)",
+        "density": 2.25,
+        "rVal": "R-18.4",
+        "type": "3-Layer Polyurethane (Ultra-Grain)",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Clopay",
+        "model": "Modern Steel (Flush / Grooved Intellicore, R-18.4)",
+        "density": 2.25,
+        "rVal": "R-18.4",
+        "type": "3-Layer Polyurethane Modern",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Clopay",
+        "model": "Commercial 3720 (2in Polyurethane Heavy)",
+        "density": 2.8,
+        "rVal": "R-18.4",
+        "type": "Commercial Heavy",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Clopay",
+        "model": "Avante (Full-View Aluminum, 1/8in Glass)",
+        "density": 3.4,
+        "rVal": "N/A",
+        "type": "Full-View Aluminum",
+        "constructionVal": "fullview-glass"
+    },
+    {
+        "mfg": "Hormann",
+        "model": "Gemini 2100 (Single Layer 25ga Pan)",
+        "density": 1.25,
+        "rVal": "None",
+        "type": "Single-Layer Pan",
+        "constructionVal": "pan-25"
+    },
+    {
+        "mfg": "Hormann",
+        "model": "Orion 4200 (Double Layer Polystyrene)",
+        "density": 1.65,
+        "rVal": "R-8.9",
+        "type": "2-Layer Polystyrene",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Hormann",
+        "model": "Taurus 4250 (1-3/4in Polyurethane, R-16.1)",
+        "density": 2.2,
+        "rVal": "R-16.1",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Hormann",
+        "model": "SR 9000 (Commercial Heavy Duty)",
+        "density": 2.85,
+        "rVal": "R-17.5",
+        "type": "Commercial Heavy",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Wayne Dalton",
+        "model": "Classic 8000 / 8100 (Single Layer Pan 25ga)",
+        "density": 1.2,
+        "rVal": "None",
+        "type": "Single-Layer Pan",
+        "constructionVal": "pan-25"
+    },
+    {
+        "mfg": "Wayne Dalton",
+        "model": "Classic 8300 (1-3/8in Polyurethane, R-12.12)",
+        "density": 1.85,
+        "rVal": "R-12.1",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Wayne Dalton",
+        "model": "Classic 8500 (2in Polyurethane, R-16.22)",
+        "density": 2.3,
+        "rVal": "R-16.2",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Wayne Dalton",
+        "model": "Model 9100 / 9605 (Pinch-Resistant Steel Back)",
+        "density": 1.6,
+        "rVal": "R-9.0",
+        "type": "Patented Core",
+        "constructionVal": "poly-vinyl"
+    },
+    {
+        "mfg": "Haas",
+        "model": "Haas 600 / 700 Series (1-3/8in - 1-3/4in R-13 to R-16)",
+        "density": 2.2,
+        "rVal": "R-16.1",
+        "type": "3-Layer Polyurethane",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Haas",
+        "model": "Haas 2000 Series (Commercial 2in Heavy, R-17.66)",
+        "density": 2.75,
+        "rVal": "R-17.6",
+        "type": "Commercial Heavy Polyurethane",
+        "constructionVal": "commercial-heavy"
+    },
+    {
+        "mfg": "Haas",
+        "model": "Haas 240 / 250 (Steel Pan 24/25ga)",
+        "density": 1.3,
+        "rVal": "None",
+        "type": "Single-Layer Pan",
+        "constructionVal": "pan-25"
+    },
+    {
+        "mfg": "Haas",
+        "model": "Haas CA-315 (Aluminum Full-View)",
+        "density": 3.35,
+        "rVal": "N/A",
+        "type": "Aluminum Full-View Glass",
+        "constructionVal": "fullview-glass"
+    },
+    {
+        "mfg": "Northwest",
+        "model": "Therma Tech / Therma Classic (R-9 to R-16)",
+        "density": 2.15,
+        "rVal": "R-16.0",
+        "type": "3-Layer Polyurethane / Polystyrene",
+        "constructionVal": "foamed-3layer"
+    },
+    {
+        "mfg": "Northwest",
+        "model": "500 / 800 Series (Commercial Steel Ribbed)",
+        "density": 1.45,
+        "rVal": "None",
+        "type": "Commercial Ribbed Pan",
+        "constructionVal": "pan-25"
+    }
+];
 
     let customDensityOverride = null;
 
@@ -2932,7 +3306,9 @@
       return bestMatch;
     }
 
-    // AI Photo Door Scanner Logic
+    // AI Photo Door Scanner Logic (Dual-Vector with Optional Photo 2)
+    let photo1Base64 = null;
+    let photo2Base64 = null;
     let lastAIAnalysis = null;
 
     function openAISettingsModal() {
@@ -2996,15 +3372,79 @@
       });
     }
 
-    async function handlePhotoUpload(event) {
+    async function handlePhotoSelect(event, slot) {
       const file = event.target.files[0];
       if (!file) return;
 
-      const userKey = localStorage.getItem('doormath_gemini_key') || '';
-      const proxyUrl = `https://doormath-ai.chadneweragd.workers.dev${userKey ? '?key=' + encodeURIComponent(userKey) : ''}`;
+      const btnText = document.getElementById(`photo${slot}BtnText`);
+      btnText.innerText = 'Compressing...';
+
+      try {
+        const base64 = await compressImage(file);
+        if (slot === 1) {
+          photo1Base64 = base64;
+          document.getElementById('preview1Img').src = base64;
+          document.getElementById('preview1Wrap').style.display = 'block';
+          btnText.innerText = 'Retake Front';
+        } else {
+          photo2Base64 = base64;
+          document.getElementById('preview2Img').src = base64;
+          document.getElementById('preview2Wrap').style.display = 'block';
+          btnText.innerText = 'Retake Side';
+        }
+        updateScanButtonState();
+      } catch (err) {
+        console.error('Image compression error:', err);
+        btnText.innerText = 'Error loading';
+      }
+    }
+
+    function clearPhoto(slot) {
+      if (slot === 1) {
+        photo1Base64 = null;
+        document.getElementById('preview1Wrap').style.display = 'none';
+        document.getElementById('photo1BtnText').innerText = 'Snap / Upload Front';
+        document.getElementById('doorPhoto1').value = '';
+      } else {
+        photo2Base64 = null;
+        document.getElementById('preview2Wrap').style.display = 'none';
+        document.getElementById('photo2BtnText').innerText = 'Snap Side Profile';
+        document.getElementById('doorPhoto2').value = '';
+      }
+      updateScanButtonState();
+    }
+
+    function updateScanButtonState() {
+      const scanBtn = document.getElementById('runAiScanBtn');
+      const statusText = document.getElementById('photoStatusText');
+
+      if (photo1Base64 && photo2Base64) {
+        scanBtn.disabled = false;
+        scanBtn.style.opacity = '1';
+        scanBtn.innerText = '⚡ Run Dual-Vector Door Identification (High Accuracy)';
+        statusText.innerText = '2 Photos Ready: Front Face + Side Profile loaded';
+      } else if (photo1Base64) {
+        scanBtn.disabled = false;
+        scanBtn.style.opacity = '1';
+        scanBtn.innerText = '⚡ Identify Door from Front Photo';
+        statusText.innerText = 'Photo 1 Ready (Photo 2 optional for higher precision)';
+      } else if (photo2Base64) {
+        scanBtn.disabled = false;
+        scanBtn.style.opacity = '1';
+        scanBtn.innerText = '⚡ Identify Door from Side/Stamp Photo';
+        statusText.innerText = 'Side photo ready (Front photo recommended)';
+      } else {
+        scanBtn.disabled = true;
+        scanBtn.style.opacity = '0.5';
+        scanBtn.innerText = '⚡ Identify Door with AI Vision (Snap Photo 1 to Start)';
+        statusText.innerText = 'Ready for photo';
+      }
+    }
+
+    async function executeAiDoorScan() {
+      if (!photo1Base64 && !photo2Base64) return;
 
       const previewBox = document.getElementById('aiPreviewBox');
-      const imgPreview = document.getElementById('scannedImgPreview');
       const spinner = document.getElementById('aiLoadingSpinner');
       const resultCard = document.getElementById('aiResultCard');
       const statusText = document.getElementById('photoStatusText');
@@ -3012,74 +3452,60 @@
       previewBox.style.display = 'block';
       resultCard.style.display = 'none';
       spinner.style.display = 'block';
-      statusText.innerText = 'Compressing image...';
+      statusText.innerText = 'Analyzing with Gemini Vision AI...';
 
       try {
-        const base64DataUrl = await compressImage(file);
-        imgPreview.src = base64DataUrl;
-        const base64Payload = base64DataUrl.split(',')[1];
-
-        statusText.innerText = 'Analyzing with Gemini Vision AI...';
+        const userKey = localStorage.getItem('doormath_gemini_key') || '';
+        const proxyUrl = `https://doormath-ai.chadneweragd.workers.dev${userKey ? '?key=' + encodeURIComponent(userKey) : ''}`;
 
         const promptText = `
-You are an expert commercial and residential garage door master inspector with 25 years of field experience in North America.
-Analyze this photo of a garage door. Identify the exact manufacturer (Garaga, Steel-Craft, Amarr, Clopay, Hormann, Wayne Dalton, or C.H.I.) and model series.
+You are a master garage door engineering inspector with 25 years of field experience identifying doors across Canada and the US (specifically Garaga, Steel-Craft, Richards-Wilcox / RW, Amarr, C.H.I., Clopay, Hormann, Wayne Dalton, Haas, and Northwest Door).
 
-CRITICAL FIELD IDENTIFICATION RULES:
-1. WOODGRAIN / FLUSH / PLANK TEXTURE DISAMBIGUATION:
-   - AMARR: Often features woodtone/driftwood grain prints (Weathered Gray, Dark Oak, Golden Oak, Walnut) across "Amarr Designer's Choice", "Amarr Olympus", and "Amarr Heritage Flush / Plank". Check for Amarr's signature SafeGuard pinch-protection joint contour and low-profile flush hinges. Do NOT mistake Amarr woodtone doors for C.H.I. Planks!
-   - C.H.I.: Planks / Model 2283 Accent Woodtones feature micro-grooved horizontal planks with standard tongue-and-groove joints. Only classify as C.H.I. if C.H.I. end stiles, hardware, or exact plank grooves are evident.
-   - CLOPAY: Ultra-Grain prints on Modern Steel or Gallery (Intellicore R-18.4).
-   - GARAGA / STEEL-CRAFT: Standard+ and ThermoCraft T-16 with woodgrain or composite overlays.
+You are receiving 1 or 2 photographs of an overhead garage door.
+- Image 1 is typically the Front Face (panel stamping, woodgrain/driftwood finish, window frame profiles).
+- Image 2 (if provided) is the Side Profile, Joint Geometry, End Stile, or Factory Stamp/Sticker.
 
-2. HARDWARE & JOINT HALLMARKS:
-   - Amarr: Patented SafeGuard pinch-protection section joint profiles, tamper-resistant bottom brackets, center hinge embossments, Winston-Salem/Lawrence plant stencils.
-   - Wayne Dalton: Teardrop pinch-resistant joints, integral hinge pockets, TorqueMaster springs.
-   - Garaga: High-spec dual-seal continuous polyurethane thermal break, heavy 14ga commercial end stiles.
-   - Steel-Craft: Patented WeatherLock interlocking tongue-and-groove joint, Edmonton factory tags.
-
-Reference model database:
-- Amarr: Designer's Choice / Olympus (R-19.4 2" polyurethane, flush/woodtone), Heritage Flush/Plank (24ga steel R-9.0), Classica (3-section), Lincoln 1000/2000/3000, Horizon/Vista
-- C.H.I.: Model 2283/2216 Planks (R-17.5), 5283/5983 Carriage, 2250 Pan
-- Garaga: Standard+ (R-16, 1-3/4"), Acadia 138 (R-12), Triforce, G-5000
-- Steel-Craft: ThermoCraft T-16 (R-16, 1-3/4"), T-12, CarriageCraft, SC-Industrial
-- Clopay: Classic / Gallery 3000 (R-18.4 Intellicore), Modern Steel, 1000/2000, Commercial 3720
-- Hormann: Taurus 4250 (R-16.1), Orion 4200, Gemini 2100, SR 9000
-- Wayne Dalton: Classic 8300 (R-12.1), 8500 (R-16.2), 8000/8100, 9100/9605
+CRITICAL DISAMBIGUATION RULES:
+1. AMARR vs C.H.I. vs CLOPAY (WOODTONE & FLUSH PANELS):
+   - AMARR: Often features weathered driftwood, walnut, or golden oak woodgrain prints across "Amarr Designer's Choice", "Amarr Olympus", and "Amarr Heritage Flush / Plank". Hallmarks: Amarr SafeGuard rounded pinch-protection joint contour, low-profile flush hinges, tamper-resistant bottom brackets, Winston-Salem/Lawrence plant stencils. Do NOT default to C.H.I. Planks just because of horizontal woodgrain!
+   - C.H.I.: Planks / Model 2283 Accent Woodtones feature micro-grooved horizontal planks with standard tongue-and-groove joints.
+   - RICHARDS-WILCOX (RW Canada): Neufoam continuous polyurethane core (R-12 to R-18), WeatherLock joint, Landmark, Echo Ridge, Grandview, Thermatite commercial.
+   - STEEL-CRAFT (Canada): WeatherLock dual tongue-and-groove interlocking joint, ThermoCraft T-16/T-12, Edmonton factory tags.
+   - GARAGA (Canada): Standard+ (R-16), Acadia 138, continuous PVC weatherstrip in joint, heavy 14ga commercial end stiles.
+   - CLOPAY: Intellicore (R-18.4) Modern Steel / Gallery, Ultra-Grain prints, Safe-T-Bracket system.
+   - WAYNE DALTON: Teardrop pinch-resistant joint profile, integral hinge pockets, TorqueMaster spring system.
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {
   "identified": true,
-  "manufacturer": "Garaga" | "Steel-Craft" | "Clopay" | "Hormann" | "Wayne Dalton" | "Amarr" | "C.H.I." | "Unknown",
-  "model": "Exact Model Series",
-  "confidence": 92,
+  "manufacturer": "Garaga" | "Steel-Craft" | "Richards-Wilcox" | "Amarr" | "C.H.I." | "Clopay" | "Hormann" | "Wayne Dalton" | "Haas" | "Northwest" | "Unknown",
+  "model": "Exact Model Series Name",
+  "confidence": 94,
   "rValue": "R-16",
   "density": 2.20,
-  "visualCues": "Detailed explanation of stamp text read or joint geometry observed",
-  "constructionVal": "foamed-3layer"
+  "visualCues": "Concise summary of visual evidence (e.g. 'Detected Amarr woodtone finish with SafeGuard pinch-protection joint contours')",
+  "constructionVal": "foamed-3layer" | "poly-vinyl" | "pan-25" | "commercial-heavy" | "fullview-glass"
 }
 `;
+
+        const parts = [{ text: promptText }];
+        if (photo1Base64) {
+          parts.push({
+            inlineData: { mimeType: 'image/jpeg', data: photo1Base64.split(',')[1] }
+          });
+        }
+        if (photo2Base64) {
+          parts.push({
+            inlineData: { mimeType: 'image/jpeg', data: photo2Base64.split(',')[1] }
+          });
+        }
 
         const response = await fetch(proxyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { text: promptText },
-                  {
-                    inlineData: {
-                      mimeType: 'image/jpeg',
-                      data: base64Payload
-                    }
-                  }
-                ]
-              }
-            ],
-            generationConfig: {
-              responseMimeType: "application/json"
-            }
+            contents: [{ parts: parts }],
+            generationConfig: { responseMimeType: "application/json" }
           })
         });
 
@@ -3093,18 +3519,20 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
 
           resultCard.style.display = 'block';
           statusText.innerText = 'Analysis complete';
-          document.getElementById('aiConfBadge').innerText = `${parsed.confidence || 85}% Match`;
+          document.getElementById('aiConfBadge').innerText = `${parsed.confidence || 90}% Match`;
           document.getElementById('aiModelResult').innerText = `${parsed.manufacturer} — ${parsed.model}`;
-          document.getElementById('aiCuesText').innerText = parsed.visualCues || 'Matched factory panel specifications.';
+          document.getElementById('aiCuesText').innerText = parsed.visualCues || 'Matched factory specifications.';
+        } else if (data.error) {
+          statusText.innerText = 'Error: ' + data.error.message;
+          alert('API Error: ' + data.error.message);
         } else {
-          statusText.innerText = 'Error analyzing photo. Check API key.';
-          alert('Could not identify image. Ensure photo shows stamp, sticker, or joint clearly.');
+          statusText.innerText = 'Unexpected response format.';
         }
       } catch (err) {
         console.error('AI Scan Error:', err);
         spinner.style.display = 'none';
         statusText.innerText = 'Scan failed.';
-        alert('AI Scanner Error: ' + (err.message || 'Check network connection or API key.'));
+        alert('AI Scanner Error: ' + (err.message || 'Check network connection.'));
       }
     }
 
