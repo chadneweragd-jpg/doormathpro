@@ -3848,6 +3848,13 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
         const data = await response.json();
         spinner.style.display = 'none';
 
+        // Gracefully catch rate limit errors
+        if (data.error === 'daily_limit_reached' || response.status === 429) {
+          statusText.innerText = 'Daily AI limit reached for today';
+          alert('Daily AI limit reached for today — try again tomorrow, or use the manual calculators below.');
+          return;
+        }
+
         if (data.candidates && data.candidates[0] && data.candidates[0].content) {
           const rawText = data.candidates[0].content.parts[0].text;
           const parsed = JSON.parse(rawText);
@@ -3973,6 +3980,14 @@ Guidelines:
         });
 
         const data = await response.json();
+
+        // Gracefully catch rate limit errors
+        if (data.error === 'daily_limit_reached' || response.status === 429) {
+          aiBubble.innerHTML = '<div style="color: #f59e0b; font-weight: 700; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; padding: 10px 12px; line-height: 1.4;">⏳ Daily AI limit reached for today — try again tomorrow, or use the manual calculators below.</div>';
+          chatBody.scrollTop = chatBody.scrollHeight;
+          return;
+        }
+
         if (data.candidates && data.candidates[0] && data.candidates[0].content) {
           const reply = data.candidates[0].content.parts[0].text;
           aiBubble.innerHTML = reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
