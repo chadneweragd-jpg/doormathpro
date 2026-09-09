@@ -1458,11 +1458,11 @@
         <button class="tab-btn active" onclick="switchTab('truck-stock')">
           <span>🔄</span> <span>Truck Stock Matcher</span>
         </button>
-        <button class="tab-btn" onclick="switchTab('spring-sizer')">
-          <span>⚖️</span> <span>Door to Spring Sizer</span>
-        </button>
         <button class="tab-btn" onclick="switchTab('weight-est')">
           <span>🚪</span> <span>Door Weight Estimator</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('spring-sizer')">
+          <span>⚖️</span> <span>Door to Spring Sizer</span>
         </button>
         <button class="tab-btn" onclick="switchTab('quick-tools')">
           <span>📏</span> <span>Field Quick Tools</span>
@@ -1554,8 +1554,43 @@
             </div>
           </div>
 
-          <!-- Existing Metrics -->
-          <div class="metric-grid">
+          <!-- Door Height & Drum for Rated Lifting Capacity -->
+          <div class="form-row-2" style="margin-top: 10px;">
+            <div class="field-group">
+              <div class="field-label">Door Height (ft)</div>
+              <div class="stepper-control">
+                <button class="stepper-btn" onclick="stepVal('truckDoorHeight', -0.5); runTruckMatch();">−</button>
+                <input type="number" step="0.5" class="stepper-input mono" id="truckDoorHeight" value="7" oninput="runTruckMatch()">
+                <button class="stepper-btn" onclick="stepVal('truckDoorHeight', 0.5); runTruckMatch();">+</button>
+              </div>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Cable Drum Model</div>
+              <select class="input-select" id="truckDrumModel" onchange="runTruckMatch()" style="height: 44px; font-size: 13px; padding: 0 10px;">
+                <optgroup label="── Standard Lift (Residential & Commercial) ──">
+                  <option value="400-8" selected>OMI / Apco / Canimex 400-8 (Up to 8' Door)</option>
+                  <option value="400-12">OMI / Apco / Canimex 400-12 (Up to 12' Door)</option>
+                  <option value="400-18">Canimex / Apco 400-18 (Up to 18' Commercial)</option>
+                  <option value="5250">OMI / Apco 5250 Heavy Commercial (Up to 18' Door)</option>
+                  <option value="800-32">Industrial 800-32 Heavy Bay (Up to 32' Door)</option>
+                </optgroup>
+                <optgroup label="── High Lift (HL Drums) ──">
+                  <option value="54-HL">54-HL / Apco 5250-54 (Up to 54" High Lift)</option>
+                  <option value="120-HL">120-HL / Apco 5750-120 (Up to 120" High Lift)</option>
+                  <option value="164-HL">164-HL / OMI 164 (Up to 164" High Lift)</option>
+                  <option value="220-HL">220-HL / OMI 220 (Up to 220" High Lift)</option>
+                </optgroup>
+                <optgroup label="── Vertical Lift (VL Full Spiral) ──">
+                  <option value="VL-11">OMI VL-11 / Canimex VL-11 (Up to 11' Door)</option>
+                  <option value="VL-18">OMI VL-18 / Canimex VL-18 (Up to 18' Door)</option>
+                  <option value="VL-28">OMI VL-28 / Canimex VL-28 (Up to 28' Door)</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+
+          <!-- Existing Metrics + Rated Lifting Capacity -->
+          <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));">
             <div class="metric-card">
               <div class="metric-label">Spring IPPT</div>
               <div class="metric-val mono highlight" id="oldSingleIPPT">35.8</div>
@@ -1570,6 +1605,11 @@
               <div class="metric-label">Baseline Cycles</div>
               <div class="metric-val mono success" id="oldCycles">~10,000</div>
               <div class="metric-sub">Standard DASMA</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Rated Lifting Capacity</div>
+              <div class="metric-val mono" id="ratedLiftingCapacity" style="color: #38bdf8; font-weight: 800;">~140 lbs</div>
+              <div class="metric-sub" id="ratedCapacityAssumption">(at 7'0" height, 400-8 drum)</div>
             </div>
           </div>
         </div>
@@ -1629,132 +1669,6 @@
           </div>
           <div style="margin-top: 10px; font-size: 11px; color: var(--text-dim);">
             💡 <strong>Pro-Tip:</strong> Tap "Select" on any row to automatically load that replacement into your printable job spec sheet.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 2: DOOR TO SPRING SIZER -->
-    <section id="pane-spring-sizer" class="tab-pane">
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Door & Track Specifications</div>
-              <div class="card-subtitle">Calculate required counterbalance IPPT from door dimensions</div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <div class="field-label">Door Width (ft)</div>
-            <div class="stepper-control">
-              <button class="stepper-btn" onclick="stepVal('doorWidth', -1)">−</button>
-              <input type="number" class="stepper-input mono" id="doorWidth" value="16" oninput="runSpringSizer()">
-              <button class="stepper-btn" onclick="stepVal('doorWidth', 1)">+</button>
-            </div>
-          </div>
-          <div class="field-group">
-            <div class="field-label">Door Height (ft)</div>
-            <div class="stepper-control">
-              <button class="stepper-btn" onclick="stepVal('doorHeight', -1)">−</button>
-              <input type="number" class="stepper-input mono" id="doorHeight" value="7" oninput="runSpringSizer()">
-              <button class="stepper-btn" onclick="stepVal('doorHeight', 1)">+</button>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <div class="field-label">
-              <span>Total Door Dead Weight (lbs)</span>
-              <a href="javascript:void(0)" onclick="switchTab('weight-est')" style="color: var(--accent); font-size: 12px; text-decoration: none;">Don't know? Estimate weight →</a>
-            </div>
-            <div class="stepper-control">
-              <button class="stepper-btn" onclick="stepVal('doorWeight', -5)">−</button>
-              <input type="number" class="stepper-input mono" id="doorWeight" value="145" oninput="runSpringSizer()">
-              <button class="stepper-btn" onclick="stepVal('doorWeight', 5)">+</button>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <div class="field-label">Cable Drum Model</div>
-            <select class="input-select" id="drumModel" onchange="handleDrumChange()">
-              <optgroup label="── Standard Lift (Residential & Commercial) ──">
-                <option value="400-8" selected>OMI / Apco / Canimex 400-8 (Up to 8' Door)</option>
-                <option value="400-12">OMI / Apco / Canimex 400-12 (Up to 12' Door)</option>
-                <option value="400-18">Canimex / Apco 400-18 (Up to 18' Commercial)</option>
-                <option value="5250">OMI / Apco 5250 Heavy Commercial (Up to 18' Door)</option>
-                <option value="800-32">Industrial 800-32 Heavy Bay (Up to 32' Door)</option>
-              </optgroup>
-              <optgroup label="── High Lift (HL Drums) ──">
-                <option value="54-HL">54-HL / Apco 5250-54 / DNS 54 (Up to 54" High Lift)</option>
-                <option value="120-HL">120-HL / Apco 5750-120 / DNS 120 (Up to 120" High Lift)</option>
-                <option value="164-HL">164-HL / OMI 164 (Up to 164" High Lift)</option>
-                <option value="220-HL">220-HL / OMI 220 (Up to 220" High Lift)</option>
-              </optgroup>
-              <optgroup label="── Vertical Lift (VL Full Spiral) ──">
-                <option value="VL-11">OMI VL-11 / Canimex VL-11 / Apco 850-11 (Up to 11' Door)</option>
-                <option value="VL-18">OMI VL-18 / Canimex VL-18 / Apco 1100-18 (Up to 18' Door)</option>
-                <option value="VL-28">OMI VL-28 / Canimex VL-28 (Up to 28' Door)</option>
-              </optgroup>
-            </select>
-            <!-- Dynamic Drum Specs Pill -->
-            <div id="drumSpecsPill" style="margin-top: 8px; padding: 10px 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-              <span><strong>Cable Size:</strong> <span id="pillCable" class="mono">1/8"</span></span>
-              <span><strong>Circumference:</strong> <span id="pillCircum" class="mono">12.56"</span></span>
-              <span><strong>Cross-Ref:</strong> <span id="pillCrossRef" style="color: var(--text-dim);">Apco 400-8, Canimex, DNS</span></span>
-            </div>
-            <!-- High lift extra field if HL selected -->
-            <div id="highLiftFieldGroup" style="display: none; margin-top: 12px;">
-              <div class="field-label">
-                <span>High Lift Distance (Inches)</span>
-                <span class="val-hint mono" id="hlInchesHint">36" HL</span>
-              </div>
-              <div class="stepper-control">
-                <button class="stepper-btn" onclick="stepVal('highLiftInches', -2)">−</button>
-                <input type="number" class="stepper-input mono" id="highLiftInches" value="36" oninput="runSpringSizer()">
-                <button class="stepper-btn" onclick="stepVal('highLiftInches', 2)">+</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <div class="field-label">Track Configuration & Radius</div>
-            <select class="input-select" id="trackRadius" onchange="runSpringSizer()">
-              <option value="15" selected>15" Radius Track (Standard Residential/Commercial)</option>
-              <option value="12">12" Radius Track (Low Clearance)</option>
-              <option value="LHR-F">Low Headroom (Front Mount Springs)</option>
-              <option value="LHR-R">Low Headroom (Rear Mount Springs)</option>
-            </select>
-          </div>
-
-          <div class="metric-grid">
-            <div class="metric-card">
-              <div class="metric-label">Turns of Wind</div>
-              <div class="metric-val mono highlight" id="sizerTurns">7.6</div>
-              <div class="metric-sub" id="sizerTurnsSub">7 turns + 2 quarter turns</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Required Total IPPT</div>
-              <div class="metric-val mono" id="sizerTotalIPPT">36.5</div>
-              <div class="metric-sub">inch-lbs / turn</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">Per Spring (Pair)</div>
-              <div class="metric-val mono success" id="sizerEachIPPT">18.3</div>
-              <div class="metric-sub">target for 2 springs</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Engineered Spring Recommendations</div>
-              <div class="card-subtitle">Standard, High-Cycle, and Commercial options</div>
-            </div>
-          </div>
-
-          <div id="engineeredOptionsContainer" style="display: flex; flex-direction: column; gap: 14px;">
-            <!-- Rendered by JS -->
           </div>
         </div>
       </div>
@@ -1949,8 +1863,8 @@
             </div>
           </div>
 
-          <button class="btn-action primary" style="width: 100%; justify-content: center; padding: 12px;" onclick="applyEstimatedWeightToSizer()">
-            ✅ Apply this 168 lbs Weight to Spring Sizer →
+          <button class="btn-action primary" id="applyEstWeightBtn" style="width: 100%; justify-content: center; padding: 12px; font-weight: 800;" onclick="applyEstimatedWeightToSizer()">
+            ✅ Apply this <span id="applyWeightNum">168 lbs</span> Weight to Spring Sizer →
           </button>
         </div>
 
@@ -1987,6 +1901,132 @@
 
           <div style="margin-top: 18px; padding: 12px; border-radius: 8px; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2); font-size: 12px; color: var(--blue);">
             ℹ️ <strong>Field Tip:</strong> When replacing springs on an existing door, always weigh the door with an analog scale under the bottom section before ordering to account for water absorption in older wood or uncalibrated replacement hardware.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: DOOR TO SPRING SIZER -->
+    <section id="pane-spring-sizer" class="tab-pane">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Door & Track Specifications</div>
+              <div class="card-subtitle">Calculate required counterbalance IPPT from door dimensions</div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Door Width (ft)</div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('doorWidth', -1)">−</button>
+              <input type="number" class="stepper-input mono" id="doorWidth" value="16" oninput="runSpringSizer()">
+              <button class="stepper-btn" onclick="stepVal('doorWidth', 1)">+</button>
+            </div>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Door Height (ft)</div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('doorHeight', -1)">−</button>
+              <input type="number" class="stepper-input mono" id="doorHeight" value="7" oninput="runSpringSizer()">
+              <button class="stepper-btn" onclick="stepVal('doorHeight', 1)">+</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">
+              <span>Total Door Dead Weight (lbs)</span>
+              <a href="javascript:void(0)" onclick="switchTab('weight-est')" style="color: var(--accent); font-size: 12px; text-decoration: none; font-weight: 600;">Don't know your door's weight? → Estimate it</a>
+            </div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('doorWeight', -5)">−</button>
+              <input type="number" class="stepper-input mono" id="doorWeight" value="145" oninput="runSpringSizer()">
+              <button class="stepper-btn" onclick="stepVal('doorWeight', 5)">+</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Cable Drum Model</div>
+            <select class="input-select" id="drumModel" onchange="handleDrumChange()">
+              <optgroup label="── Standard Lift (Residential & Commercial) ──">
+                <option value="400-8" selected>OMI / Apco / Canimex 400-8 (Up to 8' Door)</option>
+                <option value="400-12">OMI / Apco / Canimex 400-12 (Up to 12' Door)</option>
+                <option value="400-18">Canimex / Apco 400-18 (Up to 18' Commercial)</option>
+                <option value="5250">OMI / Apco 5250 Heavy Commercial (Up to 18' Door)</option>
+                <option value="800-32">Industrial 800-32 Heavy Bay (Up to 32' Door)</option>
+              </optgroup>
+              <optgroup label="── High Lift (HL Drums) ──">
+                <option value="54-HL">54-HL / Apco 5250-54 / DNS 54 (Up to 54" High Lift)</option>
+                <option value="120-HL">120-HL / Apco 5750-120 / DNS 120 (Up to 120" High Lift)</option>
+                <option value="164-HL">164-HL / OMI 164 (Up to 164" High Lift)</option>
+                <option value="220-HL">220-HL / OMI 220 (Up to 220" High Lift)</option>
+              </optgroup>
+              <optgroup label="── Vertical Lift (VL Full Spiral) ──">
+                <option value="VL-11">OMI VL-11 / Canimex VL-11 / Apco 850-11 (Up to 11' Door)</option>
+                <option value="VL-18">OMI VL-18 / Canimex VL-18 / Apco 1100-18 (Up to 18' Door)</option>
+                <option value="VL-28">OMI VL-28 / Canimex VL-28 (Up to 28' Door)</option>
+              </optgroup>
+            </select>
+            <!-- Dynamic Drum Specs Pill -->
+            <div id="drumSpecsPill" style="margin-top: 8px; padding: 10px 12px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+              <span><strong>Cable Size:</strong> <span id="pillCable" class="mono">1/8"</span></span>
+              <span><strong>Circumference:</strong> <span id="pillCircum" class="mono">12.56"</span></span>
+              <span><strong>Cross-Ref:</strong> <span id="pillCrossRef" style="color: var(--text-dim);">Apco 400-8, Canimex, DNS</span></span>
+            </div>
+            <!-- High lift extra field if HL selected -->
+            <div id="highLiftFieldGroup" style="display: none; margin-top: 12px;">
+              <div class="field-label">
+                <span>High Lift Distance (Inches)</span>
+                <span class="val-hint mono" id="hlInchesHint">36" HL</span>
+              </div>
+              <div class="stepper-control">
+                <button class="stepper-btn" onclick="stepVal('highLiftInches', -2)">−</button>
+                <input type="number" class="stepper-input mono" id="highLiftInches" value="36" oninput="runSpringSizer()">
+                <button class="stepper-btn" onclick="stepVal('highLiftInches', 2)">+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label">Track Configuration & Radius</div>
+            <select class="input-select" id="trackRadius" onchange="runSpringSizer()">
+              <option value="15" selected>15" Radius Track (Standard Residential/Commercial)</option>
+              <option value="12">12" Radius Track (Low Clearance)</option>
+              <option value="LHR-F">Low Headroom (Front Mount Springs)</option>
+              <option value="LHR-R">Low Headroom (Rear Mount Springs)</option>
+            </select>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Turns of Wind</div>
+              <div class="metric-val mono highlight" id="sizerTurns">7.6</div>
+              <div class="metric-sub" id="sizerTurnsSub">7 turns + 2 quarter turns</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Required Total IPPT</div>
+              <div class="metric-val mono" id="sizerTotalIPPT">36.5</div>
+              <div class="metric-sub">inch-lbs / turn</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Per Spring (Pair)</div>
+              <div class="metric-val mono success" id="sizerEachIPPT">18.3</div>
+              <div class="metric-sub">target for 2 springs</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Engineered Spring Recommendations</div>
+              <div class="card-subtitle">Standard, High-Cycle, and Commercial options</div>
+            </div>
+          </div>
+
+          <div id="engineeredOptionsContainer" style="display: flex; flex-direction: column; gap: 14px;">
+            <!-- Rendered by JS -->
           </div>
         </div>
       </div>
@@ -2568,6 +2608,18 @@
       const oldCycleEst = estimateCycles(wire, id, length, singleIPPT);
       document.getElementById('oldCycles').innerText = "~" + oldCycleEst.toLocaleString();
 
+      // FEATURE: Compute Rated Lifting Capacity live with clear assumptions
+      const truckHeight = parseFloat(document.getElementById('truckDoorHeight') ? document.getElementById('truckDoorHeight').value : 7) || 7;
+      const truckDrum = document.getElementById('truckDrumModel') ? document.getElementById('truckDrumModel').value : "400-8";
+      const drumInfo = DRUM_SPECS[truckDrum] || DRUM_SPECS["400-8"];
+      const turns = (truckHeight * drumInfo.turnsPerFt) + drumInfo.deadTurns;
+      const equivalentWeight = Math.round((totalSystemIPPT * turns) / drumInfo.radius);
+
+      const capEl = document.getElementById('ratedLiftingCapacity');
+      const capAssumpEl = document.getElementById('ratedCapacityAssumption');
+      if (capEl) capEl.innerText = `~${equivalentWeight} lbs`;
+      if (capAssumpEl) capAssumpEl.innerText = `(at ${truckHeight}'0" height, ${truckDrum} drum)`;
+
       // Required IPPT per replacement spring
       const targetIPPTPerSpring = totalSystemIPPT / targetSpringCount;
 
@@ -2670,6 +2722,20 @@
       document.getElementById('printSpringSpecs').innerText = `(${count}) Springs: ${name} Wire x ${idStr} ID x ${len}" Cut Length`;
       document.getElementById('printSpringCycle').innerText = `Rated Cycles: ~${cycles.toLocaleString()} cycles | Total Balanced System`;
 
+      // Update Rated Lifting Capacity tile for this replacement candidate
+      const truckHeight = parseFloat(document.getElementById('truckDoorHeight') ? document.getElementById('truckDoorHeight').value : 7) || 7;
+      const truckDrum = document.getElementById('truckDrumModel') ? document.getElementById('truckDrumModel').value : "400-8";
+      const drumInfo = DRUM_SPECS[truckDrum] || DRUM_SPECS["400-8"];
+      const turns = (truckHeight * drumInfo.turnsPerFt) + drumInfo.deadTurns;
+      const candSingleIPPT = calcSingleIPPT(wire, id, len);
+      const candTotalIPPT = candSingleIPPT * count;
+      const candWeight = Math.round((candTotalIPPT * turns) / drumInfo.radius);
+
+      const capEl = document.getElementById('ratedLiftingCapacity');
+      const capAssumpEl = document.getElementById('ratedCapacityAssumption');
+      if (capEl) capEl.innerText = `~${candWeight} lbs`;
+      if (capAssumpEl) capAssumpEl.innerText = `(candidate: (${count}) ${name} at ${truckHeight}'0", ${truckDrum})`;
+
       // Visual row selection in table
       document.querySelectorAll('#truckMatrixBody tr').forEach(tr => tr.classList.remove('selected'));
       document.querySelectorAll('#truckMatrixBody button').forEach(b => {
@@ -2690,7 +2756,7 @@
       const banner = document.getElementById('selectedNotificationBanner');
       if (banner) {
         banner.style.display = 'flex';
-        document.getElementById('bannerSelectedText').innerText = `(${count}) ${name} x ${idStr} x ${len}" (~${cycles.toLocaleString()} cycles)`;
+        document.getElementById('bannerSelectedText').innerText = `(${count}) ${name} x ${idStr} x ${len}" (~${cycles.toLocaleString()} cycles) → ~${candWeight} lbs lift`;
       }
     }
 
@@ -2899,15 +2965,18 @@
       const struts = parseInt(document.getElementById('estStruts').value) || 0;
 
       const sqft = w * h;
-      let density = customDensityOverride !== null ? customDensityOverride : 1.65;
-
-      if (construction === 'pan-25') density = 1.25;
-      else if (construction === 'pan-24') density = 1.40;
-      else if (construction === 'poly-vinyl') density = 1.65;
-      else if (construction === 'foamed-3layer') density = 2.20;
-      else if (construction === 'commercial-heavy') density = 2.85;
-      else if (construction === 'fullview-glass') density = 3.40;
-      else if (construction === 'wood-solid') density = 4.50;
+      let density = 1.65;
+      if (customDensityOverride !== null) {
+        density = customDensityOverride;
+      } else {
+        if (construction === 'pan-25') density = 1.25;
+        else if (construction === 'pan-24') density = 1.40;
+        else if (construction === 'poly-vinyl') density = 1.65;
+        else if (construction === 'foamed-3layer') density = 2.20;
+        else if (construction === 'commercial-heavy') density = 2.85;
+        else if (construction === 'fullview-glass') density = 3.40;
+        else if (construction === 'wood-solid') density = 4.50;
+      }
 
       const basePanels = sqft * density;
       const hardwareWeight = 14 + (sections * 2) + (w > 12 ? 6 : 0);
@@ -2929,6 +2998,16 @@
       document.getElementById('breakdownGlass').innerText = Math.round(glassWeight) + " lbs";
       document.getElementById('breakdownStruts').innerText = Math.round(strutWeight) + " lbs";
       document.getElementById('breakdownTotal').innerText = totalWeight + " lbs";
+
+      // BUG 4 FIX: Live update on Apply Weight button
+      const applyBtnNum = document.getElementById('applyWeightNum');
+      if (applyBtnNum) {
+        applyBtnNum.innerText = totalWeight + " lbs";
+      }
+      const applyBtn = document.getElementById('applyEstWeightBtn');
+      if (applyBtn) {
+        applyBtn.innerHTML = `✅ Apply this ${totalWeight} lbs Weight to Spring Sizer →`;
+      }
     }
 
     function applyEstimatedWeightToSizer() {
@@ -4756,11 +4835,11 @@
       }
 
       document.getElementById('mfgSpecBadge').style.display = 'flex';
-      const models = DOOR_MODELS.filter(m => m.mfg === mfg);
+      const models = DOOR_MODELS.filter(m => m.manufacturer.toLowerCase() === mfg.toLowerCase() || m.manufacturer === mfg);
       models.forEach((m, idx) => {
         const opt = document.createElement('option');
-        opt.value = m.model;
-        opt.innerText = m.model;
+        opt.value = m.model_name;
+        opt.innerText = m.model_name;
         modelSelect.appendChild(opt);
       });
 
@@ -4769,12 +4848,18 @@
 
     function handleModelSelect() {
       const selectedModelName = document.getElementById('modelSelect').value;
-      const modelObj = DOOR_MODELS.find(m => m.model === selectedModelName);
+      const modelObj = DOOR_MODELS.find(m => m.model_name === selectedModelName);
       if (modelObj) {
-        customDensityOverride = modelObj.density;
-        document.getElementById('badgeRVal').innerText = modelObj.rVal;
-        document.getElementById('badgeCore').innerText = modelObj.type;
-        document.getElementById('badgeDensity').innerText = modelObj.density.toFixed(2) + " lbs/sq.ft";
+        customDensityOverride = modelObj.density_lbs_sqft;
+        document.getElementById('badgeRVal').innerText = modelObj.r_value || 'None';
+        document.getElementById('badgeCore').innerText = modelObj.construction_type || '';
+        
+        const isVerified = modelObj.weight_confidence === 'verified';
+        const confBadge = isVerified 
+          ? ' <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 9px; padding: 1px 4px;">✓ Verified</span>'
+          : ' <span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; font-size: 9px; padding: 1px 4px;">≈ Estimated</span>';
+
+        document.getElementById('badgeDensity').innerHTML = modelObj.density_lbs_sqft.toFixed(2) + " lbs/sq ft" + confBadge;
         
         // Auto-select corresponding generic construction
         if (modelObj.constructionVal) {
@@ -4794,21 +4879,87 @@
       DOOR_MODELS.forEach(m => {
         const sqft8x7 = 56;
         const sqft16x7 = 112;
-        const wt8x7 = Math.round(sqft8x7 * m.density + 18);
-        const wt16x7 = Math.round(sqft16x7 * m.density + 26 + 24); // with 2 struts
+        const density = m.density_lbs_sqft || 1.65;
+        const wt8x7 = Math.round(sqft8x7 * density + 18);
+        const wt16x7 = Math.round(sqft16x7 * density + 26 + 24); // with 2 struts
+
+        const rValStr = m.r_value || 'None';
+        const hasHighR = rValStr.includes('16') || rValStr.includes('18') || rValStr.includes('19') || rValStr.includes('20');
+        const isVerified = m.weight_confidence === 'verified';
+        const confBadge = isVerified 
+          ? '<span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 9px; padding: 1px 4px;">✓ Verified</span>'
+          : '<span class="badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; font-size: 9px; padding: 1px 4px;">≈ Estimated</span>';
+
+        const statusBadge = m.status === 'legacy'
+          ? '<span class="badge gray" style="font-size: 9px; padding: 1px 4px;">Legacy</span>'
+          : '<span class="badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; font-size: 9px; padding: 1px 4px;">Current</span>';
 
         const tr = document.createElement('tr');
-        tr.dataset.search = (m.mfg + ' ' + m.model + ' ' + m.type + ' ' + m.rVal).toLowerCase();
+        tr.dataset.search = (m.manufacturer + ' ' + m.model_name + ' ' + (m.series || '') + ' ' + m.construction_type + ' ' + (m.panel_gauge || '') + ' ' + rValStr + ' ' + (m.stamp_location || '')).toLowerCase();
+        tr.dataset.mfg = m.manufacturer.toLowerCase();
+        tr.dataset.status = m.status || 'current';
+
         tr.innerHTML = `
-          <td><strong>${m.mfg}</strong></td>
-          <td style="color: var(--accent); font-weight: 600;">${m.model}</td>
-          <td><span class="badge ${m.rVal.includes('16') || m.rVal.includes('18') || m.rVal.includes('19') ? 'green' : 'gray'}">${m.rVal}</span></td>
-          <td style="font-size: 11px; color: var(--text-muted);">${m.type}</td>
-          <td class="mono font-bold">${m.density.toFixed(2)} lbs</td>
+          <td><strong>${m.manufacturer}</strong></td>
+          <td style="color: var(--accent); font-weight: 600;">
+            ${m.model_name}
+            <div style="font-size: 10px; color: #64748b; font-weight: normal;">${m.series || ''} ${statusBadge}</div>
+          </td>
+          <td><span class="badge ${hasHighR ? 'green' : 'gray'}">${rValStr}</span></td>
+          <td style="font-size: 11px; color: var(--text-muted);">
+            <div>${m.construction_type}</div>
+            <div style="font-size: 10px; color: #64748b;">${m.panel_gauge || ''}</div>
+          </td>
+          <td>
+            <div class="mono font-bold">${density.toFixed(2)} lbs</div>
+            <div style="margin-top: 2px;">${confBadge}</div>
+          </td>
           <td class="mono">~${wt8x7} lbs</td>
           <td class="mono font-bold" style="color: #38bdf8;">~${wt16x7} lbs</td>
+          <td style="font-size: 11px; color: var(--text-muted); max-width: 180px;">${m.stamp_location || 'End stile'}</td>
+          <td>
+            <button class="btn-action primary" style="padding: 4px 8px; font-size: 10px;" onclick="applyCatalogModelToCalculator('${m.id}')">Use in Sizer →</button>
+          </td>
         `;
         tbody.appendChild(tr);
+      });
+    }
+
+    function applyCatalogModelToCalculator(modelId) {
+      const model = DOOR_MODELS.find(m => m.id === modelId);
+      if (!model) return;
+
+      switchTab('weight-est');
+
+      const mfgSelect = document.getElementById('mfgSelect');
+      mfgSelect.value = model.manufacturer;
+      handleMfgChange();
+      const modelSelect = document.getElementById('modelSelect');
+      modelSelect.value = model.model_name;
+      handleModelSelect();
+
+      const target = document.getElementById('pane-weight-est');
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function filterMfgTable() {
+      const query = (document.getElementById('mfgSearchInput').value || '').toLowerCase();
+      const mfgFilterEl = document.getElementById('mfgFilterSelect');
+      const mfgFilter = mfgFilterEl ? mfgFilterEl.value.toLowerCase() : 'all';
+      const statusFilterEl = document.getElementById('mfgStatusSelect');
+      const statusFilter = statusFilterEl ? statusFilterEl.value.toLowerCase() : 'all';
+
+      const rows = document.querySelectorAll('#mfgTableBody tr');
+      rows.forEach(r => {
+        const text = r.dataset.search || '';
+        const rowMfg = r.dataset.mfg || '';
+        const rowStatus = r.dataset.status || '';
+
+        const matchesQuery = !query || text.includes(query);
+        const matchesMfg = mfgFilter === 'all' || rowMfg === mfgFilter || rowMfg.includes(mfgFilter) || mfgFilter.includes(rowMfg);
+        const matchesStatus = statusFilter === 'all' || rowStatus === statusFilter;
+
+        r.style.display = (matchesQuery && matchesMfg && matchesStatus) ? '' : 'none';
       });
     }
 
