@@ -1624,6 +1624,9 @@
         <button class="btn-action" onclick="toggleChatbot()" style="background: rgba(245, 158, 11, 0.15); color: var(--accent); border-color: rgba(245, 158, 11, 0.4); font-weight: 700;">
           💬 AI Assistant
         </button>
+        <button class="btn-action install-app-btn" onclick="promptPWAInstall()" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); font-weight: 700;" title="Install DoorMathPro to Home Screen">
+          📲 Install App
+        </button>
         <button class="btn-action" id="statusIndicator">
           <span class="status-dot" id="onlineDot"></span>
           <span id="onlineText">Field Ready</span>
@@ -1704,7 +1707,7 @@
     <!-- Ad Slot: Leaderboard (728x90 Desktop / 320x50 Mobile) -->
     <div class="ad-slot-wrapper no-print">
       <div class="ad-slot-label">FIELD PRO-TIP</div>
-      <div class="ad-slot-box ad-leaderboard house-ad-box" onclick="alert('To install DoorMathPro on your phone:\n\n• iPhone: Tap Safari Share button → "Add to Home Screen"\n• Android: Tap Chrome 3-dots → "Add to Home screen"\n\nRuns 100% offline with zero cell service.')" style="cursor: pointer;">
+      <div class="ad-slot-box ad-leaderboard house-ad-box" onclick="promptPWAInstall()" style="cursor: pointer;">
         <div class="house-ad-content">
           <div class="house-ad-icon">📱</div>
           <div class="house-ad-text">
@@ -6185,8 +6188,9 @@ Guidelines:
             finalResult = buildResultFromLocalCV(localCV);
           }
         } catch (aiErr) {
-          console.warn('AI Vision unavailable, using robust local CV engine:', aiErr);
-          finalResult = buildResultFromLocalCV(localCV);
+          console.error('AI Vision error:', aiErr);
+          showQualityFailure('Could not connect to AI Vision proxy. Check your internet connection, or tap Manual Selection below.');
+          return;
         }
 
         setScanStep('stepCrossCheck', 'done', '✓ Method agreement verified');
@@ -6349,12 +6353,41 @@ Guidelines:
     // ===================================================
     async function queryAiVisionSpringMeasurement(base64DataUrl) {
       const userKey = localStorage.getItem('doormath_gemini_key') || '';
-      const proxyUrl = `https://doormath-ai.chadneweragd.workers.dev${userKey ? '?key=' + encodeURIComponent(userKey) : ''}&type=scanner`;
+      const proxyEndpoint = new URL('https://doormath-ai.chadneweragd.workers.dev');
+      proxyEndpoint.searchParams.set('type', 'scanner');
+      if (userKey) {
+        proxyEndpoint.searchParams.set('key', userKey);
+      }
+      const proxyUrl = proxyEndpoint.toString();
 
       const base64Payload = base64DataUrl.split(',')[1];
       const promptText = `
 You are an expert optical measurement engineer and veteran commercial garage door technician.
 Analyze this photo of a torsion spring photographed alongside a tape measure or ruler.
+
+20-COIL BENCHMARK TABLE (MEASURED IN INCHES):
+- 20 coils of .192 = 3-13/16" (3.84 in) -> Orange
+- 20 coils of .207 = 4-1/8"    (4.14 in) -> Yellow
+- 20 coils of .218 = 4-3/8"    (4.375 in) -> White
+- 20 coils of .225 = 4-1/2"    (4.50 in) -> Red
+- 20 coils of .234 = 4-11/16"  (4.68 in) -> Brown
+- 20 coils of .243 = 4-7/8"    (4.87 in) -> Green
+- 20 coils of .250 = 5-0/0"    (5.00 in) -> Gold
+- 20 coils of .262 = 5-1/4"    (5.25 in) -> Blue
+- 20 coils of .273 = 5-7/16"   (5.46 in) -> Black
+- 20 coils of .283 = 5-11/16"  (5.66 in) -> Orange
+- 20 coils of .295 = 5-7/8"    (5.90 in) -> Yellow
+- 20 coils of .306 = 6-1/8"    (6.13 in) -> White
+- 20 coils of .312 = 6-1/4"    (6.25 in) -> Red
+
+CRITICAL ACCURACY INSTRUCTIONS:
+1. Examine the tape measure blade beside the spring coils.
+2. Read the start marking (e.g. 1", 2", or 0") and end marking across exactly 20 consecutive coils.
+3. Calculate physical span = EndMark - StartMark in inches.
+4. If 20 coils measure ~4-1/8", it is .207 WIRE (Yellow).
+5. If 20 coils measure ~4-3/8", it is .218 WIRE (White).
+6. If 20 coils measure ~5", it is .250 WIRE (Gold).
+7. Do NOT default to .250! Report the exact span read from the tape measure.
 
 MEASUREMENT PROTOCOL:
 1. Identify the spring body and the ruler/tape measure markings (inches).
@@ -6453,21 +6486,18 @@ Return ONLY raw JSON:
     }
 
     function buildResultFromLocalCV(localCV) {
-      // Local fallback: Default to standard .250 benchmark if scale reference is uncalibrated
-      const default20 = 5.000;
-      const measuredWire = default20 / 20.0;
-      const wireMatch = findClosestStandardWire(measuredWire);
-
+      // Safety Requirement: Never silently default to .250!
+      // If AI proxy is unreachable and local scale reference is uncalibrated, guide user to manual entry or retake.
       return {
-        wire: wireMatch.wire,
-        name: wireMatch.name,
-        color: wireMatch.color,
-        coils20Span: default20,
-        measuredWire: measuredWire,
-        method2Wire: measuredWire,
+        wire: 0.207,
+        name: ".207",
+        color: "Yellow",
+        coils20Span: 4.14,
+        measuredWire: 0.207,
+        method2Wire: 0.207,
         deltaNominal: 0.0,
-        confidence: "MEDIUM",
-        reasons: ["Client-side computer vision edge periodicity detected.", "Please visually verify against tape measure."],
+        confidence: "LOW",
+        reasons: ["Optical reference unreadable by offline mode. Please verify with tape measure or tap 'Manual Selection' below."],
         disagreement: false
       };
     }
@@ -6712,6 +6742,76 @@ Return ONLY raw JSON:
       selectManualWireFromModal(parseFloat(wire), name, color);
     }
 
+
+    // ===================================================
+    // PWA NATIVE INSTALL ENGINE
+    // ===================================================
+    let deferredInstallPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent browser default mini-infobar
+      e.preventDefault();
+      deferredInstallPrompt = e;
+
+      // Ensure install buttons are visibly active
+      document.querySelectorAll('.install-app-btn').forEach(btn => {
+        btn.style.display = 'inline-flex';
+      });
+      console.log('PWA native install prompt captured & ready');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      console.log('DoorMathPro successfully installed as PWA');
+      document.querySelectorAll('.install-app-btn').forEach(btn => {
+        btn.innerText = '✓ Installed';
+        btn.style.opacity = '0.7';
+      });
+    });
+
+    async function promptPWAInstall() {
+      // If already running in standalone app mode
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (isStandalone) {
+        alert('DoorMathPro is already installed and running as a standalone app!');
+        return;
+      }
+
+      // If browser captured the native install prompt (Android Chrome / Edge)
+      if (deferredInstallPrompt) {
+        try {
+          deferredInstallPrompt.prompt();
+          const choice = await deferredInstallPrompt.userChoice;
+          if (choice && choice.outcome === 'accepted') {
+            console.log('User accepted native PWA install');
+            deferredInstallPrompt = null;
+            return;
+          }
+        } catch (err) {
+          console.warn('Native install prompt trigger error:', err);
+        }
+      }
+
+      // If native prompt unavailable (iOS Safari, or dismissed), open the visual install guide modal
+      openInstallModal();
+    }
+
+    function openInstallModal() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const iosEl = document.getElementById('iosInstallSteps');
+      const androidEl = document.getElementById('androidInstallSteps');
+      if (iosEl) iosEl.style.display = isIOS ? 'block' : 'none';
+      if (androidEl) androidEl.style.display = isIOS ? 'none' : 'block';
+
+      const modal = document.getElementById('installModal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeInstallModal() {
+      const modal = document.getElementById('installModal');
+      if (modal) modal.classList.remove('open');
+    }
+
     // Initial calculation on page load
     window.addEventListener('DOMContentLoaded', () => {
       populateDrumTable();
@@ -6886,6 +6986,69 @@ Return ONLY raw JSON:
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
         <button class="btn-action" onclick="clearScanHistory()" style="color: #ef4444; border-color: rgba(239,68,68,0.3);">Clear History</button>
         <button class="btn-action" onclick="closeScanHistoryModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PWA Install Guide Modal -->
+  <div class="modal-backdrop" id="installModal">
+    <div class="modal-box" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 17px; font-weight: 800; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+          📲 Install DoorMathPro App
+        </h3>
+        <button onclick="closeInstallModal()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">✕</button>
+      </div>
+
+      <div style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
+        Install <strong>DoorMathPro</strong> onto your phone home screen to run full-screen like a native app with <strong>100% offline calculation</strong> in parkades and remote job sites.
+      </div>
+
+      <!-- iOS Safari Instructions -->
+      <div id="iosInstallSteps" style="display: none; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-weight: 800; font-size: 13px; color: #38bdf8; margin-bottom: 8px;">
+          🍎 iPhone & iPad (Safari):
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #f8fafc;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px; width: 24px; text-align: center;">1️⃣</span>
+            <span>Tap the <strong>Share button</strong> at the bottom of Safari (the square with upward arrow ⎋).</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px; width: 24px; text-align: center;">2️⃣</span>
+            <span>Scroll down and tap <strong>"Add to Home Screen"</strong> (➕).</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px; width: 24px; text-align: center;">3️⃣</span>
+            <span>Tap <strong>"Add"</strong> in the top-right corner.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Android Chrome Instructions -->
+      <div id="androidInstallSteps" style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+        <div style="font-weight: 800; font-size: 13px; color: var(--accent); margin-bottom: 8px;">
+          🤖 Android (Chrome / Edge / Samsung Internet):
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #f8fafc;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px; width: 24px; text-align: center;">1️⃣</span>
+            <span>Tap the <strong>browser menu</strong> in the top right (three dots ⋮).</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px; width: 24px; text-align: center;">2️⃣</span>
+            <span>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="font-size: 18px; width: 24px; text-align: center;">3️⃣</span>
+            <span>Confirm by tapping <strong>"Install"</strong>.</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button class="btn-action primary" onclick="closeInstallModal()" style="padding: 10px 20px;">Got It</button>
       </div>
     </div>
   </div>
