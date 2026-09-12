@@ -1725,6 +1725,14 @@
           </div>
         </div>
 
+        <!-- BUGFIX (Sept 2026 audit): out-of-range warning. Previously this
+             tool always silently displayed the closest table match with no
+             indication when a measurement fell well outside supported wire
+             gauges -- risking a wrong, under-rated wire ID with no warning. -->
+        <div id="coilRangeWarning" style="display:none; background: rgba(245,158,11,0.12); border: 1px solid var(--warning); color: var(--warning); border-radius: 8px; padding: 10px 12px; font-size: 13px; font-weight: 700; margin-bottom: 12px; text-align: center;">
+          ⚠️ This measurement is outside the wire gauges this tool supports (.192"–.500"). Double-check your 20-coil measurement and verify this spring's wire size manually before ordering a replacement.
+        </div>
+
         <button class="btn-action primary" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px; font-weight: 900; margin-bottom: 8px; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);" onclick="confirmTwentyCoilWire()">
           ✓ Use This Wire Size in Spring Engineering →
         </button>
@@ -2599,27 +2607,26 @@
     const E_MODULUS = 28500000.0;
 
     // Standard Wire Gauges and Colors
-    const WIRE_SPECS = [
-      { wire: 0.192, name: ".192", color: "Orange", coils20: 3.84 },
-      { wire: 0.207, name: ".207", color: "Yellow", coils20: 4.14 },
-      { wire: 0.218, name: ".218", color: "White", coils20: 4.36 },
-      { wire: 0.225, name: ".225", color: "Red", coils20: 4.50 },
-      { wire: 0.234, name: ".234", color: "Brown", coils20: 4.68 },
-      { wire: 0.243, name: ".243", color: "Green", coils20: 4.86 },
-      { wire: 0.250, name: ".250", color: "Gold", coils20: 5.00 },
-      { wire: 0.262, name: ".262", color: "Blue", coils20: 5.24 },
-      { wire: 0.273, name: ".273", color: "Black", coils20: 5.46 },
-      { wire: 0.283, name: ".283", color: "Orange", coils20: 5.66 },
-      { wire: 0.295, name: ".295", color: "Yellow", coils20: 5.90 },
-      { wire: 0.306, name: ".306", color: "White", coils20: 6.12 },
-      { wire: 0.312, name: ".312", color: "Red", coils20: 6.24 },
-      { wire: 0.331, name: ".331", color: "Green", coils20: 6.62 },
-      { wire: 0.343, name: ".343", color: "Blue", coils20: 6.86 },
-      { wire: 0.362, name: ".362", color: "Black", coils20: 7.24 },
-      { wire: 0.375, name: ".375", color: "Orange", coils20: 7.50 },
-      { wire: 0.390, name: ".390", color: "Yellow", coils20: 7.80 },
-      { wire: 0.406, name: ".406", color: "White", coils20: 8.12 }
-    ];
+    //
+    // BUGFIX (Sept 2026 audit): WIRE_SPECS used to be a second, hand-maintained
+    // table that was built separately from STANDARD_SPRING_WIRES above. It had
+    // drifted out of sync with it -- disagreeing on the 20-coil length for
+    // several gauges (rounding), and missing SIX wire gauges entirely: .200,
+    // .289, .325, .393, and critically the two heaviest gauges, .437" and
+    // .500" ("Heavy"). Because this table backs the 20-Coil Wire Size
+    // Identifier (now the app's only wire-ID method since Spring Scan was
+    // removed), a real .437"/.500" spring would silently get identified as a
+    // .406" -- an under-rated wire size feeding straight into the spring
+    // engineering math. Fix: derive WIRE_SPECS directly from
+    // STANDARD_SPRING_WIRES so there is exactly ONE source of truth for wire
+    // gauge data and the two tables can never drift apart again.
+    const WIRE_SPECS = STANDARD_SPRING_WIRES.map(w => ({
+      wire: w.wire,
+      name: w.name,
+      color: w.color,
+      coils20: w.coils20,
+      dashes: w.dashes
+    }));
 
     // Comprehensive Reverse-Engineered Drum Database
     const DRUM_SPECS = {
@@ -3247,11 +3254,28 @@
 
       document.getElementById('coilWireResult').innerText = closest.name;
       document.getElementById('coilColorResult').innerText = closest.color;
+      const fractionEl = document.getElementById('coilFractionResult');
+      if (fractionEl) fractionEl.innerText = closest.dashes || '';
+
+      // BUGFIX (Sept 2026 audit): flag measurements that fall well outside
+      // the wire gauges this tool actually supports (.192"-.500"), instead of
+      // silently returning the closest match as if it were a confident read.
+      const warningEl = document.getElementById('coilRangeWarning');
+      if (warningEl) {
+        const smallest = WIRE_SPECS[0].coils20;
+        const largest = WIRE_SPECS[WIRE_SPECS.length - 1].coils20;
+        const outOfRange = (val < smallest - 0.15) || (val > largest + 0.15) || (minDiff > 0.2);
+        warningEl.style.display = outOfRange ? 'block' : 'none';
+      }
     }
 
     function stepTwentyCoil(delta) {
       const el = document.getElementById('twentyCoilInput');
-      let val = Math.max(3.5, Math.min(8.0, parseFloat(el.value) + delta));
+      // BUGFIX (Sept 2026 audit): old max of 8.0" silently capped this
+      // stepper below the .437"/.500" "Heavy" gauges (8.75"/10.00" per 20
+      // coils) that are now supported in WIRE_SPECS. Raised to give full
+      // range plus a little headroom for the out-of-range warning to trigger.
+      let val = Math.max(3.5, Math.min(10.5, parseFloat(el.value) + delta));
       el.value = val.toFixed(4);
       calcTwentyCoil();
     }
@@ -5619,6 +5643,35 @@ Guidelines:
       });
     }
 
+    // BUGFIX (Sept 2026 audit): #oldWireSelect (Truck Stock Matcher's "old
+    // spring" wire dropdown) and #odWireSelect (OD-to-ID Converter) used to
+    // be separate, hand-typed <option> lists in the HTML that had fallen out
+    // of sync with the real wire gauge range -- oldWireSelect topped out at
+    // .375" and odWireSelect at .273", both silently unable to represent
+    // heavier real-world springs (up to .500"). Rebuild both dropdowns from
+    // WIRE_SPECS (the single source of truth) so they always cover the full,
+    // correct range and can never drift out of date again.
+    function populateWireSelects() {
+      const targets = [
+        { id: 'oldWireSelect', defaultWire: 0.25, showColor: true },
+        { id: 'odWireSelect', defaultWire: 0.25, showColor: false }
+      ];
+      targets.forEach(t => {
+        const sel = document.getElementById(t.id);
+        if (!sel) return;
+        const priorValue = sel.value; // preserve a user's existing selection across rebuilds
+        sel.innerHTML = '';
+        WIRE_SPECS.forEach(w => {
+          const opt = document.createElement('option');
+          opt.value = w.wire;
+          opt.innerText = t.showColor ? `${w.name} (${w.color})` : w.name;
+          sel.appendChild(opt);
+        });
+        const hasPrior = priorValue && Array.from(sel.options).some(o => Math.abs(parseFloat(o.value) - parseFloat(priorValue)) < 0.001);
+        sel.value = hasPrior ? priorValue : String(t.defaultWire);
+      });
+    }
+
     // Initialize Manual Wire List in Modal
     function populateManualWireModal() {
       const tbody = document.getElementById('manualWireListBody');
@@ -5787,6 +5840,7 @@ Guidelines:
       handleDrumChange();
       handleMfgChange();
       populateMfgTable();
+      populateWireSelects();
       runTruckMatch();
       runSpringSizer();
       calculateDoorWeight();
