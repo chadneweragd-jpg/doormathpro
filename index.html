@@ -1363,12 +1363,18 @@
           <span class="status-dot" id="onlineDot"></span>
           <span id="onlineText">Field Ready</span>
         </button>
-        <button class="btn-action primary" onclick="openSpecSheet()">
-          📄 Spec Sheet
-        </button>
       </div>
     </div>
   </header>
+  <!-- BUGFIX (field report, Sept 2026): removed the duplicate "Spec Sheet"
+       button that used to live here. With 4 buttons crammed into the sticky
+       header, it ran off the edge of the screen on phone-width viewports
+       (no wrap/scroll on .header-actions) so it was effectively invisible on
+       mobile -- and it did exactly the same thing (openSpecSheet()) as the
+       "View Spec Sheet" button already in the hero section just below.
+       That hero button remains the one way to open the spec sheet from the
+       top of the page. -->
+
 
   <div class="app-container">
     <!-- Hero / Landing Page Section -->
@@ -3027,6 +3033,16 @@
       document.getElementById('printDrum').innerText = drum;
       document.getElementById('printTotalIPPT').innerText = totalIPPT.toFixed(1);
       document.getElementById('printTurns').innerText = `${turns.toFixed(1)} turns (${Math.round(turns * 4)} quarter turns)`;
+
+      // BUGFIX (field report, Sept 2026): #printTrack was a static "15"
+      // Standard" placeholder that never updated -- the printed spec sheet
+      // always showed the default track config no matter what the tech
+      // actually selected. Now it reflects the real selection.
+      const trackSel = document.getElementById('trackRadius');
+      const printTrackEl = document.getElementById('printTrack');
+      if (trackSel && printTrackEl) {
+        printTrackEl.innerText = trackSel.options[trackSel.selectedIndex].text;
+      }
 
       // Dynamically select realistic, field-practical spring wire sizes
       const container = document.getElementById('engineeredOptionsContainer');
