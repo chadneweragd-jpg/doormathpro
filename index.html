@@ -2104,6 +2104,14 @@
               <option value="LHR-F">Low Headroom (Front Mount Springs)</option>
               <option value="LHR-R">Low Headroom (Rear Mount Springs)</option>
             </select>
+            <!-- BUGFIX (field report, Sept 2026): Low Headroom mounts use a
+                 different mechanical system (typically a separate
+                 jackshaft/pulley arrangement per most LHR conversion kits),
+                 not just a smaller curve radius -- flag it instead of
+                 silently applying the standard turns/IPPT math to it. -->
+            <div id="lhrAdvisory" style="display:none; background: rgba(245,158,11,0.12); border: 1px solid var(--warning); color: var(--warning); border-radius: 8px; padding: 10px 12px; font-size: 12px; margin-top: 8px;">
+              ⚠️ Low Headroom mounts typically use a different spring/drum arrangement (often a separate jackshaft or pulley kit), not just a tighter track curve. The turns/IPPT below assume standard curved-track geometry and have NOT been adjusted for your specific LHR kit -- verify against that kit's own installation instructions before winding.
+            </div>
           </div>
 
           <div class="metric-grid">
@@ -3014,11 +3022,50 @@
       const width = parseFloat(document.getElementById('doorWidth').value);
       const weight = parseFloat(document.getElementById('doorWeight').value);
       const drum = document.getElementById('drumModel').value;
+      const trackRadiusEl = document.getElementById('trackRadius');
+      const trackRadiusVal = trackRadiusEl ? trackRadiusEl.value : '15';
 
       const drumInfo = DRUM_SPECS[drum] || DRUM_SPECS["400-8"];
-      const turns = (height * drumInfo.turnsPerFt) + drumInfo.deadTurns;
+
+      // BUGFIX (field report, Sept 2026): total cable travel is door height
+      // PLUS any additional High Lift distance. The "High Lift Distance"
+      // field was already being collected from the tech but was never
+      // actually used anywhere -- turns (and therefore IPPT) were silently
+      // calculated as if every High Lift door were a Standard Lift door of
+      // the same height, undercounting the extra travel entirely.
+      let effectiveHeightIn = height * 12;
+      if (drumInfo.type === 'High Lift') {
+        const hlEl = document.getElementById('highLiftInches');
+        const hlExtra = hlEl ? (parseFloat(hlEl.value) || 0) : 0;
+        effectiveHeightIn += hlExtra;
+      }
+
+      // BUGFIX: track curve radius has a small but real effect on total cable
+      // travel. A tighter 12in radius curve needs about 3in less vertical
+      // travel than the 15in standard curve (consistent with the ~3in of
+      // headroom a 12in radius is widely documented to save vs. 15in). The
+      // drum constants above already assume the 15in standard baseline (the
+      // dropdown's default), so only 12in gets an adjustment here.
+      // Low Headroom (LHR-F/LHR-R) mounts are NOT simply "an even smaller
+      // radius" -- they're a different mechanical system (a separate
+      // jackshaft/pulley arrangement per most low-headroom conversion kits),
+      // so this calculator deliberately does not invent a numeric adjustment
+      // for them; see the advisory note wired to the LHR options below.
+      let trackAdjustIn = 0;
+      if (trackRadiusVal === '12') trackAdjustIn = -3;
+
+      const effectiveHeightFt = (effectiveHeightIn + trackAdjustIn) / 12;
+      const turns = (effectiveHeightFt * drumInfo.turnsPerFt) + drumInfo.deadTurns;
       const totalIPPT = (weight * drumInfo.radius) / turns;
       const eachIPPT = totalIPPT / 2.0;
+
+      // Low Headroom mounts use a genuinely different mechanical system --
+      // flag it rather than silently presenting a number as if it were fully
+      // engineered for that configuration.
+      const lhrWarning = document.getElementById('lhrAdvisory');
+      if (lhrWarning) {
+        lhrWarning.style.display = (trackRadiusVal === 'LHR-F' || trackRadiusVal === 'LHR-R') ? 'block' : 'none';
+      }
 
       document.getElementById('sizerTurns').innerText = turns.toFixed(1);
       const fullTurns = Math.floor(turns);
