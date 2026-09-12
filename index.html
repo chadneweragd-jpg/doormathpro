@@ -1849,9 +1849,15 @@
                   <strong style="font-size: 15px; color: #fff;" id="aiModelResult">Door Model Result</strong>
                   <span class="badge green" id="aiConfBadge">94% Match</span>
                 </div>
-                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px;" id="aiCuesText">
+                <div style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 8px;" id="aiCuesText">
                   Detected visual cues and factory specifications.
                 </div>
+                <!-- BUGFIX (Sept 2026 audit): grounding note. Previously the app
+                     would silently pick whatever model happened to be first in
+                     the manufacturer's dropdown list if the AI's free-text model
+                     name didn't match anything -- looking exactly like a real
+                     match. This makes an unmatched result visibly honest. -->
+                <div id="aiGroundingNote" style="font-size: 11px; line-height: 1.4; margin-bottom: 12px; padding: 6px 8px; border-radius: 6px;"></div>
                 <button class="btn-action primary" style="width: 100%; justify-content: center; padding: 10px; font-size: 13px;" onclick="applyAIResultToCalculator()">
                   ✅ Apply this Model to Weight Calculator →
                 </button>
@@ -1921,6 +1927,7 @@
               <option value="commercial-heavy">Commercial Heavy Steel 20-Gauge Sandwich — ~2.85 lbs/sq ft</option>
               <option value="fullview-glass">Aluminum Full-View Sectional — ~3.40 lbs/sq ft</option>
               <option value="wood-solid">Solid Wood Overlay / Cedar Carriage — ~4.50 lbs/sq ft</option>
+              <option value="vinyl-solid">Solid Vinyl Panel — ~1.50 lbs/sq ft</option>
             </select>
           </div>
 
@@ -3188,6 +3195,7 @@
         else if (construction === 'commercial-heavy') density = 2.85;
         else if (construction === 'fullview-glass') density = 3.40;
         else if (construction === 'wood-solid') density = 4.50;
+        else if (construction === 'vinyl-solid') density = 1.50;
       }
 
       const basePanels = sqft * density;
@@ -3465,6 +3473,13 @@
 
 
     // Comprehensive Manufacturer Door Model Weights Database
+    //
+    // NOTE (Sept 2026 audit): door_database.json (shipped alongside this file)
+    // is a mirror of this exact array for offline reference/editing -- the
+    // app itself only reads the inline array below, it does not fetch the
+    // .json file at runtime. If you edit one, regenerate the other from it
+    // (they were previously allowed to silently drift; keep them identical
+    // going forward, the same way WIRE_SPECS/STANDARD_SPRING_WIRES do now).
     const DOOR_DATABASE = [
   {
     "id": "garaga-standard-plus",
@@ -4241,16 +4256,16 @@
     "id": "chi-planks-2283",
     "manufacturer": "C.H.I.",
     "series": "Planks Collection",
-    "model_name": "Model 2283 / 2216 Planks (Accent Woodtones R-17.5)",
+    "model_name": "Model 2283 / 4283 Planks (Accent Woodtones, Polystyrene R-9.65)",
     "category": "residential",
-    "construction_type": "three-layer polyurethane",
-    "panel_gauge": "27-gauge steel",
-    "r_value": "R-17.54",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "27-gauge steel (2-sided)",
+    "r_value": "R-9.65",
     "thickness_in": 2.0,
-    "density_lbs_sqft": 2.25,
+    "density_lbs_sqft": 1.75,
     "weight_confidence": "verified",
-    "data_source": "C.H.I. Overhead Doors Architectural Specification Manual",
-    "last_verified": "2026-08",
+    "data_source": "C.H.I. Overhead Doors Model 2283/4283 spec sheet (chiohd.com, 2025-02 revision)",
+    "last_verified": "2026-09",
     "common_sizes": [
       "8x7",
       "9x7",
@@ -4263,8 +4278,8 @@
     "strut_options": "2-1/4in 20ga galvanized U-bar (+0.85 lbs/ft)",
     "stamp_location": "Interior stenciled stamp on section #2 or inside left end stile",
     "status": "current",
-    "constructionVal": "foamed-3layer",
-    "notes": "Famous for Accent Woodtones (Cedar, Driftwood, Dark Oak, Natural Oak). Micro-grooved horizontal planks with standard tongue-and-groove joint."
+    "constructionVal": "poly-vinyl",
+    "notes": "CORRECTED Sept 2026: previously listed as R-17.54 three-layer polyurethane, which does not match C.H.I.'s published spec for this model (that R-value belongs to a different C.H.I. line). Verified spec: 2\" thick, 1-13/16\" CFC-free polystyrene glued both sides, 27ga steel skins, R-9.65. A polyurethane-insulated Planks-style option exists under C.H.I.'s Sterling line at higher R-value -- see chi-sterling-2717."
   },
   {
     "id": "chi-flush-2284",
@@ -4323,16 +4338,16 @@
     "id": "chi-carriage-5283",
     "manufacturer": "C.H.I.",
     "series": "Carriage House",
-    "model_name": "Model 5283 / 5983 Carriage House (R-17.5)",
+    "model_name": "Model 5283 / 5983 Carriage House Stamped (Polystyrene R-9.65)",
     "category": "residential",
-    "construction_type": "three-layer polyurethane",
-    "panel_gauge": "27-gauge steel with composite overlays",
-    "r_value": "R-17.54",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "27-gauge steel with composite overlays (2-sided)",
+    "r_value": "R-9.65",
     "thickness_in": 2.0,
-    "density_lbs_sqft": 2.65,
+    "density_lbs_sqft": 2.05,
     "weight_confidence": "verified",
-    "data_source": "C.H.I. Carriage House Product Brochure",
-    "last_verified": "2026-08",
+    "data_source": "C.H.I. Overhead Doors Model 5283/5983 spec sheet (gdsomaha.com hosted PDF)",
+    "last_verified": "2026-09",
     "common_sizes": [
       "8x7",
       "9x7",
@@ -4343,8 +4358,8 @@
     "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
     "stamp_location": "Interior stencil on section #2",
     "status": "current",
-    "constructionVal": "foamed-3layer",
-    "notes": "Carriage house design with decorative composite batten overlays added to exterior."
+    "constructionVal": "poly-vinyl",
+    "notes": "CORRECTED Sept 2026: previously listed as R-17.54 three-layer polyurethane; verified spec sheet confirms 1-13/16\" CFC-free polystyrene glued both sides, R-9.65, same insulation tier as Planks 2283/4283. Density estimated slightly above plain Planks to account for the applied composite carriage-house overlay boards."
   },
   {
     "id": "chi-commercial-3285",
@@ -5048,6 +5063,805 @@
     "status": "current",
     "constructionVal": "fullview-glass",
     "notes": "Extruded aluminum residential and commercial full-view door."
+  },
+  {
+    "id": "clopay-gallery-steel",
+    "manufacturer": "Clopay",
+    "series": "Gallery Steel Collection",
+    "model_name": "Gallery Steel (Intellicore Polyurethane R-18.4)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "24-gauge steel",
+    "r_value": "R-18.4",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.3,
+    "weight_confidence": "estimated",
+    "data_source": "Clopay product pages (clopaydoor.com); density estimated from same Intellicore construction tier as Classic Steel 3000 / Modern Steel",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Grooved-panel arch/rectangle lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile ID label",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Carriage-style grooved-panel design on Clopay's standard Intellicore polyurethane platform -- same insulation tier as Classic Steel 3000/Modern Steel, different panel styling."
+  },
+  {
+    "id": "clopay-bridgeport",
+    "manufacturer": "Clopay",
+    "series": "Bridgeport Collection",
+    "model_name": "Bridgeport Steel (Intellicore Polyurethane R-18.4)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "24-gauge steel",
+    "r_value": "R-18.4",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.3,
+    "weight_confidence": "estimated",
+    "data_source": "Clopay product pages (clopaydoor.com); density estimated from same Intellicore construction tier as Classic Steel 3000",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Shaker recessed-panel arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile ID label",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Shaker-style recessed-panel design (also sold as Bridgeport Inlay); same Intellicore R-18.4 construction tier as Classic Steel 3000."
+  },
+  {
+    "id": "clopay-coachman-grandharbor",
+    "manufacturer": "Clopay",
+    "series": "Coachman / Grand Harbor Collection",
+    "model_name": "Coachman / Grand Harbor (Steel + Composite Overlay, ~R-6.3)",
+    "category": "residential",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "25-gauge steel with applied composite overlay",
+    "r_value": "R-6.3",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.1,
+    "weight_confidence": "estimated",
+    "data_source": "doorservpro.com Clopay brand guide (R-6.3 for polystyrene-backed overlay tier); density estimated from steel+overlay construction",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Arched carriage-top windows (+10 lbs across top section)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile ID label",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Steel carriage-house door with applied composite overlay boards on a polystyrene-insulated base -- lighter insulation tier than Canyon Ridge's 4/5-layer composite doors."
+  },
+  {
+    "id": "clopay-reserve-wood",
+    "manufacturer": "Clopay",
+    "series": "Reserve Wood / Classic Wood Collection",
+    "model_name": "Reserve Wood (Custom Hardwood, Species-Dependent)",
+    "category": "residential",
+    "construction_type": "wood - custom",
+    "panel_gauge": "N/A (solid/veneered wood panel)",
+    "r_value": "None (uninsulated unless custom-ordered)",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 3.0,
+    "weight_confidence": "estimated",
+    "data_source": "Clopay product pages; weight is a rough midpoint estimate only -- real wood door weight varies significantly by species, panel thickness and finish and is normally quoted per-order",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Custom true-divided-lite wood windows (weight varies by species/size)",
+    "strut_options": "Wood cross-bracing or steel reinforcement per manufacturer spec",
+    "stamp_location": "No standard factory stamp -- custom order tag",
+    "status": "current",
+    "constructionVal": "wood-solid",
+    "notes": "Custom hardwood door (cedar, hemlock, redwood, etc). Weight varies far more than steel doors -- treat this density as a rough planning estimate only, not a substitute for the actual order spec."
+  },
+  {
+    "id": "clopay-avante-sleek-vertistack",
+    "manufacturer": "Clopay",
+    "series": "Avante Sleek / VertiStack Avante",
+    "model_name": "Avante Sleek / VertiStack (Aluminum Full-View)",
+    "category": "residential",
+    "construction_type": "aluminum full-view",
+    "panel_gauge": "Extruded aluminum frame",
+    "r_value": "N/A",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 3.4,
+    "weight_confidence": "estimated",
+    "data_source": "Clopay product pages; density carried over from Avante Model AX/904 (same aluminum-glass construction, styling variant only)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Full-height glass infill standard; frosted/tinted options similar weight",
+    "strut_options": "Integral aluminum horizontal rails",
+    "stamp_location": "Bottom rail ID label",
+    "status": "current",
+    "constructionVal": "fullview-glass",
+    "notes": "Styling/track variants of the Avante aluminum-glass platform (Sleek = narrower stile, VertiStack = compact vertical stacking for low headroom) -- same frame construction and weight class as Avante Model AX."
+  },
+  {
+    "id": "amarr-stratford",
+    "manufacturer": "Amarr",
+    "series": "Stratford Collection",
+    "model_name": "Stratford (Standard-Gauge Steel, R-6.5)",
+    "category": "residential",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "Standard-gauge steel",
+    "r_value": "R-6.5",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 1.6,
+    "weight_confidence": "estimated",
+    "data_source": "commonwealthgaragedoors.com Amarr collection summary (R-6.48-6.64); density estimated from same 2-layer tier as Lincoln 2000",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Standard ranch window inserts (+5.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Value-tier insulated steel door, similar construction class to Lincoln 2000 but standard (lighter) gauge steel."
+  },
+  {
+    "id": "amarr-coastal-vinyl",
+    "manufacturer": "Amarr",
+    "series": "Coastal Collection",
+    "model_name": "Coastal (Solid Vinyl, R-8.16)",
+    "category": "residential",
+    "construction_type": "vinyl",
+    "panel_gauge": "N/A (solid vinyl panel)",
+    "r_value": "R-8.16",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 1.5,
+    "weight_confidence": "estimated",
+    "data_source": "commonwealthgaragedoors.com Amarr collection summary; density estimated -- vinyl is lighter than steel-and-foam construction of similar thickness, no manufacturer weight published",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Vinyl-framed lites (+4.0 lbs/ea)",
+    "strut_options": "Steel reinforcement struts standard (manufacturer-installed)",
+    "stamp_location": "Interior stamped ID tag",
+    "status": "current",
+    "constructionVal": "vinyl-solid",
+    "notes": "Solid vinyl panel construction -- resists denting/corrosion in coastal climates. Genuinely different material from Amarr's steel lines, so treat this weight as a distinct construction category, not a steel-tier estimate."
+  },
+  {
+    "id": "amarr-hillcrest",
+    "manufacturer": "Amarr",
+    "series": "Hillcrest Collection",
+    "model_name": "Hillcrest (Value Steel Carriage House, R-6.5)",
+    "category": "residential",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "25-gauge steel",
+    "r_value": "R-6.5",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 1.65,
+    "weight_confidence": "estimated",
+    "data_source": "amarr.com collection pages; density estimated from same 2-layer construction tier as Stratford/Lincoln 2000",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+7.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Value-positioned steel carriage-house design -- same construction class as Stratford, styled with faux carriage hardware."
+  },
+  {
+    "id": "wd-9405-carriage",
+    "manufacturer": "Wayne Dalton",
+    "series": "Model 9405 Carriage House",
+    "model_name": "Model 9405 Carriage House Steel (Insulated, ~R-16 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "25-gauge steel",
+    "r_value": "R-16 (est.)",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.3,
+    "weight_confidence": "estimated",
+    "data_source": "kaisergarage.com Wayne Dalton residential listing (model number/construction only -- R-value not published on source page, estimated from Classic Steel 8500 construction tier)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Low-maintenance steel carriage-house design; same general insulation tier assumed as Classic Steel 8500 pending a published R-value."
+  },
+  {
+    "id": "wd-8800-modern-glass",
+    "manufacturer": "Wayne Dalton",
+    "series": "Model 8800 Modern Glass",
+    "model_name": "Model 8800 Modern Glass (Aluminum Full-View)",
+    "category": "residential",
+    "construction_type": "aluminum full-view",
+    "panel_gauge": "Extruded aluminum frame",
+    "r_value": "N/A",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 3.3,
+    "weight_confidence": "estimated",
+    "data_source": "kaisergarage.com Wayne Dalton residential listing; density estimated from other manufacturers' aluminum full-view construction",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Full-height glass infill standard",
+    "strut_options": "Integral aluminum horizontal rails",
+    "stamp_location": "Bottom rail ID label",
+    "status": "current",
+    "constructionVal": "fullview-glass",
+    "notes": "Aluminum-and-glass contemporary door, Wayne Dalton's equivalent to other manufacturers' full-view aluminum lines."
+  },
+  {
+    "id": "chi-sterling-2717",
+    "manufacturer": "C.H.I.",
+    "series": "Sterling Collection",
+    "model_name": "Model 2717 Sterling (Polyurethane R-15.07)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "24-gauge steel (2-sided)",
+    "r_value": "R-15.07",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.25,
+    "weight_confidence": "verified",
+    "data_source": "chiohd.com Sterling collection page (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Minimalist linear lites (+7.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior section #2 stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Sterling's higher-R polyurethane variant. A lower-cost polystyrene variant (Model 2783, R-10.29) is also sold under the same collection name -- see notes on chi-planks-2283 for the equivalent lower tier."
+  },
+  {
+    "id": "chi-shoreline-2717",
+    "manufacturer": "C.H.I.",
+    "series": "Shoreline Collection",
+    "model_name": "Shoreline (2-1/2in Polyurethane, R-17.54)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "27-gauge steel (2-sided)",
+    "r_value": "R-17.54",
+    "thickness_in": 2.5,
+    "density_lbs_sqft": 2.6,
+    "weight_confidence": "verified",
+    "data_source": "chiohd.com Shoreline collection page (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Coastal-style vertical lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior section #2 stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "C.H.I.'s thickest standard residential door (2-1/2in) and the collection that actually carries the R-17.54 rating previously mis-assigned to Planks/Carriage House Stamped."
+  },
+  {
+    "id": "chi-recessed-panel",
+    "manufacturer": "C.H.I.",
+    "series": "Recessed Panel",
+    "model_name": "Recessed Panel (Polystyrene, ~R-9.65 est.)",
+    "category": "residential",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "25-gauge steel",
+    "r_value": "R-9.65 (est.)",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 1.75,
+    "weight_confidence": "estimated",
+    "data_source": "chiohd.com Recessed Panel collection listing (construction family only; R-value assumed same as other C.H.I. polystyrene-tier doors pending a model-specific spec sheet)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Recessed-panel arch lites (+6.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior section #2 stamp",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Timeless-collection recessed-panel steel door on C.H.I.'s standard polystyrene platform."
+  },
+  {
+    "id": "chi-full-view-aluminum",
+    "manufacturer": "C.H.I.",
+    "series": "Full-View Aluminum",
+    "model_name": "Full-View Aluminum (Aluminum Full-View)",
+    "category": "residential",
+    "construction_type": "aluminum full-view",
+    "panel_gauge": "Extruded aluminum frame",
+    "r_value": "N/A",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 3.35,
+    "weight_confidence": "estimated",
+    "data_source": "chiohd.com Full-View collection listing; density estimated from other manufacturers' aluminum full-view construction",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Full-height glass infill standard",
+    "strut_options": "Integral aluminum horizontal rails",
+    "stamp_location": "Bottom rail ID label",
+    "status": "current",
+    "constructionVal": "fullview-glass",
+    "notes": "C.H.I. previously had no full-view aluminum entry in this database despite it being a standard collection -- added for completeness."
+  },
+  {
+    "id": "chi-overlay-carriage",
+    "manufacturer": "C.H.I.",
+    "series": "Overlay Carriage House",
+    "model_name": "Overlay Carriage House (Steel + Composite Overlay, ~R-9.65 est.)",
+    "category": "residential",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "25-gauge steel with composite overlay",
+    "r_value": "R-9.65 (est.)",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.05,
+    "weight_confidence": "estimated",
+    "data_source": "chiohd.com Carriage collection listing; R-value/density estimated from same insulation tier as Carriage House Stamped 5283",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Arched carriage-top windows (+10 lbs across top section)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior section #2 stamp",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Distinct from the all-steel Stamped Carriage House line -- uses applied wood/composite overlay boards, available in steel, wood or fiberglass per C.H.I.'s site."
+  },
+  {
+    "id": "garaga-vantage",
+    "manufacturer": "Garaga",
+    "series": "Vantage Collection",
+    "model_name": "Vantage (3-Layer Steel, R-15.1)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "3-layer steel",
+    "r_value": "R-15.1",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.2,
+    "weight_confidence": "verified",
+    "data_source": "garaga.com selection guide (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Vantage window inserts (+7.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Also sold in 1-1/2in and 3in thickness variants (R-7 to R-15.1 depending on thickness); this entry represents the common 2in / R-15.1 configuration."
+  },
+  {
+    "id": "garaga-regal",
+    "manufacturer": "Garaga",
+    "series": "Regal Collection",
+    "model_name": "Regal (2-Layer Polystyrene, R-7.2)",
+    "category": "residential",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "Open-back steel",
+    "r_value": "R-7.2",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 1.6,
+    "weight_confidence": "verified",
+    "data_source": "garaga.com selection guide + aaagaragedoorswa.com Regal brochure (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Standard ranch window inserts (+5.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Value-tier door, also available fully non-insulated (open-back)."
+  },
+  {
+    "id": "garaga-top-tech",
+    "manufacturer": "Garaga",
+    "series": "Top Tech Collection",
+    "model_name": "Top Tech (Textured Steel, Polyurethane R-16)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "Textured steel",
+    "r_value": "R-16.0",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 2.2,
+    "weight_confidence": "verified",
+    "data_source": "garaga.com selection guide (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Top Tech window inserts (+7.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Textured-steel finish on Garaga's standard R-16 polyurethane platform -- same insulation tier as Standard+."
+  },
+  {
+    "id": "garaga-special-reserve",
+    "manufacturer": "Garaga",
+    "series": "Special Reserve Collection",
+    "model_name": "Special Reserve (4-Layer Steel, Polystyrene R-8.9)",
+    "category": "residential",
+    "construction_type": "two-layer sandwich",
+    "panel_gauge": "4-layer steel",
+    "r_value": "R-8.9",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 1.8,
+    "weight_confidence": "verified",
+    "data_source": "garaga.com selection guide (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Special Reserve window inserts (+6.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Also available in a non-insulated (R-7) open-back version at the same weight class."
+  },
+  {
+    "id": "steelcraft-artisan",
+    "manufacturer": "Steel-Craft",
+    "series": "Artisan Collection",
+    "model_name": "Artisan (Carriage House, Polyurethane ~R-16 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "Standard steel",
+    "r_value": "R-16 (est.)",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 2.25,
+    "weight_confidence": "estimated",
+    "data_source": "titangaragedoors.ca Steel-Craft residential collection listing (name/construction family only -- R-value not published on source page, estimated from ThermoCraft T-16 tier)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Premium carriage-house styling on Steel-Craft's standard ThermoCraft insulation platform."
+  },
+  {
+    "id": "steelcraft-esteem",
+    "manufacturer": "Steel-Craft",
+    "series": "Esteem Collection",
+    "model_name": "Esteem (Carriage House, Polyurethane ~R-16 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "Standard steel",
+    "r_value": "R-16 (est.)",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 2.25,
+    "weight_confidence": "estimated",
+    "data_source": "titangaragedoors.ca Steel-Craft residential collection listing (name/construction family only, R-value estimated from ThermoCraft T-16 tier)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Another carriage-house styling line on the same ThermoCraft-tier construction -- treat weight identically to Artisan/RanchCraft pending manufacturer-specific data."
+  },
+  {
+    "id": "steelcraft-prairie-ridge",
+    "manufacturer": "Steel-Craft",
+    "series": "Prairie Ridge / Mid-Century Modern Collection",
+    "model_name": "Prairie Ridge / Mid-Century Modern (Flush Steel, Polyurethane ~R-16 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "Standard steel",
+    "r_value": "R-16 (est.)",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 2.2,
+    "weight_confidence": "estimated",
+    "data_source": "titangaragedoors.ca Steel-Craft residential collection listing (name/construction family only, R-value estimated from same insulation platform as Contemporary Flush)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Horizontal linear lites (+7.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Modern flush/grooved-panel styling variants on the same ThermoCraft-tier construction as Contemporary Flush/Woodtone."
+  },
+  {
+    "id": "rw-briarcrest",
+    "manufacturer": "Richards-Wilcox",
+    "series": "Briarcrest (L200BC)",
+    "model_name": "Briarcrest L200BC (2in Neufoam Polyurethane, R-18)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "2in Neufoam polyurethane core",
+    "r_value": "R-18.0",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.25,
+    "weight_confidence": "verified",
+    "data_source": "rwdoors.com US garage door series listing (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Carriage-house door on the same Premium L200 (R-18) construction platform as Landmark Premium."
+  },
+  {
+    "id": "rw-echo-ridge-xl",
+    "manufacturer": "Richards-Wilcox",
+    "series": "Echo Ridge XL (L200ERX)",
+    "model_name": "Echo Ridge XL L200ERX (2in Neufoam + Fibrex Overlay, R-18)",
+    "category": "residential",
+    "construction_type": "composite overlay",
+    "panel_gauge": "2in Neufoam core with Fibrex overlay",
+    "r_value": "R-18.0",
+    "thickness_in": 2.0,
+    "density_lbs_sqft": 2.9,
+    "weight_confidence": "verified",
+    "data_source": "rwdoors.com US garage door series listing (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Fibrex composite overlay on the Premium (R-18) core, a step up from the entry-level Echo Ridge (L138ER)."
+  },
+  {
+    "id": "rw-rockwood",
+    "manufacturer": "Richards-Wilcox",
+    "series": "Rockwood (L200RW / L200RWC)",
+    "model_name": "Rockwood L200RW (2in Core + Applied Cedar Board, R-19)",
+    "category": "residential",
+    "construction_type": "composite overlay",
+    "panel_gauge": "2in core with 1in applied cedar board",
+    "r_value": "R-19.0",
+    "thickness_in": 3.0,
+    "density_lbs_sqft": 3.1,
+    "weight_confidence": "verified",
+    "data_source": "rwdoors.com US garage door series listing (2026-09 pull)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Custom carriage-style lites (+10 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Real 1in cedar board applied over the insulated core -- heaviest Richards-Wilcox residential door in this database due to the solid wood overlay."
+  },
+  {
+    "id": "hormann-carriage-style",
+    "manufacturer": "Hormann",
+    "series": "Carriage House Style",
+    "model_name": "Carriage House Style (Steel or Aluminum, Polyurethane ~R-16 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "Steel (aluminum variant also offered)",
+    "r_value": "R-16 (est.)",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 2.2,
+    "weight_confidence": "estimated",
+    "data_source": "hormann.us residential Carriage House Style page (construction family only; R-value estimated from same tier as Taurus 4250)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Steel version is on the same insulation tier as the Taurus line; an aluminum full-view carriage variant is also offered (see hormann-carriage-alum for that construction)."
+  },
+  {
+    "id": "hormann-carriage-alum",
+    "manufacturer": "Hormann",
+    "series": "Carriage House Style (Aluminum)",
+    "model_name": "Carriage House Style Aluminum (Full-View)",
+    "category": "residential",
+    "construction_type": "aluminum full-view",
+    "panel_gauge": "Extruded aluminum frame",
+    "r_value": "N/A",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 3.3,
+    "weight_confidence": "estimated",
+    "data_source": "hormann.us residential Carriage House Style page; density estimated from other manufacturers' aluminum full-view construction",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Full-height glass infill standard",
+    "strut_options": "Integral aluminum horizontal rails",
+    "stamp_location": "Bottom rail ID label",
+    "status": "current",
+    "constructionVal": "fullview-glass",
+    "notes": "Hormann previously had no full-view aluminum entry in this database -- added for completeness."
+  },
+  {
+    "id": "haas-6300-carriage",
+    "manufacturer": "Haas",
+    "series": "6300 Series Carriage House",
+    "model_name": "Haas 6300 Series Carriage House (Polyurethane ~R-16 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "Standard steel",
+    "r_value": "R-16 (est.)",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 2.2,
+    "weight_confidence": "estimated",
+    "data_source": "haasdoor.com residential product family; R-value estimated from same insulation tier as Haas 700 Series",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Carriage-house styling on the same polyurethane platform as the 700 Series."
+  },
+  {
+    "id": "nwd-heritage-classic",
+    "manufacturer": "Northwest",
+    "series": "Heritage Classic Collection",
+    "model_name": "Heritage Classic (Carriage House, Polyurethane ~R-16 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polyurethane",
+    "panel_gauge": "Standard steel",
+    "r_value": "R-16 (est.)",
+    "thickness_in": 1.75,
+    "density_lbs_sqft": 2.2,
+    "weight_confidence": "estimated",
+    "data_source": "nwdusa.com Heritage Classic collection listing (construction family only; R-value estimated from same tier as Therma Max)",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7",
+      "16x8"
+    ],
+    "window_options": "Carriage-style arch lites (+8.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "foamed-3layer",
+    "notes": "Carriage-house styling line (C-Series/E-Series variants) on the same polyurethane platform as Therma Max. Northwest Door's site now operates under the Hormann-Northwest Door brand."
+  },
+  {
+    "id": "nwd-protech-2500",
+    "manufacturer": "Northwest",
+    "series": "Pro Tech 2500 Collection",
+    "model_name": "Pro Tech 2500 (Standard Steel, ~R-9 est.)",
+    "category": "residential",
+    "construction_type": "three-layer polystyrene",
+    "panel_gauge": "Standard steel",
+    "r_value": "R-9 (est.)",
+    "thickness_in": 1.5,
+    "density_lbs_sqft": 1.7,
+    "weight_confidence": "estimated",
+    "data_source": "nwdusa.com 500-series/Pro Tech collection listing; R-value estimated from same tier as Therma Tech",
+    "last_verified": "2026-09",
+    "common_sizes": [
+      "8x7",
+      "9x7",
+      "16x7"
+    ],
+    "window_options": "Standard ranch window inserts (+5.0 lbs/ea)",
+    "strut_options": "2-1/4in U-bar (+0.85 lbs/ft)",
+    "stamp_location": "Interior end stile stamp",
+    "status": "current",
+    "constructionVal": "poly-vinyl",
+    "notes": "Entry/value-tier residential line, same construction class as Therma Tech."
   }
 ];
 
@@ -5446,76 +6260,263 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
           });
         }
 
-        const response = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: parts }],
-            generationConfig: { responseMimeType: "application/json" }
-          })
-        });
+        // BUGFIX (Sept 2026 audit): a hung Worker/API call used to leave the
+        // spinner running forever with no way out. Add a hard 30s timeout so
+        // a stalled request always resolves into a clear error state.
+        const abortController = new AbortController();
+        const timeoutId = setTimeout(() => abortController.abort(), 30000);
 
-        const data = await response.json();
+        let response;
+        try {
+          response = await fetch(proxyUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: parts }],
+              generationConfig: { responseMimeType: "application/json" }
+            }),
+            signal: abortController.signal
+          });
+        } finally {
+          clearTimeout(timeoutId);
+        }
+
         spinner.style.display = 'none';
 
-        // Gracefully catch rate limit errors
-        if (data.error === 'daily_limit_reached' || response.status === 429) {
+        // BUGFIX: previously only HTTP 429 / a specific error string were
+        // handled -- any other non-OK status (500, 502, a changed Worker URL,
+        // etc.) fell through and produced a confusing "Unexpected response
+        // format" message. Give every failure path a clear, specific message.
+        if (response.status === 429) {
+          statusText.innerText = 'Daily AI limit reached for today';
+          alert('Daily AI limit reached for today — try again tomorrow, or use the manual calculators below.');
+          return;
+        }
+        if (!response.ok) {
+          statusText.innerText = `AI service error (HTTP ${response.status})`;
+          alert(`AI Scanner Error: the identification service returned an error (HTTP ${response.status}). Please try again, or use the manual manufacturer/model picker below.`);
+          return;
+        }
+
+        let data;
+        try {
+          data = await response.json();
+        } catch (parseErr) {
+          statusText.innerText = 'AI service returned an unreadable response.';
+          alert('AI Scanner Error: the identification service returned data we could not read. Please try again, or use the manual picker below.');
+          return;
+        }
+
+        if (data.error === 'daily_limit_reached') {
           statusText.innerText = 'Daily AI limit reached for today';
           alert('Daily AI limit reached for today — try again tomorrow, or use the manual calculators below.');
           return;
         }
 
         if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-          const rawText = data.candidates[0].content.parts[0].text;
-          const parsed = JSON.parse(rawText);
+          const finishReason = data.candidates[0].finishReason;
+          const rawText = data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+
+          if (!rawText) {
+            statusText.innerText = finishReason === 'SAFETY'
+              ? 'Photo could not be analyzed (content filter).'
+              : 'AI returned no result for this photo.';
+            alert('AI Scanner: no usable result was returned for this photo. Try a clearer, well-lit photo of the door face, or use the manual picker below.');
+            return;
+          }
+
+          let parsed;
+          try {
+            parsed = JSON.parse(rawText);
+          } catch (jsonErr) {
+            console.error('AI Scan: malformed JSON from model:', rawText);
+            statusText.innerText = 'AI returned malformed data.';
+            alert('AI Scanner Error: the AI\'s response could not be parsed. Please try again, or use the manual picker below.');
+            return;
+          }
+
+          // BUGFIX: validate the response actually has what we need before
+          // trusting it anywhere downstream -- an empty/partial object used
+          // to sail straight through and get applied to the calculator.
+          if (parsed.identified === false || !parsed.manufacturer || !parsed.model) {
+            lastAIAnalysis = null;
+            resultCard.style.display = 'block';
+            statusText.innerText = 'Could not confidently identify this door.';
+            document.getElementById('aiConfBadge').innerText = 'No match';
+            document.getElementById('aiConfBadge').className = 'badge';
+            document.getElementById('aiConfBadge').style.background = 'rgba(148,163,184,0.2)';
+            document.getElementById('aiConfBadge').style.color = '#94a3b8';
+            document.getElementById('aiModelResult').innerText = 'Manufacturer/model not identified';
+            document.getElementById('aiCuesText').innerText = parsed.visualCues || 'The photo didn\'t contain enough clear evidence to identify this door. Try a straight-on shot of the face and, if possible, a second photo of the end stile or joint profile, or use the manual picker below.';
+            document.getElementById('aiGroundingNote').style.display = 'none';
+            return;
+          }
+
           lastAIAnalysis = parsed;
 
           resultCard.style.display = 'block';
           statusText.innerText = 'Analysis complete';
-          document.getElementById('aiConfBadge').innerText = `${parsed.confidence || 90}% Match`;
+
+          const confidence = typeof parsed.confidence === 'number' ? parsed.confidence : 90;
+          const confBadge = document.getElementById('aiConfBadge');
+          confBadge.innerText = `${confidence}% Match`;
+          // BUGFIX: a low-confidence AI guess used to look identical (same
+          // green badge) to a high-confidence one. Now a shaky read is
+          // visibly flagged rather than presented with false certainty.
+          if (confidence < 60) {
+            confBadge.className = 'badge';
+            confBadge.style.background = 'rgba(239,68,68,0.2)';
+            confBadge.style.color = '#f87171';
+            confBadge.innerText = `${confidence}% Match — low confidence, verify manually`;
+          } else if (confidence < 80) {
+            confBadge.className = 'badge';
+            confBadge.style.background = 'rgba(245,158,11,0.2)';
+            confBadge.style.color = '#f59e0b';
+          } else {
+            confBadge.className = 'badge green';
+            confBadge.style.background = '';
+            confBadge.style.color = '';
+          }
+
           document.getElementById('aiModelResult').innerText = `${parsed.manufacturer} — ${parsed.model}`;
           document.getElementById('aiCuesText').innerText = parsed.visualCues || 'Matched factory specifications.';
+          document.getElementById('aiGroundingNote').style.display = 'none'; // set properly once Apply is pressed and matching runs
         } else if (data.error) {
-          statusText.innerText = 'Error: ' + data.error.message;
-          alert('API Error: ' + data.error.message);
+          statusText.innerText = 'Error: ' + (data.error.message || 'unknown error');
+          alert('API Error: ' + (data.error.message || 'unknown error'));
         } else {
           statusText.innerText = 'Unexpected response format.';
+          alert('AI Scanner Error: received an unexpected response format from the identification service. Please try again, or use the manual picker below.');
         }
       } catch (err) {
-        console.error('AI Scan Error:', err);
         spinner.style.display = 'none';
-        statusText.innerText = 'Scan failed.';
-        alert('AI Scanner Error: ' + (err.message || 'Check network connection.'));
+        if (err.name === 'AbortError') {
+          console.error('AI Scan Error: request timed out');
+          statusText.innerText = 'Scan timed out.';
+          alert('AI Scanner Error: the request took too long and timed out. Check your connection and try again, or use the manual picker below.');
+        } else {
+          console.error('AI Scan Error:', err);
+          statusText.innerText = 'Scan failed.';
+          alert('AI Scanner Error: ' + (err.message || 'Check network connection.') + ' You can use the manual picker below in the meantime.');
+        }
       }
     }
 
+    // BUGFIX (Sept 2026 audit) -- helper: normalize a model name for comparison
+    // (lowercase, strip punctuation, collapse whitespace) so "C.H.I. Plank"
+    // and "chi plank" compare the same way.
+    function normalizeModelStr(s) {
+      return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    }
+
+    // BUGFIX: word-overlap similarity score (0-1) between the AI's free-text
+    // model guess and a real catalog model name, instead of the old
+    // includes()-in-either-direction check (which matched almost anything
+    // short, and matched nothing sensibly for anything long/differently
+    // worded).
+    function scoreModelMatch(aiModel, candidateModel) {
+      const a = new Set(normalizeModelStr(aiModel).split(' ').filter(Boolean));
+      const b = new Set(normalizeModelStr(candidateModel).split(' ').filter(Boolean));
+      if (a.size === 0 || b.size === 0) return 0;
+      let overlap = 0;
+      a.forEach(tok => { if (b.has(tok)) overlap++; });
+      return overlap / Math.max(a.size, b.size);
+    }
+
+    // Minimum similarity before we'll present an AI model guess as a real
+    // catalog match. Below this, we tell the tech honestly that nothing in
+    // the database matched, instead of silently defaulting to whatever
+    // model happened to be first in that manufacturer's list.
+    const MODEL_MATCH_THRESHOLD = 0.34;
+
     function applyAIResultToCalculator() {
       if (!lastAIAnalysis) return;
+      const groundingNote = document.getElementById('aiGroundingNote');
 
+      // BUGFIX: case/format-sensitive exact match used to silently fail
+      // (leaving whatever manufacturer was already selected) with zero
+      // indication that the AI's manufacturer guess wasn't applied at all.
       const mfgSelect = document.getElementById('mfgSelect');
-      mfgSelect.value = lastAIAnalysis.manufacturer;
+      const mfgTarget = (lastAIAnalysis.manufacturer || '').trim().toLowerCase();
+      let matchedMfgValue = null;
+      for (const opt of mfgSelect.options) {
+        if (opt.value.toLowerCase() === mfgTarget) { matchedMfgValue = opt.value; break; }
+      }
+
+      if (!matchedMfgValue) {
+        // Manufacturer isn't one we have in the database (e.g. AI returned
+        // "Unknown" or a brand we don't carry) -- do not silently mutate the
+        // calculator to some other manufacturer. Apply only the AI's own
+        // material estimate (density/R-value), clearly labeled as such, and
+        // leave manufacturer/model selection to the technician.
+        if (typeof lastAIAnalysis.density === 'number') {
+          customDensityOverride = lastAIAnalysis.density;
+          document.getElementById('badgeDensity').innerText = lastAIAnalysis.density.toFixed(2) + ' lbs/sq ft (AI estimate, unverified)';
+        }
+        if (lastAIAnalysis.rValue) {
+          document.getElementById('badgeRVal').innerText = lastAIAnalysis.rValue + ' (AI estimate)';
+        }
+        calculateDoorWeight();
+        groundingNote.style.display = 'block';
+        groundingNote.style.background = 'rgba(239,68,68,0.12)';
+        groundingNote.style.color = '#f87171';
+        groundingNote.innerText = `⚠️ "${lastAIAnalysis.manufacturer || 'Unknown'}" isn't in the manufacturer database -- applied the AI's estimated weight/R-value only. Please select the actual manufacturer/model manually if you can identify it.`;
+        alert(`Could not match "${lastAIAnalysis.manufacturer || 'Unknown'}" to a manufacturer in the database. Applied only the AI's estimated ${(lastAIAnalysis.density || 2.2).toFixed(2)} lbs/sq ft as a rough weight -- please verify manually.`);
+        return;
+      }
+
+      mfgSelect.value = matchedMfgValue;
       handleMfgChange();
 
-      // Attempt to match model
+      // BUGFIX: score every real model in this manufacturer's catalog against
+      // the AI's free-text guess and take the best one -- but only accept it
+      // above MODEL_MATCH_THRESHOLD. Previously, a failed match silently left
+      // whichever model was first in the list selected, indistinguishable
+      // from a real match.
       const modelSelect = document.getElementById('modelSelect');
+      let bestIdx = -1;
+      let bestScore = 0;
       for (let i = 0; i < modelSelect.options.length; i++) {
-        if (modelSelect.options[i].value.toLowerCase().includes(lastAIAnalysis.model.toLowerCase()) || 
-            lastAIAnalysis.model.toLowerCase().includes(modelSelect.options[i].value.toLowerCase())) {
-          modelSelect.selectedIndex = i;
-          break;
+        const score = scoreModelMatch(lastAIAnalysis.model, modelSelect.options[i].value);
+        if (score > bestScore) { bestScore = score; bestIdx = i; }
+      }
+
+      let matchedModelName = null;
+      if (bestIdx >= 0 && bestScore >= MODEL_MATCH_THRESHOLD) {
+        modelSelect.selectedIndex = bestIdx;
+        matchedModelName = modelSelect.options[bestIdx].value;
+        handleModelSelect(); // pulls the catalog's own verified/estimated density + R-value
+      }
+
+      // The AI's own density/R-value estimate is still useful even when we
+      // couldn't ground it to a named catalog model -- apply it as a
+      // clearly-labeled estimate rather than discarding it or, worse,
+      // silently attaching it to the wrong model.
+      if (!matchedModelName) {
+        if (typeof lastAIAnalysis.density === 'number') {
+          customDensityOverride = lastAIAnalysis.density;
+          document.getElementById('badgeDensity').innerText = lastAIAnalysis.density.toFixed(2) + ' lbs/sq ft (AI estimate, unverified)';
         }
+        if (lastAIAnalysis.rValue) {
+          document.getElementById('badgeRVal').innerText = lastAIAnalysis.rValue + ' (AI estimate)';
+        }
+        calculateDoorWeight();
       }
 
-      if (lastAIAnalysis.density) {
-        customDensityOverride = lastAIAnalysis.density;
-        document.getElementById('badgeDensity').innerText = lastAIAnalysis.density.toFixed(2) + ' lbs/sq ft';
-      }
-      if (lastAIAnalysis.rValue) {
-        document.getElementById('badgeRVal').innerText = lastAIAnalysis.rValue;
+      groundingNote.style.display = 'block';
+      if (matchedModelName) {
+        groundingNote.style.background = 'rgba(16,185,129,0.12)';
+        groundingNote.style.color = '#34d399';
+        groundingNote.innerText = `✓ Matched to catalog: ${matchedMfgValue} — ${matchedModelName} (${Math.round(bestScore * 100)}% name match). Verify against the door's actual stamp/label before finalizing.`;
+      } else {
+        groundingNote.style.background = 'rgba(245,158,11,0.12)';
+        groundingNote.style.color = '#f59e0b';
+        groundingNote.innerText = `⚠️ No confident match for "${lastAIAnalysis.model}" in the ${matchedMfgValue} catalog -- applied the AI's estimated weight/R-value only, not a specific named model. Please verify manually or pick the closest model from the dropdown.`;
       }
 
-      calculateDoorWeight();
-      alert(`Applied ${lastAIAnalysis.manufacturer} ${lastAIAnalysis.model} (${lastAIAnalysis.density || 2.2} lbs/sq ft) to calculator.`);
+      alert(matchedModelName
+        ? `Applied ${matchedMfgValue} — ${matchedModelName} (${customDensityOverride ? customDensityOverride.toFixed(2) : (lastAIAnalysis.density || 2.2).toFixed(2)} lbs/sq ft) to calculator. Please verify against the door's stamp before finalizing.`
+        : `No exact catalog model matched "${lastAIAnalysis.model}". Applied only the AI's estimated ${(lastAIAnalysis.density || 2.2).toFixed(2)} lbs/sq ft as a rough weight for ${matchedMfgValue} -- please verify manually or choose a specific model.`);
     }
 
 
