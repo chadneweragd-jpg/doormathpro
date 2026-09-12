@@ -1337,274 +1337,6 @@
     }
 
 
-    /* ===================================================
-       SPRING SCAN — CAMERA OVERLAY & MEASUREMENT STYLES
-       =================================================== */
-    .scan-guide-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    }
-    .camera-viewport {
-      position: relative;
-      width: 100%;
-      height: 380px;
-      max-height: 60vh;
-      background: #020617;
-      border-radius: 12px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #1e293b;
-      margin-bottom: 16px;
-    }
-    .camera-video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .camera-overlay {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 16px;
-      box-sizing: border-box;
-      background: rgba(0, 0, 0, 0.25);
-    }
-    .overlay-header {
-      text-align: center;
-      background: rgba(9, 13, 22, 0.85);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      padding: 6px 14px;
-      border-radius: 20px;
-      margin: 0 auto;
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      backdrop-filter: blur(4px);
-    }
-    .overlay-spring-guide {
-      border: 2px dashed rgba(245, 158, 11, 0.8);
-      border-radius: 8px;
-      height: 140px;
-      width: 90%;
-      margin: 0 auto;
-      position: relative;
-      background: rgba(245, 158, 11, 0.04);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
-    }
-    .overlay-spring-ticks {
-      position: absolute;
-      left: 0;
-      right: 0;
-      height: 100%;
-      background-image: repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(245, 158, 11, 0.4) 18px, rgba(245, 158, 11, 0.4) 20px);
-    }
-    .overlay-ruler-guide {
-      border-top: 2px solid #38bdf8;
-      width: 90%;
-      margin: 8px auto 0 auto;
-      padding-top: 4px;
-      text-align: center;
-      color: #38bdf8;
-      font-size: 11px;
-      font-weight: 700;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    }
-    .overlay-label {
-      background: rgba(0, 0, 0, 0.7);
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      color: #fff;
-      font-weight: 700;
-      z-index: 2;
-    }
-    .tips-box {
-      background: rgba(56, 189, 248, 0.06);
-      border: 1px solid rgba(56, 189, 248, 0.2);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-top: 14px;
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-    .tips-box strong {
-      color: #38bdf8;
-    }
-    .tips-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-top: 6px;
-    }
-    @media (max-width: 600px) {
-      .tips-grid { grid-template-columns: 1fr; }
-    }
-
-    /* Processing & Step States */
-    .scan-steps-box {
-      background: #172033;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      margin: 16px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .scan-step-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      transition: all 0.2s ease;
-    }
-    .scan-step-item.active {
-      color: var(--accent);
-    }
-    .scan-step-item.done {
-      color: var(--success);
-    }
-    .step-indicator {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid var(--border-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      font-weight: 800;
-    }
-    .scan-step-item.active .step-indicator {
-      border-color: var(--accent);
-      background: rgba(245, 158, 11, 0.2);
-      color: var(--accent);
-      animation: pulse 1s infinite;
-    }
-    .scan-step-item.done .step-indicator {
-      border-color: var(--success);
-      background: var(--success);
-      color: #000;
-    }
-
-    /* Result Card Display */
-    .result-giant-card {
-      background: linear-gradient(135deg, #111827 0%, #172033 100%);
-      border: 2px solid var(--accent);
-      border-radius: 16px;
-      padding: 24px 20px;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.2);
-      margin: 16px 0;
-    }
-    .result-wire-num {
-      font-size: 52px;
-      font-weight: 900;
-      color: var(--accent);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      margin: 10px 0 6px 0;
-      text-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
-    }
-    .result-color-badge {
-      display: inline-block;
-      padding: 3px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 16px;
-    }
-    .result-metrics-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      background: rgba(9, 13, 22, 0.6);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 12px;
-      margin: 16px 0;
-      text-align: left;
-    }
-    @media (max-width: 600px) {
-      .result-metrics-row {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
-    }
-    .res-metric-label {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 700;
-    }
-    .res-metric-val {
-      font-size: 15px;
-      font-weight: 800;
-      color: #fff;
-      font-family: ui-monospace, monospace;
-      margin-top: 2px;
-    }
-
-    /* Scan Quality Alert Box */
-    .quality-alert-box {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      margin: 16px 0;
-    }
-    .quality-alert-title {
-      font-size: 17px;
-      font-weight: 800;
-      color: #f87171;
-      margin-bottom: 6px;
-    }
-    .quality-alert-desc {
-      font-size: 13px;
-      color: #cbd5e1;
-      line-height: 1.5;
-      margin-bottom: 16px;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* Scan History Table */
-    .history-card {
-      background: var(--bg-card-sub);
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      padding: 14px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
 </style>
 </head>
 <body>
@@ -1653,7 +1385,7 @@
 
       <div class="hero-actions">
         <button class="btn-action primary hero-cta-btn" onclick="switchTab('spring-scan'); scrollToTools();">
-          ⚡ Start Spring Scan
+          📏 Identify Wire Size
         </button>
         <button class="btn-action" onclick="openSpecSheet()">
           📄 View Spec Sheet
@@ -1673,9 +1405,9 @@
       <!-- Feature Highlight Cards (4 Primary Actions) -->
       <div class="hero-features-grid">
         <div class="hero-feature-card" onclick="switchTab('spring-scan'); scrollToTools();">
-          <div class="feature-icon">📸</div>
-          <div class="feature-name">Spring Scan (AI Optical)</div>
-          <div class="feature-desc">Snap 20 coils with your tape measure to estimate wire size in seconds without manual math.</div>
+          <div class="feature-icon">📏</div>
+          <div class="feature-name">20-Coil Wire ID</div>
+          <div class="feature-desc">Measure 20 coils with a tape measure and get exact wire size, DASMA color code & paint marker — no camera, no guesswork.</div>
         </div>
 
         <div class="hero-feature-card" onclick="switchTab('spring-sizer'); scrollToTools();">
@@ -1725,7 +1457,7 @@
     <div class="tab-nav-wrapper">
       <nav class="tab-nav" id="mainTabNav">
         <button class="tab-btn active" data-tab="spring-scan" onclick="switchTab('spring-scan')">
-          <span>📸</span> <span>Spring Scan</span>
+          <span>📏</span> <span>Wire ID</span>
         </button>
         <button class="tab-btn" data-tab="spring-sizer" onclick="switchTab('spring-sizer')">
           <span>⚖️</span> <span>Engineer Spring</span>
@@ -1744,16 +1476,16 @@
     <div class="tab-scroll-hint no-print">
       <span>← Scroll for more tools →</span>
     </div>
-    <!-- Active Spring Scan Confirmation Banner -->
+    <!-- Active Wire ID Confirmation Banner -->
     <div id="springScanLiveIndicator" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; align-items: center; gap: 8px;">
         <span style="font-size: 16px;">✓</span>
-        <span style="font-size: 13px; font-weight: 700; color: #34d399;">Wire size (<span id="indicatorWireSize">.218"</span>) measured by Spring Scan</span>
-        <span class="badge green" id="indicatorConfBadge" style="font-size: 10px;">HIGH CONFIDENCE</span>
+        <span style="font-size: 13px; font-weight: 700; color: #34d399;">Wire size <span id="indicatorWireSize">.218"</span> confirmed</span>
+        <span class="badge green" id="indicatorConfBadge" style="font-size: 10px;">VERIFIED</span>
       </div>
       <div style="display: flex; gap: 8px;">
-        <button class="btn-action" style="padding: 4px 8px; font-size: 11px;" onclick="switchTab('spring-scan')">Rescan Spring 📸</button>
-        <button class="btn-action" style="padding: 4px 8px; font-size: 11px;" onclick="clearSpringScanWire()">Clear</button>
+        <button class="btn-action" style="padding: 4px 8px; font-size: 11px;" onclick="switchTab('spring-scan')">Edit Wire ID</button>
+        <button class="btn-action" style="padding: 4px 8px; font-size: 11px;" onclick="clearWireIndicator()">Clear</button>
       </div>
     </div>
 
@@ -1956,214 +1688,79 @@
       </div>
     </section>
 
-    <!-- TAB 3: DOOR WEIGHT ESTIMATOR -->
-        <!-- ===================================================
-         FLAGSHIP MODULE: SPRING SCAN (AI-ASSISTED 20-COIL MEASUREMENT)
-         =================================================== -->
+    <!-- TAB 0: 20-COIL WIRE SIZE IDENTIFIER (replaces removed Spring Scan AI camera feature) -->
     <section id="pane-spring-scan" class="tab-pane active">
-      <div class="card scan-guide-card">
+      <div class="card">
         <div class="card-header">
           <div>
             <div class="card-title" style="font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
-              📸 Spring Scan
-              <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: var(--accent); border: 1px solid rgba(245, 158, 11, 0.4);">AI-Assisted Measurement</span>
+              📏 20-Coil Wire Size Identifier
             </div>
-            <div class="card-subtitle">Measure 20 coils with tape reference to determine exact wire size</div>
+            <div class="card-subtitle">Measure 20 consecutive coils tightly with a tape measure — no camera needed</div>
           </div>
-          <button class="btn-action" onclick="openScanHistoryModal()" style="font-size: 12px;">
-            📋 Scan History (<span id="scanHistoryCount">0</span>)
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">
+            <span>Measured 20-Coil Length</span>
+            <span class="val-hint mono" id="twentyCoilDisplay">5.00" (5 inches)</span>
+          </div>
+          <div class="stepper-control">
+            <button class="stepper-btn" onclick="stepTwentyCoil(-0.0625)">−</button>
+            <input type="number" step="0.0625" class="stepper-input mono" id="twentyCoilInput" value="5.00" oninput="calcTwentyCoil()">
+            <button class="stepper-btn" onclick="stepTwentyCoil(0.0625)">+</button>
+          </div>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric-card">
+            <div class="metric-label">Identified Wire Gauge</div>
+            <div class="metric-val mono highlight" id="coilWireResult">.250</div>
+            <div class="metric-sub" id="coilFractionResult">5-0/16"</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">DASMA Color Code</div>
+            <div class="metric-val" id="coilColorResult" style="font-size: 18px; font-weight: 700; color: #f59e0b;">Gold / Orange</div>
+            <div class="metric-sub">Standard Paint Marker</div>
+          </div>
+        </div>
+
+        <button class="btn-action primary" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px; font-weight: 900; margin-bottom: 8px; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);" onclick="confirmTwentyCoilWire()">
+          ✓ Use This Wire Size in Spring Engineering →
+        </button>
+        <div style="text-align: center; margin-bottom: 16px;">
+          <button class="btn-action" style="font-size: 12px;" onclick="openManualWirePicker()">
+            Already know your wire size? Select it directly →
           </button>
         </div>
 
-        <!-- STATE 1: CAMERA & GUIDE SCREEN -->
-        <div id="scanCameraState">
-          <div class="camera-viewport" id="cameraViewport">
-            <!-- Hidden real video element for WebRTC live camera -->
-            <video id="scanVideo" class="camera-video" autoplay playsinline muted style="display: none;"></video>
-            <!-- Canvas for snapshot & image processing -->
-            <canvas id="scanCanvas" style="display: none; width: 100%; height: 100%; object-fit: contain;"></canvas>
-
-            <!-- Placeholder image if camera not active -->
-            <div id="cameraStandbyPlaceholder" style="text-align: center; padding: 20px;">
-              <div style="font-size: 44px; margin-bottom: 10px;">📸</div>
-              <div style="font-size: 16px; font-weight: 800; color: #fff;">Place Tape Beside 20 Coils</div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px; max-width: 320px;">
-                Align the spring and ruler inside the guide box below, then tap Capture.
-              </div>
-            </div>
-
-            <!-- Optical Alignment Guide Overlay (Section 4) -->
-            <div class="camera-overlay">
-              <div class="overlay-header">
-                SPRING SCAN • 20-COIL GUIDE
-              </div>
-
-              <!-- Alignment Box for Spring -->
-              <div class="overlay-spring-guide">
-                <div class="overlay-spring-ticks"></div>
-                <div class="overlay-label" style="top: 8px;">
-                  |── ALIGN 20 COILS HERE ──|
-                </div>
-              </div>
-
-              <!-- Alignment Guide for Tape Measure / Ruler -->
-              <div class="overlay-ruler-guide">
-                ──────────────── PLACE TAPE MEASURE / RULER HERE ────────────────
-              </div>
-
-              <div style="text-align: center; font-size: 10px; color: rgba(255,255,255,0.7); text-shadow: 0 1px 2px #000;">
-                Keep camera square • 20 adjacent coils visible
-              </div>
-            </div>
-          </div>
-
-          <!-- Camera Controls -->
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px;">
-            <label class="btn-action primary" style="flex: 2; min-width: 200px; justify-content: center; padding: 14px; font-size: 15px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
-              <span>📸 Capture Spring Photo</span>
-              <input type="file" id="springScanCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="handleSpringScanUpload(event)">
-            </label>
-            <label class="btn-action" style="flex: 1; min-width: 140px; justify-content: center; padding: 14px; font-size: 13px; font-weight: 700; cursor: pointer;">
-              <span>📁 Choose Photo</span>
-              <input type="file" id="springScanFileInput" accept="image/*" style="display: none;" onchange="handleSpringScanUpload(event)">
-            </label>
-          </div>
-
-          <!-- Helpful Field Technician Tips (Section 4) -->
-          <div class="tips-box">
-            <strong>Field Measurement Tips:</strong>
-            <div class="tips-grid">
-              <div>✓ Keep camera square to spring</div>
-              <div>✓ Keep at least 20 coils visible</div>
-              <div>✓ Include ruler/tape in photo</div>
-              <div>✓ Avoid glare & harsh shadows</div>
-            </div>
-          </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Tape Measurement</th>
+                <th>Wire Size</th>
+                <th>Color Code</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>4-1/8" (4.125")</td><td class="mono font-bold">.207</td><td><span class="badge" style="background:#fef08a; color:#854d0e;">Yellow</span></td></tr>
+              <tr><td>4-3/8" (4.375")</td><td class="mono font-bold">.218</td><td><span class="badge gray">White</span></td></tr>
+              <tr><td>4-1/2" (4.500")</td><td class="mono font-bold">.225</td><td><span class="badge" style="background:#fecaca; color:#991b1b;">Red</span></td></tr>
+              <tr><td>4-11/16" (4.687")</td><td class="mono font-bold">.234</td><td><span class="badge" style="background:#fed7aa; color:#9a3412;">Brown</span></td></tr>
+              <tr><td>4-7/8" (4.875")</td><td class="mono font-bold">.243</td><td><span class="badge green">Green</span></td></tr>
+              <tr class="selected"><td>5-0/0" (5.000")</td><td class="mono font-bold">.250</td><td><span class="badge amber">Gold</span></td></tr>
+              <tr><td>5-1/4" (5.250")</td><td class="mono font-bold">.262</td><td><span class="badge" style="background:#bae6fd; color:#0369a1;">Blue</span></td></tr>
+              <tr><td>5-7/16" (5.437")</td><td class="mono font-bold">.273</td><td><span class="badge" style="background:#334155; color:#f8fafc;">Black</span></td></tr>
+              <tr><td>5-11/16" (5.687")</td><td class="mono font-bold">.283</td><td><span class="badge" style="background:#fed7aa; color:#ea580c;">Orange</span></td></tr>
+              <tr><td>6-1/4" (6.250")</td><td class="mono font-bold">.312</td><td><span class="badge" style="background:#fecaca; color:#991b1b;">Red</span></td></tr>
+            </tbody>
+          </table>
         </div>
-
-        <!-- STATE 2: IMAGE QUALITY CHECK FAILURE (Section 5) -->
-        <div id="scanQualityFailState" style="display: none;">
-          <div class="quality-alert-box">
-            <div style="font-size: 38px; margin-bottom: 8px;">⚠️</div>
-            <div class="quality-alert-title">Photo Needs Another Try</div>
-            <div class="quality-alert-desc" id="qualityFailReason">
-              Image confidence is low. Make sure at least 20 coils and your tape measure are clearly visible with the camera square to the spring.
-            </div>
-            <button class="btn-action primary" style="padding: 14px 28px; font-size: 15px; font-weight: 800;" onclick="resetScanToCamera()">
-              [ 🔄 RETAKE PHOTO ]
-            </button>
-            <div style="margin-top: 14px;">
-              <button class="btn-action" style="font-size: 12px;" onclick="openManualWirePicker()">
-                Enter Wire Size Manually Instead →
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- STATE 3: MEASUREMENT IN PROGRESS -->
-        <div id="scanProcessingState" style="display: none;">
-          <div class="scan-steps-box">
-            <div style="font-size: 15px; font-weight: 800; color: #fff; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
-              <span>🔬</span> Analyzing Spring Coils & Scale Reference...
-            </div>
-            
-            <div class="scan-step-item" id="stepDetectSpring">
-              <div class="step-indicator">1</div>
-              <span>Detecting spring body...</span>
-            </div>
-            <div class="scan-step-item" id="stepDetectRef">
-              <div class="step-indicator">2</div>
-              <span>Locating measurement reference (tape/ruler)...</span>
-            </div>
-            <div class="scan-step-item" id="stepCountCoils">
-              <div class="step-indicator">3</div>
-              <span>Counting 20 adjacent coils...</span>
-            </div>
-            <div class="scan-step-item" id="stepCrossCheck">
-              <div class="step-indicator">4</div>
-              <span>Cross-checking 20-coil span vs. wire edge pitch...</span>
-            </div>
-            <div class="scan-step-item" id="stepMatchStandard">
-              <div class="step-indicator">5</div>
-              <span>Matching standard DASMA wire size...</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- STATE 4: RESULT & VERIFICATION SCREEN (Section 10 & 17) -->
-        <div id="scanResultState" style="display: none;">
-          <div class="result-giant-card">
-            <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
-              AI-ASSISTED SPRING MEASUREMENT RESULT
-            </div>
-
-            <!-- Wire Size (Largest item on screen) -->
-            <div class="result-wire-num" id="resWireNumber">
-              .218"
-            </div>
-            <div>
-              <span class="result-color-badge" id="resColorBadge" style="background: #e2e8f0; color: #0f172a;">
-                White (DASMA)
-              </span>
-            </div>
-
-            <!-- Confidence Badge -->
-            <div style="margin-bottom: 12px;">
-              <span class="badge" id="resConfBadge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-size: 12px; padding: 4px 12px; border: 1px solid rgba(16, 185, 129, 0.4);">
-                ✓ HIGH CONFIDENCE
-              </span>
-            </div>
-
-            <!-- Metrics Breakdown -->
-            <div class="result-metrics-row">
-              <div>
-                <div class="res-metric-label">Measured Wire</div>
-                <div class="res-metric-val" id="resMeasuredWire">0.2187"</div>
-              </div>
-              <div>
-                <div class="res-metric-label">20-Coil Distance</div>
-                <div class="res-metric-val" id="resCoilsSpan">4.375" (4-3/8")</div>
-              </div>
-              <div>
-                <div class="res-metric-label">Method Agreement</div>
-                <div class="res-metric-val" id="resMethodAgreement">✓ &lt; 0.002" Delta</div>
-              </div>
-            </div>
-
-            <div id="resConfDetails" style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px; text-align: left; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 8px;">
-              <!-- Filled dynamically with verification factors -->
-            </div>
-
-            <!-- Quick 1-Tap 20-Coil Tape Reading Selector (Fast Field Verification) -->
-            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 18px; text-align: left;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <span style="font-size: 12px; font-weight: 800; color: var(--accent);">📏 1-Tap Quick Correction</span>
-                <span style="font-size: 11px; color: var(--text-muted);">Tap what your tape reads:</span>
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px;" id="quickCorrectionGrid">
-                <!-- Populated dynamically via JS -->
-              </div>
-            </div>
-
-            <!-- Primary Action Button (Section 10 & 18) -->
-            <button class="btn-action primary" id="useWireBtn" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px; font-weight: 900; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);" onclick="confirmSpringScanWire()">
-              ✓ USE .218 IN SPRING ENGINEERING →
-            </button>
-
-            <!-- Secondary Actions -->
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <button class="btn-action" style="flex: 1; min-width: 130px; justify-content: center; padding: 12px; font-size: 13px;" onclick="resetScanToCamera()">
-                🔄 Retake Photo
-              </button>
-              <button class="btn-action" style="flex: 1; min-width: 130px; justify-content: center; padding: 12px; font-size: 13px;" onclick="openManualWirePicker()">
-                ✏️ Manual Selection
-              </button>
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
+
+    <!-- TAB 3: DOOR WEIGHT ESTIMATOR -->
 
 <section id="pane-weight-est" class="tab-pane">
       <div class="grid-2">
@@ -2524,66 +2121,6 @@
 
     <!-- TAB 4: FIELD QUICK TOOLS -->
     <section id="pane-quick-tools" class="tab-pane">
-      <div class="grid-2">
-        <!-- 20-Coil Wire Gauge Finder -->
-        <div class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">20-Coil Wire Size Identifier</div>
-              <div class="card-subtitle">Measure 20 consecutive coils tightly with a tape measure</div>
-            </div>
-          </div>
-
-          <div class="field-group">
-            <div class="field-label">
-              <span>Measured 20-Coil Length</span>
-              <span class="val-hint mono" id="twentyCoilDisplay">5.00" (5 inches)</span>
-            </div>
-            <div class="stepper-control">
-              <button class="stepper-btn" onclick="stepTwentyCoil(-0.0625)">−</button>
-              <input type="number" step="0.0625" class="stepper-input mono" id="twentyCoilInput" value="5.00" oninput="calcTwentyCoil()">
-              <button class="stepper-btn" onclick="stepTwentyCoil(0.0625)">+</button>
-            </div>
-          </div>
-
-          <div class="metric-grid">
-            <div class="metric-card">
-              <div class="metric-label">Identified Wire Gauge</div>
-              <div class="metric-val mono highlight" id="coilWireResult">.250</div>
-              <div class="metric-sub" id="coilFractionResult">5-0/16"</div>
-            </div>
-            <div class="metric-card">
-              <div class="metric-label">DASMA Color Code</div>
-              <div class="metric-val" id="coilColorResult" style="font-size: 18px; font-weight: 700; color: #f59e0b;">Gold / Orange</div>
-              <div class="metric-sub">Standard Paint Marker</div>
-            </div>
-          </div>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Tape Measurement</th>
-                  <th>Wire Size</th>
-                  <th>Color Code</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>4-1/8" (4.125")</td><td class="mono font-bold">.207</td><td><span class="badge" style="background:#fef08a; color:#854d0e;">Yellow</span></td></tr>
-                <tr><td>4-3/8" (4.375")</td><td class="mono font-bold">.218</td><td><span class="badge gray">White</span></td></tr>
-                <tr><td>4-1/2" (4.500")</td><td class="mono font-bold">.225</td><td><span class="badge" style="background:#fecaca; color:#991b1b;">Red</span></td></tr>
-                <tr><td>4-11/16" (4.687")</td><td class="mono font-bold">.234</td><td><span class="badge" style="background:#fed7aa; color:#9a3412;">Brown</span></td></tr>
-                <tr><td>4-7/8" (4.875")</td><td class="mono font-bold">.243</td><td><span class="badge green">Green</span></td></tr>
-                <tr class="selected"><td>5-0/0" (5.000")</td><td class="mono font-bold">.250</td><td><span class="badge amber">Gold</span></td></tr>
-                <tr><td>5-1/4" (5.250")</td><td class="mono font-bold">.262</td><td><span class="badge" style="background:#bae6fd; color:#0369a1;">Blue</span></td></tr>
-                <tr><td>5-7/16" (5.437")</td><td class="mono font-bold">.273</td><td><span class="badge" style="background:#334155; color:#f8fafc;">Black</span></td></tr>
-                <tr><td>5-11/16" (5.687")</td><td class="mono font-bold">.283</td><td><span class="badge" style="background:#fed7aa; color:#ea580c;">Orange</span></td></tr>
-                <tr><td>6-1/4" (6.250")</td><td class="mono font-bold">.312</td><td><span class="badge" style="background:#fecaca; color:#991b1b;">Red</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
         <!-- OD to ID Converter & Track Clearance -->
         <div class="card">
           <div class="card-header">
@@ -2640,7 +2177,6 @@
             </table>
           </div>
         </div>
-      </div>
 
       <!-- NEW MODULE: SSC-Style Drum Comparison & Cross-Reference Explorer -->
       <div class="card" style="margin-top: 20px;">
@@ -2771,19 +2307,6 @@
               <!-- Populated dynamically via JS -->
             </tbody>
           </table>
-        </div>
-      </div>
-          <!-- MODULE: Spring Scan History & Audit Log (Section 19) -->
-      <div class="card" style="margin-top: 20px;">
-        <div class="card-header">
-          <div>
-            <div class="card-title">📋 Spring Scan Audit Trail & Job Log</div>
-            <div class="card-subtitle">Recent optical measurements, 20-coil distance records, and confirmed wire sizes</div>
-          </div>
-          <button class="btn-action" style="font-size: 11px; color:#ef4444;" onclick="clearScanHistory()">Clear Log</button>
-        </div>
-        <div id="moreToolsScanHistory">
-          <!-- Populated dynamically via JS -->
         </div>
       </div>
 </section>
@@ -6069,70 +5592,31 @@ Guidelines:
 
 
     // ===================================================
-    // SPRING SCAN — AI-ASSISTED MEASUREMENT ENGINE
+    // WIRE ID CONFIRMATION STATE
+    // (Spring Scan AI camera engine removed completely — replaced by the
+    // static 20-Coil Wire Size Identifier + manual picker below)
     // ===================================================
-    let activeCameraStream = null;
-    let currentScanData = null;
     let confirmedScanWire = null;
 
-
-    // Quick 20-Coil Correction Carousel
-    const COMMON_TEST_WIRES = [
-      { wire: 0.192, name: ".192", color: "Orange", coils20: 3.840, dashes: '3-13/16"' },
-      { wire: 0.207, name: ".207", color: "Yellow", coils20: 4.140, dashes: '4-1/8"' },
-      { wire: 0.218, name: ".218", color: "White",  coils20: 4.375, dashes: '4-3/8"' },
-      { wire: 0.225, name: ".225", color: "Red",    coils20: 4.506, dashes: '4-1/2"' },
-      { wire: 0.234, name: ".234", color: "Brown",  coils20: 4.680, dashes: '4-11/16"' },
-      { wire: 0.243, name: ".243", color: "Green",  coils20: 4.874, dashes: '4-7/8"' },
-      { wire: 0.250, name: ".250", color: "Gold",   coils20: 5.000, dashes: '5-0/0"' },
-      { wire: 0.262, name: ".262", color: "Blue",   coils20: 5.250, dashes: '5-1/4"' },
-      { wire: 0.273, name: ".273", color: "Black",  coils20: 5.460, dashes: '5-7/16"' }
-    ];
-
-    function renderQuickCorrectionButtons(activeWire) {
-      const container = document.getElementById('quickCorrectionGrid');
-      if (!container) return;
-      container.innerHTML = '';
-
-      COMMON_TEST_WIRES.forEach(w => {
-        const isMatch = Math.abs(w.wire - activeWire) < 0.003;
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'btn-action';
-        btn.style.padding = '8px 6px';
-        btn.style.fontSize = '11px';
-        btn.style.fontWeight = '700';
-        btn.style.justifyContent = 'center';
-        btn.style.textAlign = 'center';
-        btn.style.border = isMatch ? '2px solid var(--accent)' : '1px solid var(--border-color)';
-        btn.style.background = isMatch ? 'rgba(245, 158, 11, 0.2)' : 'var(--bg-card-sub)';
-        btn.style.color = isMatch ? '#fff' : 'var(--text-muted)';
-
-        btn.innerHTML = `<span>${w.dashes}</span> <strong style="color:var(--accent); margin-left:4px;">${w.name}</strong>`;
-        btn.onclick = () => {
-          applyQuickWireCorrection(w);
-        };
-        container.appendChild(btn);
+    // Confirm the wire size read off the 20-Coil Wire Size Identifier
+    // and load it into the rest of the engineering workflow.
+    function confirmTwentyCoilWire() {
+      const val = parseFloat(document.getElementById('twentyCoilInput').value);
+      let closest = WIRE_SPECS[0];
+      let minDiff = 999;
+      WIRE_SPECS.forEach(w => {
+        const diff = Math.abs(w.coils20 - val);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closest = w;
+        }
       });
-    }
-
-    function applyQuickWireCorrection(wireObj) {
-      if (!currentScanData) {
-        currentScanData = {};
-      }
-      currentScanData.wire = wireObj.wire;
-      currentScanData.name = wireObj.name;
-      currentScanData.color = wireObj.color;
-      currentScanData.measuredWire = wireObj.wire;
-      currentScanData.coils20Span = wireObj.coils20;
-      currentScanData.confidence = 'HIGH';
-      currentScanData.reasons = [
-        `Technician verified 20 coils at ${wireObj.dashes} on tape measure.`,
-        `Directly matched standard DASMA ${wireObj.name}" ${wireObj.color} specification.`
-      ];
-      currentScanData.disagreement = false;
-
-      renderScanResultUI(currentScanData);
+      applyConfirmedWireToEngineering({
+        wire: closest.wire,
+        name: closest.name,
+        color: closest.color,
+        confidence: 'MANUAL'
+      });
     }
 
     // Initialize Manual Wire List in Modal
@@ -6182,472 +5666,6 @@ Guidelines:
       applyConfirmedWireToEngineering(mockResult);
     }
 
-    // Camera and UI State Controllers
-    function resetScanToCamera() {
-      document.getElementById('scanCameraState').style.display = 'block';
-      document.getElementById('scanQualityFailState').style.display = 'none';
-      document.getElementById('scanProcessingState').style.display = 'none';
-      document.getElementById('scanResultState').style.display = 'none';
-      document.getElementById('springScanCameraInput').value = '';
-      document.getElementById('springScanFileInput').value = '';
-    }
-
-    // Process photo capture / file upload
-    async function handleSpringScanUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      // Show processing view
-      document.getElementById('scanCameraState').style.display = 'none';
-      document.getElementById('scanQualityFailState').style.display = 'none';
-      document.getElementById('scanProcessingState').style.display = 'block';
-      document.getElementById('scanResultState').style.display = 'none';
-
-      // Reset step indicators
-      setScanStep('stepDetectSpring', 'active', 'Detecting spring body...');
-      setScanStep('stepDetectRef', '', 'Locating measurement reference (tape/ruler)...');
-      setScanStep('stepCountCoils', '', 'Counting 20 adjacent coils...');
-      setScanStep('stepCrossCheck', '', 'Cross-checking 20-coil span vs. wire edge pitch...');
-      setScanStep('stepMatchStandard', '', 'Matching standard DASMA wire size...');
-
-      try {
-        // 1. Compress Image for speed & compute
-        const base64DataUrl = await compressImage(file, 1280, 0.88);
-        
-        // 2. Load onto off-screen canvas for computer vision pre-check
-        const canvas = document.getElementById('scanCanvas');
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        
-        await new Promise((resolve, reject) => {
-          img.onload = resolve;
-          img.onerror = reject;
-          img.src = base64DataUrl;
-        });
-
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-
-        // Step 1: Quality & Clarity Assessment (Section 5)
-        setScanStep('stepDetectSpring', 'done', '✓ Spring body detected');
-        setScanStep('stepDetectRef', 'active', 'Evaluating image focus & ruler reference...');
-        
-        const qualityCheck = assessImageQuality(canvas, ctx);
-        if (!qualityCheck.passed) {
-          showQualityFailure(qualityCheck.reason);
-          return;
-        }
-
-        setScanStep('stepDetectRef', 'done', '✓ Measurement reference detected');
-        setScanStep('stepCountCoils', 'active', 'Counting 20 adjacent coils...');
-
-        // Step 2: Run Local Computer Vision Analysis (Method 1 & Method 2)
-        const localCV = runLocalCVSpringMeasurement(canvas, ctx);
-        setScanStep('stepCountCoils', 'done', `✓ ${localCV.coilsDetected} coils detected`);
-        setScanStep('stepCrossCheck', 'active', 'Cross-checking dual-measurement algorithms...');
-
-        // Step 3: Run AI Multimodal Vision (Gemini 2.0/3.6 Flash via Cloudflare Worker)
-        let finalResult = null;
-        try {
-          const aiResult = await queryAiVisionSpringMeasurement(base64DataUrl);
-          if (aiResult && aiResult.success) {
-            // Combine AI Vision with Local CV for dual-verification
-            finalResult = reconcileDualMeasurements(localCV, aiResult);
-          } else {
-            // Fallback to local CV engine if AI proxy is unreachable/offline
-            finalResult = buildResultFromLocalCV(localCV);
-          }
-        } catch (aiErr) {
-          console.error('AI Vision error:', aiErr);
-          showQualityFailure('Could not connect to AI Vision proxy. Check your internet connection, or tap Manual Selection below.');
-          return;
-        }
-
-        setScanStep('stepCrossCheck', 'done', '✓ Method agreement verified');
-        setScanStep('stepMatchStandard', 'done', `✓ Matched ${finalResult.name} (${finalResult.color})`);
-
-        // Small delay for UI smoothness
-        setTimeout(() => {
-          currentScanData = { ...finalResult, thumbnail: base64DataUrl };
-          renderScanResultUI(finalResult);
-        }, 350);
-
-      } catch (err) {
-        console.error('Spring scan error:', err);
-        showQualityFailure('Could not process photo. Please hold phone steady, square to the spring, and ensure 20 coils are clearly in focus.');
-      }
-    }
-
-    function setScanStep(stepId, state, text) {
-      const el = document.getElementById(stepId);
-      if (!el) return;
-      el.className = `scan-step-item ${state}`;
-      if (text) {
-        const span = el.querySelector('span');
-        if (span) span.innerText = text;
-      }
-    }
-
-    function showQualityFailure(reasonText) {
-      document.getElementById('scanCameraState').style.display = 'none';
-      document.getElementById('scanProcessingState').style.display = 'none';
-      document.getElementById('scanResultState').style.display = 'none';
-      document.getElementById('scanQualityFailState').style.display = 'block';
-      document.getElementById('qualityFailReason').innerText = reasonText;
-    }
-
-    // ===================================================
-    // IMAGE QUALITY CHECK ENGINE (Section 5)
-    // ===================================================
-    function assessImageQuality(canvas, ctx) {
-      const w = canvas.width;
-      const h = canvas.height;
-      if (w < 200 || h < 200) {
-        return { passed: false, reason: "Image resolution too low. Retake closer to the spring." };
-      }
-
-      // Sample central 50% region of the image
-      const sx = Math.floor(w * 0.25);
-      const sy = Math.floor(h * 0.25);
-      const sw = Math.floor(w * 0.5);
-      const sh = Math.floor(h * 0.5);
-      const imgData = ctx.getImageData(sx, sy, sw, sh);
-      const d = imgData.data;
-
-      let totalLum = 0;
-      let minLum = 255;
-      let maxLum = 0;
-      const pixelCount = sw * sh;
-
-      // Check luminance & exposure
-      for (let i = 0; i < d.length; i += 4) {
-        const lum = (d[i] * 0.299 + d[i+1] * 0.587 + d[i+2] * 0.114);
-        totalLum += lum;
-        if (lum < minLum) minLum = lum;
-        if (lum > maxLum) maxLum = lum;
-      }
-
-      const avgLum = totalLum / pixelCount;
-      if (avgLum < 28) {
-        return { passed: false, reason: "Photo is too dark. Increase lighting or use flashlight so coils and tape measure are clearly visible." };
-      }
-      if (avgLum > 242) {
-        return { passed: false, reason: "Severe glare or washout detected. Reposition to eliminate direct light reflection off the coils." };
-      }
-
-      // Sharpness check using high-frequency gradient variance
-      let gradientSum = 0;
-      const step = 4;
-      for (let y = 1; y < sh - 1; y += step) {
-        for (let x = 1; x < sw - 1; x += step) {
-          const idx = (y * sw + x) * 4;
-          const idxR = (y * sw + (x + 1)) * 4;
-          const idxD = ((y + 1) * sw + x) * 4;
-
-          const lumC = (d[idx]*0.299 + d[idx+1]*0.587 + d[idx+2]*0.114);
-          const lumR = (d[idxR]*0.299 + d[idxR+1]*0.587 + d[idxR+2]*0.114);
-          const lumD = (d[idxD]*0.299 + d[idxD+1]*0.587 + d[idxD+2]*0.114);
-
-          const gradX = Math.abs(lumR - lumC);
-          const gradY = Math.abs(lumD - lumC);
-          gradientSum += (gradX + gradY);
-        }
-      }
-
-      const sharpness = gradientSum / (pixelCount / (step * step));
-      if (sharpness < 12.0) {
-        return { passed: false, reason: "Photo is too blurry. Hold the phone steady and tap the screen to focus on the spring coils and ruler." };
-      }
-
-      return { passed: true };
-    }
-
-    // ===================================================
-    // LOCAL CLIENT-SIDE COMPUTER VISION ENGINE (Offline Fallback)
-    // ===================================================
-    function runLocalCVSpringMeasurement(canvas, ctx) {
-      const w = canvas.width;
-      const h = canvas.height;
-      const midY = Math.floor(h * 0.45);
-      const scanHeight = Math.floor(h * 0.15);
-      const imgData = ctx.getImageData(0, midY, w, scanHeight);
-      const d = imgData.data;
-
-      // 1D horizontal intensity profile
-      const profile = new Float32Array(w);
-      for (let x = 0; x < w; x++) {
-        let colSum = 0;
-        for (let y = 0; y < scanHeight; y++) {
-          const idx = (y * w + x) * 4;
-          colSum += (d[idx] * 0.299 + d[idx+1] * 0.587 + d[idx+2] * 0.114);
-        }
-        profile[x] = colSum / scanHeight;
-      }
-
-      // Detect peaks/valleys across coil grooves
-      const peaks = [];
-      for (let x = 2; x < w - 2; x++) {
-        if (profile[x] > profile[x-1] && profile[x] > profile[x-2] &&
-            profile[x] > profile[x+1] && profile[x] > profile[x+2]) {
-          peaks.push(x);
-        }
-      }
-
-      // Filter periodic peaks with typical coil spacing
-      let validDiffs = [];
-      for (let i = 1; i < peaks.length; i++) {
-        const diff = peaks[i] - peaks[i-1];
-        if (diff > 8 && diff < 80) {
-          validDiffs.push(diff);
-        }
-      }
-
-      let avgPitchPixels = 24.0;
-      if (validDiffs.length > 5) {
-        validDiffs.sort((a, b) => a - b);
-        const median = validDiffs[Math.floor(validDiffs.length / 2)];
-        avgPitchPixels = median;
-      }
-
-      const estimatedCoils = Math.max(20, Math.min(26, validDiffs.length));
-
-      return {
-        coilsDetected: estimatedCoils,
-        avgPitchPixels: avgPitchPixels,
-        profileSharpness: true
-      };
-    }
-
-    // ===================================================
-    // GEMINI MULTIMODAL AI VISION MEASUREMENT
-    // ===================================================
-    async function queryAiVisionSpringMeasurement(base64DataUrl) {
-      const userKey = localStorage.getItem('doormath_gemini_key') || '';
-      const proxyEndpoint = new URL('https://doormath-ai.chadneweragd.workers.dev');
-      proxyEndpoint.searchParams.set('type', 'scanner');
-      if (userKey) {
-        proxyEndpoint.searchParams.set('key', userKey);
-      }
-      const proxyUrl = proxyEndpoint.toString();
-
-      const base64Payload = base64DataUrl.split(',')[1];
-      const promptText = `
-You are a master optical measurement engineer and veteran garage door spring specialist.
-You are inspecting a photograph of a garage door torsion spring placed alongside a tape measure.
-
-DASMA 20-COIL BENCHMARK SPANS (PHYSICAL DISTANCE IN INCHES):
-- .192 Wire (Orange) -> 20 coils = 3-13/16" (3.84 in)
-- .207 Wire (Yellow) -> 20 coils = 4-1/8"    (4.14 in)
-- .218 Wire (White)  -> 20 coils = 4-3/8"    (4.375 in)
-- .225 Wire (Red)    -> 20 coils = 4-1/2"    (4.50 in)
-- .234 Wire (Brown)  -> 20 coils = 4-11/16"  (4.68 in)
-- .243 Wire (Green)  -> 20 coils = 4-7/8"    (4.87 in)
-- .250 Wire (Gold)   -> 20 coils = 5-0/0"    (5.00 in)
-- .262 Wire (Blue)   -> 20 coils = 5-1/4"    (5.25 in)
-- .273 Wire (Black)  -> 20 coils = 5-7/16"   (5.46 in)
-- .283 Wire (Orange) -> 20 coils = 5-11/16"  (5.66 in)
-- .295 Wire (Yellow) -> 20 coils = 5-7/8"    (5.90 in)
-- .306 Wire (White)  -> 20 coils = 6-1/8"    (6.13 in)
-- .312 Wire (Red)    -> 20 coils = 6-1/4"    (6.25 in)
-
-STRICT TAPE MEASURE GROUNDING STEPS:
-1. ONLY read numbers physically visible on the tape measure in the photo (e.g. 4, 5, 6, 7, 8, 9, 10, 11). Do NOT hallucinate numbers outside the photo (e.g. 12, 13, 14, 15, 16)!
-2. Identify a clean full-inch line as the start reference (e.g. the 5-inch line or 6-inch line).
-3. Count forward exactly 20 adjacent coil wires along the spring from that start mark:
-   Coils 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20.
-4. Read the exact inch mark where the 20th coil ends:
-   - If starting at 5.0", look at the 9" and 10" marks:
-     * If 20 coils end just past 9" at approximately 9-1/8" (4-1/8" span) -> WIRE IS .207 (Yellow).
-     * If 20 coils end at 9-3/8" (4-3/8" span) -> WIRE IS .218 (White).
-     * If 20 coils end at 9-1/2" (4-1/2" span) -> WIRE IS .225 (Red).
-     * If 20 coils end at 10-0/0" (5.00" span) -> WIRE IS .250 (Gold).
-5. DO NOT round to 5" or 4-1/2" just because they are prominent marks! A 20-coil span of 4-1/8" is .207 Yellow.
-
-Respond ONLY with raw JSON:
-{
-  "quality_ok": true,
-  "quality_reason": null,
-  "visible_tape_range": "4in to 11in",
-  "start_inch_mark": 5.0,
-  "end_inch_mark": 9.14,
-  "twenty_coil_span_in": 4.14,
-  "wire_dia_measured": 0.207,
-  "method2_pitch_wire": 0.207,
-  "closest_standard_wire": 0.207,
-  "wire_name": ".207",
-  "color_code": "Yellow",
-  "confidence": "HIGH",
-  "confidence_reasons": ["Counted 20 coils starting at 5.0in mark and ending at 9-1/8in mark", "Physical 20-coil span is 4.14 inches", "Matches standard .207 Yellow wire"],
-  "disagreement": false
-}
-`;
-
-      const response = await fetch(proxyUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: promptText },
-                {
-                  inlineData: {
-                    mimeType: 'image/jpeg',
-                    data: base64Payload
-                  }
-                }
-              ]
-            }
-          ],
-          generationConfig: { responseMimeType: "application/json" }
-        })
-      });
-
-      const data = await response.json();
-      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-        const parsed = JSON.parse(data.candidates[0].content.parts[0].text);
-        return { success: true, ...parsed };
-      }
-      return { success: false, error: data.error };
-    }
-
-    // ===================================================
-    // MEASUREMENT RECONCILIATION & WIRE MATCHING (Section 7, 8, 9)
-    // ===================================================
-    function reconcileDualMeasurements(localCV, aiResult) {
-      if (!aiResult.quality_ok) {
-        showQualityFailure(aiResult.quality_reason || "Image quality inadequate for reliable measurement.");
-        return null;
-      }
-
-      const coils20Span = parseFloat(aiResult.twenty_coil_span_in) || (parseFloat(aiResult.wire_dia_measured) ? parseFloat(aiResult.wire_dia_measured) * 20.0 : 4.14);
-      const measuredWire = parseFloat(aiResult.wire_dia_measured) || (coils20Span / 20.0);
-      const method2Wire = aiResult.method2_pitch_wire || measuredWire;
-
-      // Match against STANDARD_SPRING_WIRES
-      const wireMatch = findClosestStandardWire(measuredWire);
-      const deltaNominal = Math.abs(wireMatch.wire - measuredWire);
-      const methodDelta = Math.abs(method2Wire - measuredWire);
-
-      let confidence = aiResult.confidence || "HIGH";
-      if (aiResult.disagreement || deltaNominal > 0.008 || methodDelta > 0.008) {
-        confidence = "LOW";
-      } else if (confidence !== "LOW" && deltaNominal <= 0.0035 && methodDelta <= 0.0035) {
-        confidence = "HIGH";
-      } else {
-        confidence = "MEDIUM";
-      }
-
-      return {
-        wire: wireMatch.wire,
-        name: wireMatch.name,
-        color: wireMatch.color,
-        coils20Span: coils20Span,
-        measuredWire: measuredWire,
-        method2Wire: method2Wire,
-        deltaNominal: deltaNominal,
-        confidence: confidence,
-        reasons: aiResult.confidence_reasons || ["Optical 20-coil distance measured against reference."],
-        disagreement: aiResult.disagreement || false
-      };
-    }
-
-    function buildResultFromLocalCV(localCV) {
-      // Safety Requirement: Never silently default to .250!
-      // If AI proxy is unreachable and local scale reference is uncalibrated, guide user to manual entry or retake.
-      return {
-        wire: 0.207,
-        name: ".207",
-        color: "Yellow",
-        coils20Span: 4.14,
-        measuredWire: 0.207,
-        method2Wire: 0.207,
-        deltaNominal: 0.0,
-        confidence: "LOW",
-        reasons: ["Optical reference unreadable by offline mode. Please verify with tape measure or tap 'Manual Selection' below."],
-        disagreement: false
-      };
-    }
-
-    function findClosestStandardWire(targetDia) {
-      let best = STANDARD_SPRING_WIRES[0];
-      let minDiff = 999.0;
-      STANDARD_SPRING_WIRES.forEach(w => {
-        const diff = Math.abs(w.wire - targetDia);
-        if (diff < minDiff) {
-          minDiff = diff;
-          best = w;
-        }
-      });
-      return best;
-    }
-
-    // ===================================================
-    // RESULT SCREEN & ENGINEERING INTEGRATION (Section 10, 17, 18)
-    // ===================================================
-    function renderScanResultUI(res) {
-      if (!res) return;
-
-      document.getElementById('scanCameraState').style.display = 'none';
-      document.getElementById('scanProcessingState').style.display = 'none';
-      document.getElementById('scanQualityFailState').style.display = 'none';
-      document.getElementById('scanResultState').style.display = 'block';
-
-      // Giant wire display
-      document.getElementById('resWireNumber').innerText = `${res.name}"`;
-      
-      const badgeColor = document.getElementById('resColorBadge');
-      badgeColor.innerText = `${res.color} (DASMA Code)`;
-      badgeColor.style.background = '#e2e8f0';
-      badgeColor.style.color = '#0f172a';
-
-      // Confidence badge
-      const confBadge = document.getElementById('resConfBadge');
-      if (res.confidence === 'HIGH') {
-        confBadge.innerText = '✓ HIGH CONFIDENCE';
-        confBadge.style.background = 'rgba(16, 185, 129, 0.2)';
-        confBadge.style.color = '#34d399';
-        confBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-      } else if (res.confidence === 'MEDIUM') {
-        confBadge.innerText = '≈ MEDIUM CONFIDENCE';
-        confBadge.style.background = 'rgba(245, 158, 11, 0.2)';
-        confBadge.style.color = '#f59e0b';
-        confBadge.style.borderColor = 'rgba(245, 158, 11, 0.4)';
-      } else {
-        confBadge.innerText = '⚠️ LOW CONFIDENCE — VERIFY TAPE';
-        confBadge.style.background = 'rgba(239, 68, 68, 0.2)';
-        confBadge.style.color = '#f87171';
-        confBadge.style.borderColor = 'rgba(239, 68, 68, 0.4)';
-      }
-
-      // Metrics
-      document.getElementById('resMeasuredWire').innerText = `${res.measuredWire.toFixed(4)}"`;
-      document.getElementById('resCoilsSpan').innerText = `${res.coils20Span.toFixed(3)}"`;
-      
-      const agreementText = res.disagreement 
-        ? '<span style="color:#ef4444;">⚠️ Disagreement &gt; 0.008"</span>'
-        : `<span style="color:#34d399;">✓ ${(Math.abs(res.measuredWire - (res.method2Wire || res.measuredWire))).toFixed(4)}" Delta</span>`;
-      document.getElementById('resMethodAgreement').innerHTML = agreementText;
-
-      // Reasons & Details
-      const detailsList = res.reasons.map(r => `• ${r}`).join('<br>');
-      document.getElementById('resConfDetails').innerHTML = `
-        <strong>Measurement Verification Factors:</strong><br>${detailsList}<br>
-        <span style="color:#f59e0b; font-size:11px;">⚠️ AI-Assisted Measurement: Always visually confirm coil span against your tape measure before cutting wire.</span>
-      `;
-
-      // Update CTA button
-      document.getElementById('useWireBtn').innerText = `✓ USE ${res.name} IN SPRING ENGINEERING →`;
-      renderQuickCorrectionButtons(res.wire);
-    }
-
-    // CONFIRM WIRE & POPULATE ENGINEERING WORKFLOW (Section 18 & 19)
-    function confirmSpringScanWire() {
-      if (!currentScanData) return;
-      applyConfirmedWireToEngineering(currentScanData);
-    }
-
     function applyConfirmedWireToEngineering(scanObj) {
       confirmedScanWire = scanObj.wire;
 
@@ -6680,10 +5698,7 @@ Respond ONLY with raw JSON:
         }
       }
 
-      // 3. Save to Audit Trail / Scan History in localStorage (Section 19)
-      saveScanAuditLog(scanObj);
-
-      // 4. Smoothly navigate technician to Spring Engineering / Truck Stock
+      // 3. Smoothly navigate technician to Spring Engineering / Truck Stock
       switchTab('truck-stock');
       scrollToTools();
 
@@ -6691,124 +5706,9 @@ Respond ONLY with raw JSON:
       alert(`✓ Spring wire size ${scanObj.name}" successfully loaded into Spring Engineering! All other door fields preserved.`);
     }
 
-    function clearSpringScanWire() {
+    function clearWireIndicator() {
       confirmedScanWire = null;
       document.getElementById('springScanLiveIndicator').style.display = 'none';
-    }
-
-    // AUDIT LOG & SCAN HISTORY (Section 19)
-    function saveScanAuditLog(scanObj) {
-      try {
-        const history = JSON.parse(localStorage.getItem('doormath_scan_history') || '[]');
-        history.unshift({
-          timestamp: new Date().toISOString(),
-          wire: scanObj.wire,
-          name: scanObj.name,
-          color: scanObj.color,
-          coils20Span: scanObj.coils20Span,
-          measuredWire: scanObj.measuredWire,
-          confidence: scanObj.confidence,
-          thumbnail: scanObj.thumbnail || null
-        });
-        // Keep last 30 scans
-        if (history.length > 30) history.pop();
-        localStorage.setItem('doormath_scan_history', JSON.stringify(history));
-        updateScanHistoryCounter();
-      } catch (e) {
-        console.warn('Could not save audit log:', e);
-      }
-    }
-
-    function updateScanHistoryCounter() {
-      try {
-        const history = JSON.parse(localStorage.getItem('doormath_scan_history') || '[]');
-        const badge = document.getElementById('scanHistoryCount');
-        if (badge) badge.innerText = history.length;
-
-        const container = document.getElementById('moreToolsScanHistory');
-        if (container) {
-          if (history.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-dim); font-size:12px;">No spring scans saved yet. Tap "Spring Scan" above to measure a spring with your camera.</div>';
-          } else {
-            container.innerHTML = history.slice(0, 5).map(item => {
-              const dStr = new Date(item.timestamp).toLocaleDateString() + ' ' + new Date(item.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-              return `
-                <div class="history-card" style="margin-bottom:8px;">
-                  <div>
-                    <strong class="mono" style="color:var(--accent); font-size:15px;">${item.name}"</strong>
-                    <span class="badge gray" style="font-size:10px; margin-left:6px;">${item.color}</span>
-                    <span class="badge ${item.confidence === 'HIGH' ? 'green' : 'amber'}" style="font-size:9px; margin-left:4px;">${item.confidence}</span>
-                    <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">
-                      20-Coil Span: ${item.coils20Span ? item.coils20Span.toFixed(3) : '-'}in | Measured Wire: ${item.measuredWire ? item.measuredWire.toFixed(4) : '-'}in
-                    </div>
-                    <div style="font-size:10px; color:#64748b;">${dStr}</div>
-                  </div>
-                  <button class="btn-action primary" style="padding:4px 10px; font-size:11px;" onclick="applyHistoricalScan('${item.wire}', '${item.name}', '${item.color}')">
-                    Use Wire →
-                  </button>
-                </div>
-              `;
-            }).join('');
-          }
-        }
-      } catch (e) {}
-    }
-
-    function openScanHistoryModal() {
-      const container = document.getElementById('scanHistoryList');
-      if (!container) return;
-      container.innerHTML = '';
-
-      let history = [];
-      try {
-        history = JSON.parse(localStorage.getItem('doormath_scan_history') || '[]');
-      } catch (e) {}
-
-      if (history.length === 0) {
-        container.innerHTML = '<div style="text-align:center; padding:30px; color:var(--text-dim);">No spring scans recorded yet. Use Spring Scan to measure a spring and it will log here automatically.</div>';
-      } else {
-        history.forEach(item => {
-          const dateStr = new Date(item.timestamp).toLocaleString();
-          const card = document.createElement('div');
-          card.className = 'history-card';
-          card.innerHTML = `
-            <div>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <strong class="mono" style="font-size:16px; color:var(--accent);">${item.name}"</strong>
-                <span class="badge gray">${item.color}</span>
-                <span class="badge ${item.confidence === 'HIGH' ? 'green' : 'amber'}">${item.confidence}</span>
-              </div>
-              <div style="font-size:11px; color:var(--text-muted); margin-top:3px;">
-                20-Coil: ${item.coils20Span ? item.coils20Span.toFixed(3) : '-'}in | Measured: ${item.measuredWire ? item.measuredWire.toFixed(4) : '-'}in
-              </div>
-              <div style="font-size:10px; color:#64748b; margin-top:2px;">${dateStr}</div>
-            </div>
-            <button class="btn-action primary" style="padding:6px 12px; font-size:11px;" onclick="applyHistoricalScan('${item.wire}', '${item.name}', '${item.color}')">
-              Load Wire →
-            </button>
-          `;
-          container.appendChild(card);
-        });
-      }
-
-      document.getElementById('scanHistoryModal').classList.add('open');
-    }
-
-    function closeScanHistoryModal() {
-      document.getElementById('scanHistoryModal').classList.remove('open');
-    }
-
-    function clearScanHistory() {
-      if (confirm('Clear all local spring scan history on this device?')) {
-        localStorage.removeItem('doormath_scan_history');
-        openScanHistoryModal();
-        updateScanHistoryCounter();
-      }
-    }
-
-    function applyHistoricalScan(wire, name, color) {
-      closeScanHistoryModal();
-      selectManualWireFromModal(parseFloat(wire), name, color);
     }
 
 
@@ -6894,7 +5794,6 @@ Respond ONLY with raw JSON:
       calcODtoID();
       runDirectIPPT();
       updateOnlineStatus();
-      updateScanHistoryCounter();
       populateManualWireModal();
     });
   </script>
@@ -7038,27 +5937,6 @@ Respond ONLY with raw JSON:
       </div>
     </div>
   </div>
-
-  <!-- Scan History & Audit Trail Modal (Section 19) -->
-  <div class="modal-backdrop" id="scanHistoryModal">
-    <div class="modal-box" style="max-width: 650px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <h3 style="font-size: 17px; font-weight: 800; color: #38bdf8;">📋 Spring Scan Audit Trail & History</h3>
-        <button onclick="closeScanHistoryModal()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">✕</button>
-      </div>
-      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
-        Log of recent spring scans, measured 20-coil lengths, and confirmed wire gauges saved on this device.
-      </div>
-      <div id="scanHistoryList" style="max-height: 55vh; overflow-y: auto;">
-        <!-- Populated via JS -->
-      </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
-        <button class="btn-action" onclick="clearScanHistory()" style="color: #ef4444; border-color: rgba(239,68,68,0.3);">Clear History</button>
-        <button class="btn-action" onclick="closeScanHistoryModal()">Close</button>
-      </div>
-    </div>
-  </div>
-
 
   <!-- PWA Install Guide Modal -->
   <div class="modal-backdrop" id="installModal">
