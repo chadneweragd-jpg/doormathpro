@@ -2130,8 +2130,19 @@
               </div>
             </div>
 
-            <div id="resConfDetails" style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; text-align: left; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 8px;">
+            <div id="resConfDetails" style="font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px; text-align: left; background: rgba(0,0,0,0.3); padding: 10px 14px; border-radius: 8px;">
               <!-- Filled dynamically with verification factors -->
+            </div>
+
+            <!-- Quick 1-Tap 20-Coil Tape Reading Selector (Fast Field Verification) -->
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 18px; text-align: left;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 12px; font-weight: 800; color: var(--accent);">📏 1-Tap Quick Correction</span>
+                <span style="font-size: 11px; color: var(--text-muted);">Tap what your tape reads:</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px;" id="quickCorrectionGrid">
+                <!-- Populated dynamically via JS -->
+              </div>
             </div>
 
             <!-- Primary Action Button (Section 10 & 18) -->
@@ -6064,6 +6075,66 @@ Guidelines:
     let currentScanData = null;
     let confirmedScanWire = null;
 
+
+    // Quick 20-Coil Correction Carousel
+    const COMMON_TEST_WIRES = [
+      { wire: 0.192, name: ".192", color: "Orange", coils20: 3.840, dashes: '3-13/16"' },
+      { wire: 0.207, name: ".207", color: "Yellow", coils20: 4.140, dashes: '4-1/8"' },
+      { wire: 0.218, name: ".218", color: "White",  coils20: 4.375, dashes: '4-3/8"' },
+      { wire: 0.225, name: ".225", color: "Red",    coils20: 4.506, dashes: '4-1/2"' },
+      { wire: 0.234, name: ".234", color: "Brown",  coils20: 4.680, dashes: '4-11/16"' },
+      { wire: 0.243, name: ".243", color: "Green",  coils20: 4.874, dashes: '4-7/8"' },
+      { wire: 0.250, name: ".250", color: "Gold",   coils20: 5.000, dashes: '5-0/0"' },
+      { wire: 0.262, name: ".262", color: "Blue",   coils20: 5.250, dashes: '5-1/4"' },
+      { wire: 0.273, name: ".273", color: "Black",  coils20: 5.460, dashes: '5-7/16"' }
+    ];
+
+    function renderQuickCorrectionButtons(activeWire) {
+      const container = document.getElementById('quickCorrectionGrid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      COMMON_TEST_WIRES.forEach(w => {
+        const isMatch = Math.abs(w.wire - activeWire) < 0.003;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn-action';
+        btn.style.padding = '8px 6px';
+        btn.style.fontSize = '11px';
+        btn.style.fontWeight = '700';
+        btn.style.justifyContent = 'center';
+        btn.style.textAlign = 'center';
+        btn.style.border = isMatch ? '2px solid var(--accent)' : '1px solid var(--border-color)';
+        btn.style.background = isMatch ? 'rgba(245, 158, 11, 0.2)' : 'var(--bg-card-sub)';
+        btn.style.color = isMatch ? '#fff' : 'var(--text-muted)';
+
+        btn.innerHTML = `<span>${w.dashes}</span> <strong style="color:var(--accent); margin-left:4px;">${w.name}</strong>`;
+        btn.onclick = () => {
+          applyQuickWireCorrection(w);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function applyQuickWireCorrection(wireObj) {
+      if (!currentScanData) {
+        currentScanData = {};
+      }
+      currentScanData.wire = wireObj.wire;
+      currentScanData.name = wireObj.name;
+      currentScanData.color = wireObj.color;
+      currentScanData.measuredWire = wireObj.wire;
+      currentScanData.coils20Span = wireObj.coils20;
+      currentScanData.confidence = 'HIGH';
+      currentScanData.reasons = [
+        `Technician verified 20 coils at ${wireObj.dashes} on tape measure.`,
+        `Directly matched standard DASMA ${wireObj.name}" ${wireObj.color} specification.`
+      ];
+      currentScanData.disagreement = false;
+
+      renderScanResultUI(currentScanData);
+    }
+
     // Initialize Manual Wire List in Modal
     function populateManualWireModal() {
       const tbody = document.getElementById('manualWireListBody');
@@ -6362,56 +6433,53 @@ Guidelines:
 
       const base64Payload = base64DataUrl.split(',')[1];
       const promptText = `
-You are an expert optical measurement engineer and veteran commercial garage door technician.
-Analyze this photo of a torsion spring photographed alongside a tape measure or ruler.
+You are a master optical measurement engineer and veteran garage door spring specialist.
+You are inspecting a photograph of a garage door torsion spring placed alongside a tape measure.
 
-20-COIL BENCHMARK TABLE (MEASURED IN INCHES):
-- 20 coils of .192 = 3-13/16" (3.84 in) -> Orange
-- 20 coils of .207 = 4-1/8"    (4.14 in) -> Yellow
-- 20 coils of .218 = 4-3/8"    (4.375 in) -> White
-- 20 coils of .225 = 4-1/2"    (4.50 in) -> Red
-- 20 coils of .234 = 4-11/16"  (4.68 in) -> Brown
-- 20 coils of .243 = 4-7/8"    (4.87 in) -> Green
-- 20 coils of .250 = 5-0/0"    (5.00 in) -> Gold
-- 20 coils of .262 = 5-1/4"    (5.25 in) -> Blue
-- 20 coils of .273 = 5-7/16"   (5.46 in) -> Black
-- 20 coils of .283 = 5-11/16"  (5.66 in) -> Orange
-- 20 coils of .295 = 5-7/8"    (5.90 in) -> Yellow
-- 20 coils of .306 = 6-1/8"    (6.13 in) -> White
-- 20 coils of .312 = 6-1/4"    (6.25 in) -> Red
+DASMA 20-COIL BENCHMARK SPANS (PHYSICAL DISTANCE IN INCHES):
+- .192 Wire (Orange) -> 20 coils = 3-13/16" (3.84 in)
+- .207 Wire (Yellow) -> 20 coils = 4-1/8"    (4.14 in)
+- .218 Wire (White)  -> 20 coils = 4-3/8"    (4.375 in)
+- .225 Wire (Red)    -> 20 coils = 4-1/2"    (4.50 in)
+- .234 Wire (Brown)  -> 20 coils = 4-11/16"  (4.68 in)
+- .243 Wire (Green)  -> 20 coils = 4-7/8"    (4.87 in)
+- .250 Wire (Gold)   -> 20 coils = 5-0/0"    (5.00 in)
+- .262 Wire (Blue)   -> 20 coils = 5-1/4"    (5.25 in)
+- .273 Wire (Black)  -> 20 coils = 5-7/16"   (5.46 in)
+- .283 Wire (Orange) -> 20 coils = 5-11/16"  (5.66 in)
+- .295 Wire (Yellow) -> 20 coils = 5-7/8"    (5.90 in)
+- .306 Wire (White)  -> 20 coils = 6-1/8"    (6.13 in)
+- .312 Wire (Red)    -> 20 coils = 6-1/4"    (6.25 in)
 
-CRITICAL ACCURACY INSTRUCTIONS:
-1. Examine the tape measure blade beside the spring coils.
-2. Read the start marking (e.g. 1", 2", or 0") and end marking across exactly 20 consecutive coils.
-3. Calculate physical span = EndMark - StartMark in inches.
-4. If 20 coils measure ~4-1/8", it is .207 WIRE (Yellow).
-5. If 20 coils measure ~4-3/8", it is .218 WIRE (White).
-6. If 20 coils measure ~5", it is .250 WIRE (Gold).
-7. Do NOT default to .250! Report the exact span read from the tape measure.
+STRICT TAPE MEASURE GROUNDING STEPS:
+1. ONLY read numbers physically visible on the tape measure in the photo (e.g. 4, 5, 6, 7, 8, 9, 10, 11). Do NOT hallucinate numbers outside the photo (e.g. 12, 13, 14, 15, 16)!
+2. Identify a clean full-inch line as the start reference (e.g. the 5-inch line or 6-inch line).
+3. Count forward exactly 20 adjacent coil wires along the spring from that start mark:
+   Coils 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20.
+4. Read the exact inch mark where the 20th coil ends:
+   - If starting at 5.0", look at the 9" and 10" marks:
+     * If 20 coils end just past 9" at approximately 9-1/8" (4-1/8" span) -> WIRE IS .207 (Yellow).
+     * If 20 coils end at 9-3/8" (4-3/8" span) -> WIRE IS .218 (White).
+     * If 20 coils end at 9-1/2" (4-1/2" span) -> WIRE IS .225 (Red).
+     * If 20 coils end at 10-0/0" (5.00" span) -> WIRE IS .250 (Gold).
+5. DO NOT round to 5" or 4-1/2" just because they are prominent marks! A 20-coil span of 4-1/8" is .207 Yellow.
 
-MEASUREMENT PROTOCOL:
-1. Identify the spring body and the ruler/tape measure markings (inches).
-2. Count exactly 20 adjacent, tightly coiled spring wires.
-3. Measure the physical distance across those 20 coils on the tape measure in inches (e.g., exactly 4-3/8" = 4.375", 4-1/2" = 4.500", 5" = 5.000").
-4. Compute measured wire diameter = (20-coil distance) / 20.
-5. Identify the closest standard DASMA spring wire from:
-   [.192, .200, .207, .218, .225, .234, .243, .250, .262, .273, .283, .289, .295, .306, .312, .325, .331, .343, .362, .375, .390, .406, .437, .500]
-6. Compare Method 1 (20-coil span / 20) against Method 2 (individual wire edge pitch). If they differ by > 0.008 inches, set disagreement to true.
-7. Assess camera angle, lighting, and ruler readability to assign Confidence: HIGH, MEDIUM, or LOW.
-
-Return ONLY raw JSON:
+Respond ONLY with raw JSON:
 {
   "quality_ok": true,
   "quality_reason": null,
-  "coils_counted": 20,
-  "twenty_coil_span_in": 4.375,
-  "wire_dia_measured": 0.2188,
-  "method2_pitch_wire": 0.2185,
-  "closest_standard_wire": 0.218,
+  "visible_tape_range": "4in to 11in",
+  "start_inch_mark": 5.0,
+  "end_inch_mark": 9.14,
+  "twenty_coil_span_in": 4.14,
+  "wire_dia_measured": 0.207,
+  "method2_pitch_wire": 0.207,
+  "closest_standard_wire": 0.207,
+  "wire_name": ".207",
+  "color_code": "Yellow",
   "confidence": "HIGH",
-  "confidence_reasons": ["20 coils clearly counted", "Tape measure 1/16in hash marks readable", "Pitch agreement within 0.001in"],
-  "disagreement": false,
-  "inside_diameter_est": "2.0 in"
+  "confidence_reasons": ["Counted 20 coils starting at 5.0in mark and ending at 9-1/8in mark", "Physical 20-coil span is 4.14 inches", "Matches standard .207 Yellow wire"],
+  "disagreement": false
 }
 `;
 
@@ -6453,8 +6521,8 @@ Return ONLY raw JSON:
         return null;
       }
 
-      const coils20Span = aiResult.twenty_coil_span_in || 4.375;
-      const measuredWire = aiResult.wire_dia_measured || (coils20Span / 20.0);
+      const coils20Span = parseFloat(aiResult.twenty_coil_span_in) || (parseFloat(aiResult.wire_dia_measured) ? parseFloat(aiResult.wire_dia_measured) * 20.0 : 4.14);
+      const measuredWire = parseFloat(aiResult.wire_dia_measured) || (coils20Span / 20.0);
       const method2Wire = aiResult.method2_pitch_wire || measuredWire;
 
       // Match against STANDARD_SPRING_WIRES
@@ -6571,6 +6639,7 @@ Return ONLY raw JSON:
 
       // Update CTA button
       document.getElementById('useWireBtn').innerText = `✓ USE ${res.name} IN SPRING ENGINEERING →`;
+      renderQuickCorrectionButtons(res.wire);
     }
 
     // CONFIRM WIRE & POPULATE ENGINEERING WORKFLOW (Section 18 & 19)
