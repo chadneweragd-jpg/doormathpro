@@ -1214,13 +1214,13 @@
 
       /* Native Mobile Bottom Sheet Chatbot */
       .chatbot-window {
-        bottom: 0 !important;
+        bottom: 75px !important; /* Sit exactly on top of bottom nav */
         right: 0 !important;
         left: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
-        height: 85vh !important;
-        max-height: 85vh !important;
+        height: 75vh !important; /* Adjusted so it fits nicely above nav */
+        max-height: 75vh !important;
         border-radius: 20px 20px 0 0 !important;
         border-bottom: none !important;
       }
@@ -7572,9 +7572,6 @@ Only output the raw JSON — no markdown fences, no explanation text outside the
       isChatOpen = !isChatOpen;
       const win = document.getElementById('chatbotWindow');
       win.classList.toggle('open', isChatOpen);
-      if (isChatOpen) {
-        document.getElementById('chatTextInput').focus();
-      }
     }
 
     function handleChatKeyDown(e) {
