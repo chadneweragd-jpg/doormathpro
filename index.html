@@ -7586,8 +7586,20 @@ Only output the raw JSON — no markdown fences, no explanation text outside the
       chatBody.appendChild(aiBubble);
       chatBody.scrollTop = chatBody.scrollHeight;
 
+      // v40: Context Awareness - grab live calculator state
+      const doorW = document.getElementById('doorWidth')?.value || '0';
+      const doorH = document.getElementById('doorHeight')?.value || '0';
+      const doorWt = document.getElementById('doorWeight')?.value || '0';
+
       const systemPrompt = `You are DoorTech AI, a veteran commercial and residential garage door installer, service technician, and estimator with 25 years of field experience in North America.
 You provide direct, highly practical, field-tested troubleshooting advice for overhead doors, torsion springs, cable drums (standard lift, high lift, vertical lift), track clearances (12", 15", low headroom), operators (LiftMaster, Hormann, Manaras), and hardware.
+
+Current Calculator State (use this if the user asks a specific engineering question):
+- Door Width: ${doorW} ft
+- Door Height: ${doorH} ft
+- Door Weight: ${doorWt} lbs
+If these values are 0, the user hasn't entered them yet. If they ask a specific question requiring math and the values are 0, politely tell them to enter the door size and weight into the calculator on their screen so you can crunch the numbers for them.
+
 Guidelines:
 1. Keep answers concise, direct, bulleted, and scannable for a tech on a ladder.
 2. Safety first: remind technicians about winding bar safety and extreme spring tension when applicable.
