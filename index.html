@@ -1332,8 +1332,55 @@
       .house-ad-content.footer-variant .house-ad-desc {
         display: block !important;
         font-size: 11px;
-        margin: 6px 0 8px 0;
+        margin-bottom: 4px;
       }
+    }
+
+    /* Fixed Bottom Navigation Bar (v40 Update) */
+    body {
+      padding-bottom: 70px; /* Space for bottom nav */
+    }
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: var(--surface-light);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 8px 0;
+      z-index: 1000;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+    }
+    .bottom-nav .tab-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .bottom-nav .tab-btn span:first-child {
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .bottom-nav .tab-btn.active, .bottom-nav .tab-btn:hover {
+      opacity: 1;
+      color: var(--accent);
+    }
+    .bottom-nav .tab-btn.active span:first-child {
+      transform: scale(1.15);
     }
 
 
@@ -1377,8 +1424,8 @@
 
 
   <div class="app-container">
-    <!-- Hero / Landing Page Section -->
-    <section class="hero-section" id="hero-landing">
+    <!-- Home / Dashboard Section -->
+    <section id="pane-home" class="tab-pane active">
       <div class="hero-badge">
         <span class="pulse-dot"></span> Free Trade Suite • Field-Ready
       </div>
@@ -1390,8 +1437,8 @@
       </p>
 
       <div class="hero-actions">
-        <button class="btn-action primary hero-cta-btn" onclick="switchTab('spring-scan'); scrollToTools();">
-          📏 Identify Wire Size
+        <button class="btn-action primary hero-cta-btn" onclick="switchTab('spring-sizer'); scrollToTools();">
+          📐 Start Engineering
         </button>
         <button class="btn-action" onclick="openSpecSheet()">
           📄 View Spec Sheet
@@ -1408,39 +1455,12 @@
         <span>📶 Runs Offline</span>
       </div>
 
-      <!-- Feature Highlight Cards (4 Primary Actions) -->
-      <div class="hero-features-grid">
-        <div class="hero-feature-card" onclick="switchTab('spring-scan'); scrollToTools();">
-          <div class="feature-icon">📏</div>
-          <div class="feature-name">20-Coil Wire ID</div>
-          <div class="feature-desc">Measure 20 coils with a tape measure and get exact wire size, DASMA color code & paint marker — no camera, no guesswork.</div>
-        </div>
-
-        <div class="hero-feature-card" onclick="switchTab('spring-sizer'); scrollToTools();">
-          <div class="feature-icon">⚖️</div>
-          <div class="feature-name">Engineer Spring (IPPT)</div>
-          <div class="feature-desc">Exact counterbalance torque & DASMA cycle ratings across 12 standard, high-lift & vertical drums.</div>
-        </div>
-
-        <div class="hero-feature-card" onclick="switchTab('weight-est'); scrollToTools();">
-          <div class="feature-icon">🚪</div>
-          <div class="feature-name">Door Weight & AI Scanner</div>
-          <div class="feature-desc">58+ factory models across 10 manufacturers plus optional 2-slot camera vision ID.</div>
-        </div>
-
-        <div class="hero-feature-card" onclick="switchTab('truck-stock'); scrollToTools();">
-          <div class="feature-icon">🔄</div>
-          <div class="feature-name">Truck Stock Matcher</div>
-          <div class="feature-desc">Live matrix converting broken springs to any wire gauge available on your truck shelves.</div>
-        </div>
-      </div>
-
       <div class="hero-tagline">
         🔧 Built by a tech, for techs.
       </div>
     </section>
 
-    <!-- Main Navigation Tabs -->
+    <!-- Main Navigation Anchor -->
     <div id="tools-anchor"></div>
     <!-- Ad Slot: Leaderboard (728x90 Desktop / 320x50 Mobile) -->
     <div class="ad-slot-wrapper no-print">
@@ -1457,30 +1477,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Main Navigation: 4 Primary Actions + More Tools (Section 14) -->
-    <div class="tab-nav-wrapper">
-      <nav class="tab-nav" id="mainTabNav">
-        <button class="tab-btn active" data-tab="spring-scan" onclick="switchTab('spring-scan')">
-          <span>📏</span> <span>Wire ID</span>
-        </button>
-        <button class="tab-btn" data-tab="spring-sizer" onclick="switchTab('spring-sizer')">
-          <span>⚖️</span> <span>Engineer Spring</span>
-        </button>
-        <button class="tab-btn" data-tab="weight-est" onclick="switchTab('weight-est')">
-          <span>🚪</span> <span>Door Weight</span>
-        </button>
-        <button class="tab-btn" data-tab="truck-stock" onclick="switchTab('truck-stock')">
-          <span>🔄</span> <span>Truck Stock</span>
-        </button>
-        <button class="tab-btn" data-tab="quick-tools" onclick="switchTab('quick-tools')">
-          <span>🛠️</span> <span>More Tools</span>
-        </button>
-      </nav>
-    </div>
-    <div class="tab-scroll-hint no-print">
-      <span>← Scroll for more tools →</span>
     </div>
     <!-- Active Wire ID Confirmation Banner -->
     <div id="springScanLiveIndicator" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
@@ -1695,7 +1691,7 @@
     </section>
 
     <!-- TAB 0: 20-COIL WIRE SIZE IDENTIFIER (replaces removed Spring Scan AI camera feature) -->
-    <section id="pane-spring-scan" class="tab-pane active">
+    <section id="pane-spring-scan" class="tab-pane">
       <div class="card">
         <div class="card-header">
           <div>
@@ -7963,11 +7959,23 @@ Guidelines:
   </div>
 
 
-  <!-- Floating AI Assistant Button (Bug 2 Fix) -->
-  <button class="chatbot-fab no-print" onclick="toggleChatbot()" title="DoorTech AI Assistant">
-    <span class="fab-icon">💬</span>
-    <span class="fab-text">AI Tech Assistant</span>
-  </button>
+  <nav class="bottom-nav no-print" id="bottomNav">
+    <button class="tab-btn active" data-tab="home" onclick="switchTab('home'); window.scrollTo(0,0);">
+      <span>🏠</span><span>Home</span>
+    </button>
+    <button class="tab-btn" data-tab="spring-scan" onclick="switchTab('spring-scan'); window.scrollTo(0,0);">
+      <span>📏</span><span>Identify</span>
+    </button>
+    <button class="tab-btn" data-tab="spring-sizer" onclick="switchTab('spring-sizer'); window.scrollTo(0,0);">
+      <span>📐</span><span>Engineer</span>
+    </button>
+    <button class="tab-btn" data-tab="truck-stock" onclick="switchTab('truck-stock'); window.scrollTo(0,0);">
+      <span>📦</span><span>Stock</span>
+    </button>
+    <button class="tab-btn" onclick="toggleChatbot()">
+      <span>💬</span><span>AI Chat</span>
+    </button>
+  </nav>
 
   <!-- Floating Chatbot Window -->
   <div class="chatbot-window no-print" id="chatbotWindow">
