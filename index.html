@@ -3,11 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>DoorMathPro — Professional Garage Door Spring & Engineering Suite</title>
-  <meta name="description" content="Field-ready garage door spring calculator, truck stock conversion matcher, IPPT sizer, door weight estimator, and DASMA reference suite.">
+  <title>Garage Door Spring Calculator & IPPT Sizer | DoorMathPro</title>
+  <meta name="description" content="Free garage door spring calculator: IPPT sizing, wire gauge ID, truck stock matcher, door weight estimator & AI photo scanner. DASMA/ASTM standards, no signup, works offline.">
   <meta name="theme-color" content="#f59e0b">
+  <link rel="canonical" href="https://doormathpro.com/">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
+
+  <!-- SEO (added [SEO pass]): social share previews -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://doormathpro.com/">
+  <meta property="og:title" content="Garage Door Spring Calculator & IPPT Sizer | DoorMathPro">
+  <meta property="og:description" content="Free garage door spring calculator: IPPT sizing, wire gauge ID, truck stock matcher, door weight estimator & AI photo scanner. DASMA/ASTM standards, no signup, works offline.">
+  <meta property="og:image" content="https://doormathpro.com/icon-512.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Garage Door Spring Calculator & IPPT Sizer | DoorMathPro">
+  <meta name="twitter:description" content="Free garage door spring calculator: IPPT sizing, wire gauge ID, truck stock matcher & door weight estimator. DASMA/ASTM standards, works offline.">
+  <meta name="twitter:image" content="https://doormathpro.com/icon-512.png">
+
+  <!-- SEO (added [SEO pass]): structured data so Google understands this is a
+       free web-based tool, not an article -- helps eligibility for rich
+       results. No aggregateRating/review included since none genuinely
+       exist yet; adding fake ratings violates Google's structured data
+       guidelines and can get the listing penalized. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "DoorMathPro",
+    "url": "https://doormathpro.com/",
+    "description": "Free garage door spring calculator suite: IPPT sizing, truck stock wire matching, wire gauge identification, door weight estimation, and an AI photo door scanner. Built to DASMA and ASTM A229 standards.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any (runs in any modern web browser, installable as a PWA)",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
 
   <style>
     :root {
@@ -309,6 +343,10 @@
       align-items: center;
       gap: 8px;
       color: var(--text-main);
+      margin: 0; /* SEO pass: several of these are now real heading tags
+                    (h2/h3) for a proper outline -- this neutralizes the
+                    browser's default heading margin so nothing shifts
+                    visually. */
     }
     .card-subtitle {
       font-size: 12px;
@@ -1503,7 +1541,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Existing / Broken Spring Setup</div>
+              <h2 class="card-title">Existing / Broken Spring Setup</h2>
               <div class="card-subtitle">Measure the broken spring specs to calculate replacement wire</div>
             </div>
           </div>
@@ -1638,7 +1676,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Available Truck Stock Matcher</div>
+              <h3 class="card-title">Available Truck Stock Matcher</h3>
               <div class="card-subtitle">Live alternatives matching target IPPT across wire on your truck</div>
             </div>
             <span class="badge green" id="matchCountBadge">8 Matches</span>
@@ -1699,9 +1737,9 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title" style="font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+            <h2 class="card-title" style="font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
               📏 20-Coil Wire Size Identifier
-            </div>
+            </h2>
             <div class="card-subtitle">Measure 20 consecutive coils tightly with a tape measure — no camera needed</div>
           </div>
         </div>
@@ -1781,7 +1819,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Sectional Door Weight Calculator</div>
+              <h2 class="card-title">Sectional Door Weight Calculator</h2>
               <div class="card-subtitle">Select your manufacturer model preset or customize construction specs</div>
             </div>
           </div>
@@ -2003,7 +2041,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Dead Weight Breakdown</div>
+              <h3 class="card-title">Dead Weight Breakdown</h3>
               <div class="card-subtitle">Component weight distribution</div>
             </div>
           </div>
@@ -2044,7 +2082,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Door & Track Specifications</div>
+              <h2 class="card-title">Door & Track Specifications</h2>
               <div class="card-subtitle">Calculate required counterbalance IPPT from door dimensions</div>
             </div>
           </div>
@@ -2160,7 +2198,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Engineered Spring Recommendations</div>
+              <h3 class="card-title">Engineered Spring Recommendations</h3>
               <div class="card-subtitle">Standard, High-Cycle, and Commercial options</div>
             </div>
           </div>
@@ -2178,7 +2216,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">OD to ID Converter & Headroom Clearance</div>
+              <h2 class="card-title">OD to ID Converter & Headroom Clearance</h2>
               <div class="card-subtitle">Calculate inside diameter from outside caliper measurement</div>
             </div>
           </div>
@@ -2210,7 +2248,7 @@
 
           <!-- Headroom Quick Guide -->
           <div class="card-header" style="margin-top: 14px; margin-bottom: 10px;">
-            <div class="card-title" style="font-size: 14px;">Minimum Headroom Clearances</div>
+            <h3 class="card-title" style="font-size: 14px;">Minimum Headroom Clearances</h3>
           </div>
           <div class="table-container">
             <table class="data-table">
@@ -2235,7 +2273,7 @@
       <div class="card" style="margin-top: 20px;">
         <div class="card-header">
           <div>
-            <div class="card-title">🥁 Comprehensive Drum Comparison & Cross-Reference Explorer</div>
+            <h2 class="card-title">🥁 Comprehensive Drum Comparison & Cross-Reference Explorer</h2>
             <div class="card-subtitle">Reverse-engineered industry database comparing OMI, Apco, Canimex (Torque Force), DNS & SSC</div>
           </div>
           <input type="text" id="drumSearchInput" placeholder="Search drum (e.g. 54, 5250, Canimex, 120, VL)..." oninput="filterDrumTable()" style="background: var(--bg-card-sub); border: 1px solid var(--border-color); color: var(--text-main); font-size: 12px; padding: 6px 12px; border-radius: 6px; outline: none; width: 220px;">
@@ -2265,7 +2303,7 @@
       <div class="card" style="margin-top: 20px;">
         <div class="card-header">
           <div>
-            <div class="card-title">🎯 Springs by Direct IPPT Lookup (SSC Style)</div>
+            <h2 class="card-title">🎯 Springs by Direct IPPT Lookup (SSC Style)</h2>
             <div class="card-subtitle">Input an exact target IPPT to view all engineered wire and length matches</div>
           </div>
         </div>
@@ -2312,7 +2350,7 @@
         <div class="card-header" style="flex-direction: column; align-items: stretch; gap: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
-              <div class="card-title">📚 10-Manufacturer Model Weight & Density Reference Catalog</div>
+              <h2 class="card-title">📚 10-Manufacturer Model Weight & Density Reference Catalog</h2>
               <div class="card-subtitle">Audited factory engineering specs across 58 residential & commercial series (Canadian & US)</div>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
@@ -2378,7 +2416,11 @@
       <div class="spec-sheet-print" id="printableSpecSheet">
         <div style="border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-end;">
           <div>
-            <h1 style="font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">DOORMATH PRO</h1>
+            <!-- SEO pass: this used to be a second h1 tag -- a page should
+                 have exactly one. This is a print-only document title inside
+                 a modal, not the page's headline, so it's a div now;
+                 identical appearance, all styling is inline already. -->
+            <div style="font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">DOORMATH PRO</div>
             <div style="font-size: 12px; color: #555;">Torsion Counterbalance & Spring Engineering Specification</div>
           </div>
           <div style="text-align: right; font-size: 11px; color: #555;">
