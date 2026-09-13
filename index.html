@@ -1338,21 +1338,22 @@
 
     /* Fixed Bottom Navigation Bar (v40 Update) */
     body {
-      padding-bottom: 70px; /* Space for bottom nav */
+      padding-bottom: 75px; /* Space for bottom nav */
     }
     .bottom-nav {
       position: fixed;
       bottom: 0;
       left: 0;
       width: 100%;
-      background: var(--surface-light);
-      border-top: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.98); /* High contrast dark blue/slate */
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
       display: flex;
       justify-content: space-around;
       align-items: center;
-      padding: 8px 0;
+      padding: 10px 0 12px 0; /* Extra padding for modern phones */
       z-index: 1000;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.6);
     }
     .bottom-nav .tab-btn {
       flex: 1;
@@ -1362,25 +1363,24 @@
       justify-content: center;
       background: none;
       border: none;
-      color: var(--text-muted);
-      font-size: 10px;
+      color: rgba(255, 255, 255, 0.6); /* More visible unselected state */
+      font-size: 11px;
       font-weight: 700;
       padding: 4px;
       cursor: pointer;
-      opacity: 0.6;
       transition: all 0.2s ease;
       white-space: nowrap;
     }
     .bottom-nav .tab-btn span:first-child {
-      font-size: 20px;
+      font-size: 22px; /* Slightly larger icons */
       margin-bottom: 4px;
     }
     .bottom-nav .tab-btn.active, .bottom-nav .tab-btn:hover {
-      opacity: 1;
-      color: var(--accent);
+      color: var(--accent); /* Lights up orange/accent */
     }
     .bottom-nav .tab-btn.active span:first-child {
       transform: scale(1.15);
+      text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); /* Glow effect */
     }
 
 
@@ -1443,6 +1443,33 @@
         <button class="btn-action" onclick="openSpecSheet()">
           📄 View Spec Sheet
         </button>
+      </div>
+
+      <!-- Feature Highlight Cards (Dashboard Menu) -->
+      <div class="hero-features-grid">
+        <div class="hero-feature-card" onclick="switchTab('spring-scan'); window.scrollTo(0,0);">
+          <div class="feature-icon">📏</div>
+          <div class="feature-name">20-Coil Wire ID</div>
+          <div class="feature-desc">Measure 20 coils with a tape measure and get exact wire size, DASMA color code & paint marker.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('weight-est'); window.scrollTo(0,0);">
+          <div class="feature-icon">🚪</div>
+          <div class="feature-name">Door Weight & AI Scanner</div>
+          <div class="feature-desc">58+ factory models across 10 manufacturers plus optional 2-slot camera vision ID.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('truck-stock'); window.scrollTo(0,0);">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-name">Truck Stock Matcher</div>
+          <div class="feature-desc">Live matrix converting broken springs to any wire gauge available on your truck shelves.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('quick-tools'); window.scrollTo(0,0);">
+          <div class="feature-icon">📚</div>
+          <div class="feature-name">Reference & Tools</div>
+          <div class="feature-desc">Direct IPPT lookup, OD to ID conversion, and standard cycle ratings.</div>
+        </div>
       </div>
 
       <div class="hero-trust">
