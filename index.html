@@ -3,45 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Garage Door Spring Calculator & IPPT Sizer | DoorMathPro</title>
-  <meta name="description" content="Free garage door spring calculator: IPPT sizing, wire gauge ID, truck stock matcher, door weight estimator & AI photo scanner. DASMA/ASTM standards, no signup, works offline.">
+  <title>DoorMathPro — Professional Garage Door Spring & Engineering Suite</title>
+  <meta name="description" content="Field-ready garage door spring calculator, truck stock conversion matcher, IPPT sizer, door weight estimator, and DASMA reference suite.">
   <meta name="theme-color" content="#f59e0b">
-  <link rel="canonical" href="https://doormathpro.com/">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-
-  <!-- SEO (added [SEO pass]): social share previews -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://doormathpro.com/">
-  <meta property="og:title" content="Garage Door Spring Calculator & IPPT Sizer | DoorMathPro">
-  <meta property="og:description" content="Free garage door spring calculator: IPPT sizing, wire gauge ID, truck stock matcher, door weight estimator & AI photo scanner. DASMA/ASTM standards, no signup, works offline.">
-  <meta property="og:image" content="https://doormathpro.com/icon-512.png">
-  <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Garage Door Spring Calculator & IPPT Sizer | DoorMathPro">
-  <meta name="twitter:description" content="Free garage door spring calculator: IPPT sizing, wire gauge ID, truck stock matcher & door weight estimator. DASMA/ASTM standards, works offline.">
-  <meta name="twitter:image" content="https://doormathpro.com/icon-512.png">
-
-  <!-- SEO (added [SEO pass]): structured data so Google understands this is a
-       free web-based tool, not an article -- helps eligibility for rich
-       results. No aggregateRating/review included since none genuinely
-       exist yet; adding fake ratings violates Google's structured data
-       guidelines and can get the listing penalized. -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "DoorMathPro",
-    "url": "https://doormathpro.com/",
-    "description": "Free garage door spring calculator suite: IPPT sizing, truck stock wire matching, wire gauge identification, door weight estimation, and an AI photo door scanner. Built to DASMA and ASTM A229 standards.",
-    "applicationCategory": "UtilitiesApplication",
-    "operatingSystem": "Any (runs in any modern web browser, installable as a PWA)",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
-  }
-  </script>
 
   <style>
     :root {
@@ -343,10 +309,6 @@
       align-items: center;
       gap: 8px;
       color: var(--text-main);
-      margin: 0; /* SEO pass: several of these are now real heading tags
-                    (h2/h3) for a proper outline -- this neutralizes the
-                    browser's default heading margin so nothing shifts
-                    visually. */
     }
     .card-subtitle {
       font-size: 12px;
@@ -1541,7 +1503,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2 class="card-title">Existing / Broken Spring Setup</h2>
+              <div class="card-title">Existing / Broken Spring Setup</div>
               <div class="card-subtitle">Measure the broken spring specs to calculate replacement wire</div>
             </div>
           </div>
@@ -1676,7 +1638,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h3 class="card-title">Available Truck Stock Matcher</h3>
+              <div class="card-title">Available Truck Stock Matcher</div>
               <div class="card-subtitle">Live alternatives matching target IPPT across wire on your truck</div>
             </div>
             <span class="badge green" id="matchCountBadge">8 Matches</span>
@@ -1737,9 +1699,9 @@
       <div class="card">
         <div class="card-header">
           <div>
-            <h2 class="card-title" style="font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
+            <div class="card-title" style="font-size: 18px; color: var(--accent); display: flex; align-items: center; gap: 8px;">
               📏 20-Coil Wire Size Identifier
-            </h2>
+            </div>
             <div class="card-subtitle">Measure 20 consecutive coils tightly with a tape measure — no camera needed</div>
           </div>
         </div>
@@ -1819,7 +1781,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2 class="card-title">Sectional Door Weight Calculator</h2>
+              <div class="card-title">Sectional Door Weight Calculator</div>
               <div class="card-subtitle">Select your manufacturer model preset or customize construction specs</div>
             </div>
           </div>
@@ -1861,6 +1823,12 @@
                 <div id="preview1Wrap" style="display: none; margin-top: 8px; position: relative;">
                   <img id="preview1Img" style="width: 100%; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
                   <button onclick="clearPhoto(1)" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.75); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                  <!-- v40: quality badge shown after compression -->
+                  <div id="qualityBadge1" style="display:none; position:absolute; bottom:4px; left:4px; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;"></div>
+                </div>
+                <!-- v40: camera alignment guide (hidden until camera button tapped on mobile) -->
+                <div style="margin-top:6px; font-size:10px; color:var(--text-dim); text-align:center; line-height:1.3;">
+                  📐 <strong>Tip:</strong> Stand back — frame the full door face. Hold phone horizontal (landscape) for best results.
                 </div>
               </div>
 
@@ -1886,6 +1854,11 @@
                 <div id="preview2Wrap" style="display: none; margin-top: 8px; position: relative;">
                   <img id="preview2Img" style="width: 100%; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
                   <button onclick="clearPhoto(2)" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.75); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                  <div id="qualityBadge2" style="display:none; position:absolute; bottom:4px; left:4px; font-size:10px; font-weight:700; padding:2px 6px; border-radius:4px;"></div>
+                </div>
+                <!-- v40: joint profile framing tip -->
+                <div style="margin-top:6px; font-size:10px; color:var(--text-dim); text-align:center; line-height:1.3;">
+                  📐 <strong>Tip:</strong> Zoom in on the end stile or joint edge — the profile shape is the fingerprint.
                 </div>
               </div>
             </div>
@@ -1895,6 +1868,15 @@
               ⚡ Identify Door with AI Vision (Snap Photo 1 to Start)
             </button>
             <div id="photoStatusText" style="text-align: center; font-size: 11px; color: var(--text-dim); margin-top: 6px;">Ready for photo</div>
+            <!-- v40: retry button shown only on timeout -->
+            <div id="scanRetryRow" style="display:none; text-align:center; margin-top:8px;">
+              <button class="btn-action" style="font-size:12px; padding:6px 14px;" onclick="executeAiDoorScan(); document.getElementById('scanRetryRow').style.display='none';">🔄 Retry Scan</button>
+              <div style="font-size:10px; color:var(--text-dim); margin-top:4px;">Request timed out — tap to try again</div>
+            </div>
+            <!-- v40: manual entry link -->
+            <div style="text-align:center; margin-top:10px;">
+              <button onclick="toggleManualEntryWizard()" style="background:none; border:none; color:var(--text-dim); font-size:11px; cursor:pointer; text-decoration:underline;">📝 Can't get a clear photo? Enter parameters manually →</button>
+            </div>
 
             <!-- Loading & Analysis Result Card -->
             <div id="aiPreviewBox" style="display: none; margin-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 12px;">
@@ -1930,6 +1912,120 @@
                   ✅ Apply this Model to Weight Calculator →
                 </button>
               </div>
+            </div>
+
+            <!-- v40: Parameter Review Panel — shown when AI returns weightParams -->
+            <div id="weightParamsPanel" style="display:none; margin-top:12px; background:#172033; border:1px solid rgba(56,189,248,0.3); border-radius:10px; padding:14px;">
+              <div style="font-weight:700; font-size:13px; color:#38bdf8; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between;">
+                <span>📐 Extracted Weight Parameters</span>
+                <span id="extractionConfBadge" style="font-size:11px; font-weight:600; color:var(--text-muted);"></span>
+              </div>
+              <div style="font-size:11px; color:var(--text-dim); margin-bottom:10px;" id="extractionNotes"></div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+                <div>
+                  <label style="font-size:10px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Section Thickness</label>
+                  <select id="wpThickness" class="input-select" style="height:38px; font-size:12px;">
+                    <option value="1.125">1-1/8"</option>
+                    <option value="1.375">1-3/8"</option>
+                    <option value="1.75">1-3/4"</option>
+                    <option value="2.0" selected>2"</option>
+                    <option value="3.0">3"</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:10px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Steel Gauge (Est.)</label>
+                  <select id="wpGauge" class="input-select" style="height:38px; font-size:12px;">
+                    <option value="">Unknown</option>
+                    <option value="25ga">25 ga</option>
+                    <option value="24ga">24 ga</option>
+                    <option value="27ga">27 ga</option>
+                    <option value="26ga">26 ga</option>
+                    <option value="20ga">20 ga (Commercial)</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:10px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Insulation Core</label>
+                  <select id="wpInsulation" class="input-select" style="height:38px; font-size:12px;">
+                    <option value="none">None (Pan door)</option>
+                    <option value="polystyrene">Polystyrene</option>
+                    <option value="polyurethane_foamed">Polyurethane (foamed)</option>
+                    <option value="aluminum_frame">Aluminum frame</option>
+                    <option value="wood">Wood</option>
+                  </select>
+                </div>
+                <div>
+                  <label style="font-size:10px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Glass Rows</label>
+                  <div style="display:flex; align-items:center; gap:8px; height:38px;">
+                    <button class="stepper-btn" onclick="stepWP('wpGlassRows',-1)" style="width:36px;height:36px;border:1px solid var(--border-color);border-radius:6px;">−</button>
+                    <input type="number" id="wpGlassRows" value="0" min="0" max="5" style="width:40px; text-align:center; background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:6px; color:var(--text-main); font-size:14px; font-weight:700; padding:4px;">
+                    <button class="stepper-btn" onclick="stepWP('wpGlassRows',1)" style="width:36px;height:36px;border:1px solid var(--border-color);border-radius:6px;">+</button>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:10px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">Struts Visible</label>
+                  <div style="display:flex; align-items:center; gap:8px; height:38px;">
+                    <button class="stepper-btn" onclick="stepWP('wpStruts',-1)" style="width:36px;height:36px;border:1px solid var(--border-color);border-radius:6px;">−</button>
+                    <input type="number" id="wpStruts" value="0" min="0" max="6" style="width:40px; text-align:center; background:var(--bg-card-sub); border:1px solid var(--border-color); border-radius:6px; color:var(--text-main); font-size:14px; font-weight:700; padding:4px;">
+                    <button class="stepper-btn" onclick="stepWP('wpStruts',1)" style="width:36px;height:36px;border:1px solid var(--border-color);border-radius:6px;">+</button>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:10px; color:var(--text-muted); font-weight:700; display:block; margin-bottom:3px;">End Stile</label>
+                  <div id="wpEndStile" style="font-size:11px; color:var(--text-muted); line-height:1.3; padding:4px 0;"></div>
+                </div>
+              </div>
+              <button class="btn-action primary" style="width:100%; justify-content:center; padding:10px; font-size:12px;" onclick="applyWeightParamsToEstimator()">
+                📐 Apply These Parameters to Weight Calculator →
+              </button>
+            </div>
+
+            <!-- v40: Manual Tech Entry Wizard -->
+            <div id="manualEntryWizard" style="display:none; margin-top:12px; background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.25); border-radius:10px; padding:14px;">
+              <div style="font-weight:700; font-size:13px; color:#10b981; margin-bottom:10px;">📝 Manual Parameter Entry</div>
+              <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">Fill in what you can see on the door. Each answer directly feeds the weight calculator.</div>
+              <div class="field-group">
+                <label style="font-size:11px; color:var(--text-muted); font-weight:700;">Section thickness — measure with tape (most residential = 2")</label>
+                <select class="input-select" id="mwThickness" style="height:40px; font-size:13px; margin-top:4px;">
+                  <option value="1.125">1-1/8" (thin legacy)</option>
+                  <option value="1.375">1-3/8" (Acadia 138)</option>
+                  <option value="1.75">1-3/4" (most insulated residential)</option>
+                  <option value="2.0" selected>2" (standard foamed / commercial)</option>
+                  <option value="3.0">3" (max insulation commercial)</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label style="font-size:11px; color:var(--text-muted); font-weight:700;">Insulation — tap the inside of a section panel</label>
+                <select class="input-select" id="mwInsulation" style="height:40px; font-size:13px; margin-top:4px;">
+                  <option value="pan-25">Hollow / no insulation (pan door)</option>
+                  <option value="poly-vinyl" selected>Polystyrene — light, rigid white foam</option>
+                  <option value="foamed-3layer">Polyurethane — dense, yellow/tan foam</option>
+                  <option value="commercial-heavy">Commercial heavy-duty steel</option>
+                  <option value="fullview-glass">Aluminum full-view (glass panels)</option>
+                  <option value="wood-solid">Solid wood</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label style="font-size:11px; color:var(--text-muted); font-weight:700;">Horizontal struts — count the C-bar or U-bar rails across the door</label>
+                <select class="input-select" id="mwStruts" style="height:40px; font-size:13px; margin-top:4px;">
+                  <option value="0">None</option>
+                  <option value="1">1 strut</option>
+                  <option value="2" selected>2 struts</option>
+                  <option value="3">3 struts</option>
+                  <option value="4">4 struts</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label style="font-size:11px; color:var(--text-muted); font-weight:700;">Glass rows</label>
+                <select class="input-select" id="mwGlass" style="height:40px; font-size:13px; margin-top:4px;">
+                  <option value="none" selected>No glass</option>
+                  <option value="4-single">1 row — 4 standard insulated lites</option>
+                  <option value="4-heavy">1 row — 4 heavy laminated lites</option>
+                  <option value="full-glass-row">Full-width glass row</option>
+                </select>
+              </div>
+              <button class="btn-action primary" style="width:100%; justify-content:center; padding:10px; font-size:13px; background:#10b981; border-color:#10b981;" onclick="applyManualWizardToEstimator()">
+                ✅ Apply Manual Parameters to Calculator →
+              </button>
             </div>
           </div>
 
@@ -1987,7 +2083,7 @@
 
           <div class="field-group">
             <div class="field-label">Door Construction & Core</div>
-            <select class="input-select" id="estConstruction" onchange="calculateDoorWeight()">
+            <select class="input-select" id="estConstruction" onchange="calculateDoorWeight('manual')">
               <option value="pan-25">Single-Layer Steel Pan (25 Gauge) — ~1.25 lbs/sq ft</option>
               <option value="pan-24">Heavy-Duty Steel Pan (24 Gauge) — ~1.40 lbs/sq ft</option>
               <option value="poly-vinyl" selected>Two-Layer Sandwich (Steel + Polystyrene Core) — ~1.65 lbs/sq ft</option>
@@ -1997,6 +2093,10 @@
               <option value="wood-solid">Solid Wood Overlay / Cedar Carriage — ~4.50 lbs/sq ft</option>
               <option value="vinyl-solid">Solid Vinyl Panel — ~1.50 lbs/sq ft</option>
             </select>
+            <!-- v40: AI override active notice — shows when AI density is still in control -->
+            <div id="aiDensityOverrideNote" style="display:none; margin-top:6px; padding:5px 8px; border-radius:6px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); font-size:11px; color:#f59e0b;">
+              ⚠️ AI density estimate active — this dropdown is not controlling the weight. Change it to switch to manual mode.
+            </div>
           </div>
 
           <div class="field-group">
@@ -2033,6 +2133,11 @@
             </div>
           </div>
 
+          <!-- v40: section-count sanity warning -->
+          <div id="sectionCountWarning" style="display:none; margin-bottom:8px; padding:6px 10px; border-radius:6px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); font-size:11px; color:#f87171;">
+            ⚠️ Section count produces panels shorter than 14" — standard steel sections are 18–24". Check the section count.
+          </div>
+
           <button class="btn-action primary" id="applyEstWeightBtn" style="width: 100%; justify-content: center; padding: 12px; font-weight: 800;" onclick="applyEstimatedWeightToSizer()">
             ✅ Apply this <span id="applyWeightNum">168 lbs</span> Weight to Spring Sizer →
           </button>
@@ -2041,7 +2146,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h3 class="card-title">Dead Weight Breakdown</h3>
+              <div class="card-title">Dead Weight Breakdown</div>
               <div class="card-subtitle">Component weight distribution</div>
             </div>
           </div>
@@ -2082,7 +2187,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2 class="card-title">Door & Track Specifications</h2>
+              <div class="card-title">Door & Track Specifications</div>
               <div class="card-subtitle">Calculate required counterbalance IPPT from door dimensions</div>
             </div>
           </div>
@@ -2198,7 +2303,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h3 class="card-title">Engineered Spring Recommendations</h3>
+              <div class="card-title">Engineered Spring Recommendations</div>
               <div class="card-subtitle">Standard, High-Cycle, and Commercial options</div>
             </div>
           </div>
@@ -2216,7 +2321,7 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h2 class="card-title">OD to ID Converter & Headroom Clearance</h2>
+              <div class="card-title">OD to ID Converter & Headroom Clearance</div>
               <div class="card-subtitle">Calculate inside diameter from outside caliper measurement</div>
             </div>
           </div>
@@ -2248,7 +2353,7 @@
 
           <!-- Headroom Quick Guide -->
           <div class="card-header" style="margin-top: 14px; margin-bottom: 10px;">
-            <h3 class="card-title" style="font-size: 14px;">Minimum Headroom Clearances</h3>
+            <div class="card-title" style="font-size: 14px;">Minimum Headroom Clearances</div>
           </div>
           <div class="table-container">
             <table class="data-table">
@@ -2273,7 +2378,7 @@
       <div class="card" style="margin-top: 20px;">
         <div class="card-header">
           <div>
-            <h2 class="card-title">🥁 Comprehensive Drum Comparison & Cross-Reference Explorer</h2>
+            <div class="card-title">🥁 Comprehensive Drum Comparison & Cross-Reference Explorer</div>
             <div class="card-subtitle">Reverse-engineered industry database comparing OMI, Apco, Canimex (Torque Force), DNS & SSC</div>
           </div>
           <input type="text" id="drumSearchInput" placeholder="Search drum (e.g. 54, 5250, Canimex, 120, VL)..." oninput="filterDrumTable()" style="background: var(--bg-card-sub); border: 1px solid var(--border-color); color: var(--text-main); font-size: 12px; padding: 6px 12px; border-radius: 6px; outline: none; width: 220px;">
@@ -2303,7 +2408,7 @@
       <div class="card" style="margin-top: 20px;">
         <div class="card-header">
           <div>
-            <h2 class="card-title">🎯 Springs by Direct IPPT Lookup (SSC Style)</h2>
+            <div class="card-title">🎯 Springs by Direct IPPT Lookup (SSC Style)</div>
             <div class="card-subtitle">Input an exact target IPPT to view all engineered wire and length matches</div>
           </div>
         </div>
@@ -2350,7 +2455,7 @@
         <div class="card-header" style="flex-direction: column; align-items: stretch; gap: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
-              <h2 class="card-title">📚 10-Manufacturer Model Weight & Density Reference Catalog</h2>
+              <div class="card-title">📚 10-Manufacturer Model Weight & Density Reference Catalog</div>
               <div class="card-subtitle">Audited factory engineering specs across 58 residential & commercial series (Canadian & US)</div>
             </div>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
@@ -2416,11 +2521,7 @@
       <div class="spec-sheet-print" id="printableSpecSheet">
         <div style="border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-end;">
           <div>
-            <!-- SEO pass: this used to be a second h1 tag -- a page should
-                 have exactly one. This is a print-only document title inside
-                 a modal, not the page's headline, so it's a div now;
-                 identical appearance, all styling is inline already. -->
-            <div style="font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">DOORMATH PRO</div>
+            <h1 style="font-size: 22px; font-weight: 900; letter-spacing: -0.02em;">DOORMATH PRO</h1>
             <div style="font-size: 12px; color: #555;">Torsion Counterbalance & Spring Engineering Specification</div>
           </div>
           <div style="text-align: right; font-size: 11px; color: #555;">
@@ -3123,6 +3224,18 @@
 
       const effectiveHeightFt = (effectiveHeightIn + trackAdjustIn) / 12;
       const turns = (effectiveHeightFt * drumInfo.turnsPerFt) + drumInfo.deadTurns;
+
+      // BUGFIX (v40): guard division-by-zero. turns can only reach 0 if
+      // turnsPerFt = 0 AND deadTurns = 0 (no real drum does this, but bad
+      // data from a future drum entry would silently produce Infinity IPPT).
+      if (!turns || turns <= 0) {
+        document.getElementById('sizerTurns').innerText = '—';
+        document.getElementById('sizerTurnsSub').innerText = 'Invalid drum configuration';
+        document.getElementById('sizerTotalIPPT').innerText = '—';
+        document.getElementById('sizerEachIPPT').innerText = '—';
+        return;
+      }
+
       const totalIPPT = (weight * drumInfo.radius) / turns;
       const eachIPPT = totalIPPT / 2.0;
 
@@ -3305,13 +3418,27 @@
     }
 
     // TAB 3: Door Weight Estimator Logic
-    function calculateDoorWeight() {
+    function calculateDoorWeight(calledFromConstruction) {
       const w = parseFloat(document.getElementById('estWidth').value) || 16;
       const h = parseFloat(document.getElementById('estHeight').value) || 7;
       const sections = parseInt(document.getElementById('estSections').value) || 4;
       const construction = document.getElementById('estConstruction').value;
       const glass = document.getElementById('estGlass').value;
       const struts = parseInt(document.getElementById('estStruts').value) || 0;
+
+      // BUGFIX (v40): if the tech manually changes the Construction dropdown,
+      // clear any AI density override so the dropdown value takes effect.
+      // Without this, switching from e.g. poly-vinyl to foamed-3layer after a
+      // scan had no effect -- the AI's number silently stayed in control.
+      if (calledFromConstruction === 'manual') {
+        if (customDensityOverride !== null) {
+          customDensityOverride = null;
+          const badge = document.getElementById('badgeDensity');
+          if (badge) badge.innerHTML = '';
+          const aiOverrideNote = document.getElementById('aiDensityOverrideNote');
+          if (aiOverrideNote) aiOverrideNote.style.display = 'none';
+        }
+      }
 
       const sqft = w * h;
       let density = 1.65;
@@ -3331,12 +3458,21 @@
       const basePanels = sqft * density;
       const hardwareWeight = 14 + (sections * 2) + (w > 12 ? 6 : 0);
 
+      // BUGFIX (v40): glass weight for a full-width glass row should scale with
+      // door width -- a 20ft door has far more glass than an 8ft door.
+      // Single/heavy pane rows (4 lites across one section) are fixed absolute
+      // weights and do not change with width.
       let glassWeight = 0;
       if (glass === '4-single') glassWeight = 20;
       else if (glass === '4-heavy') glassWeight = 35;
-      else if (glass === 'full-glass-row') glassWeight = 60;
+      else if (glass === 'full-glass-row') glassWeight = Math.round(w * 3.75); // ~3.75 lbs/ft of width
 
-      const strutWeight = struts * (w * 0.85);
+      // BUGFIX (v40): strut weight formula uses a fixed 0.85 lbs/ft factor
+      // which only applies to standard 2-1/4" U-bar. The struts dropdown has
+      // "heavy commercial truss" options (3+ struts) which weigh ~1.45 lbs/ft.
+      // Use 0.85 for 1-2 struts (standard U-bar), 1.45 for 3-4 struts (truss).
+      const strutLbsPerFt = struts >= 3 ? 1.45 : 0.85;
+      const strutWeight = struts * (w * strutLbsPerFt);
 
       const totalWeight = Math.round(basePanels + hardwareWeight + glassWeight + strutWeight);
 
@@ -3348,6 +3484,21 @@
       document.getElementById('breakdownGlass').innerText = Math.round(glassWeight) + " lbs";
       document.getElementById('breakdownStruts').innerText = Math.round(strutWeight) + " lbs";
       document.getElementById('breakdownTotal').innerText = totalWeight + " lbs";
+
+      // Section-count sanity: warn if sections produce panel height < 14" (impossible
+      // for standard steel sections; means the user entered a bad section count).
+      const panelHeightIn = (h * 12) / sections;
+      const sectionWarnEl = document.getElementById('sectionCountWarning');
+      if (sectionWarnEl) {
+        sectionWarnEl.style.display = panelHeightIn < 14 ? 'block' : 'none';
+      }
+
+      // Warn if AI density override is still active (so tech knows the
+      // construction dropdown is not controlling the calculation).
+      const aiOverrideNote = document.getElementById('aiDensityOverrideNote');
+      if (aiOverrideNote) {
+        aiOverrideNote.style.display = customDensityOverride !== null ? 'block' : 'none';
+      }
 
       // BUG 4 FIX: Live update on Apply Weight button
       const applyBtnNum = document.getElementById('applyWeightNum');
@@ -6212,15 +6363,6 @@
       });
     }
 
-    function filterMfgTable() {
-      const query = (document.getElementById('mfgSearchInput').value || '').toLowerCase();
-      const rows = document.querySelectorAll('#mfgTableBody tr');
-      rows.forEach(r => {
-        const text = r.dataset.search || '';
-        r.style.display = text.includes(query) ? '' : 'none';
-      });
-    }
-
 
 
     // Commercial Duplex Spring Engineering (Nested Springs)
@@ -6335,7 +6477,212 @@
     }
 
     // =====================================================================
-    // END CAP PROFILE REFERENCE STORE (per-model overrides)
+    // v40: IMAGE QUALITY GATE
+    // Checks brightness (average luminance) and blur (Laplacian variance
+    // approximation) on the compressed canvas. Run after compressImage().
+    // Returns { ok, brightness, blurScore, issues[] }
+    // =====================================================================
+    function checkImageQuality(base64DataUrl) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          // Down-sample to 64×64 for fast pixel analysis
+          const size = 64;
+          const canvas = document.createElement('canvas');
+          canvas.width = size; canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, size, size);
+          const data = ctx.getImageData(0, 0, size, size).data;
+          const total = size * size;
+
+          // Brightness: average luminance across all pixels
+          let lumSum = 0;
+          for (let i = 0; i < data.length; i += 4) {
+            lumSum += 0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2];
+          }
+          const brightness = lumSum / total; // 0–255
+
+          // Blur: variance of luminance (proxy for Laplacian energy)
+          const lums = [];
+          for (let i = 0; i < data.length; i += 4) {
+            lums.push(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+          }
+          const mean = brightness;
+          const variance = lums.reduce((s, l) => s + (l - mean) ** 2, 0) / total;
+          const blurScore = Math.round(variance); // Higher = sharper
+
+          const issues = [];
+          if (brightness < 35) issues.push('too dark');
+          if (blurScore < 40) issues.push('possibly blurry');
+
+          resolve({ ok: issues.length === 0, brightness: Math.round(brightness), blurScore, issues });
+        };
+        img.onerror = () => resolve({ ok: true, brightness: 128, blurScore: 80, issues: [] }); // fail open
+        img.src = base64DataUrl;
+      });
+    }
+
+    // Show quality badge over the photo preview thumbnail
+    function showQualityBadge(slot, quality) {
+      const el = document.getElementById('qualityBadge' + slot);
+      if (!el) return;
+      if (quality.ok) {
+        el.style.display = 'block';
+        el.style.background = 'rgba(16,185,129,0.85)';
+        el.style.color = '#fff';
+        el.innerText = '✓ Good';
+      } else {
+        el.style.display = 'block';
+        el.style.background = 'rgba(239,68,68,0.9)';
+        el.style.color = '#fff';
+        el.innerText = '⚠️ ' + quality.issues.join(' + ');
+      }
+    }
+
+    // =====================================================================
+    // v40: WEIGHT PARAMS PANEL (AI Stage 3 extraction)
+    // =====================================================================
+    function showWeightParamsPanel(wp) {
+      if (!wp) return;
+      const panel = document.getElementById('weightParamsPanel');
+      if (!panel) return;
+      panel.style.display = 'block';
+
+      // Confidence badge
+      const conf = wp.extractionConfidence;
+      const badge = document.getElementById('extractionConfBadge');
+      if (badge && conf != null) {
+        badge.innerText = conf + '% extraction confidence';
+        badge.style.color = conf >= 75 ? '#34d399' : conf >= 50 ? '#f59e0b' : '#f87171';
+      }
+
+      // Notes
+      const notesEl = document.getElementById('extractionNotes');
+      if (notesEl) notesEl.innerText = wp.extractionNotes || '';
+
+      // Thickness
+      const thk = document.getElementById('wpThickness');
+      if (thk && wp.sectionThickness_in != null) {
+        thk.value = String(wp.sectionThickness_in);
+      }
+
+      // Gauge
+      const gau = document.getElementById('wpGauge');
+      if (gau && wp.gaugeEstimate) gau.value = wp.gaugeEstimate;
+
+      // Insulation
+      const ins = document.getElementById('wpInsulation');
+      if (ins && wp.insulationType) ins.value = wp.insulationType;
+
+      // Glass rows
+      const gr = document.getElementById('wpGlassRows');
+      if (gr && wp.glassSections != null) gr.value = wp.glassSections;
+
+      // Struts
+      const st = document.getElementById('wpStruts');
+      if (st && wp.strutsVisible != null) st.value = wp.strutsVisible;
+
+      // End stile text
+      const es = document.getElementById('wpEndStile');
+      if (es) es.innerText = wp.endStileProfile || 'Not detected';
+    }
+
+    function stepWP(id, delta) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const val = parseInt(el.value) || 0;
+      el.value = Math.max(parseInt(el.min) || 0, Math.min(parseInt(el.max) || 99, val + delta));
+    }
+
+    // Map insulation type from AI string to constructionVal enum
+    function insulationToConstructionVal(insType) {
+      if (!insType) return null;
+      const map = {
+        'none': 'pan-25',
+        'polystyrene': 'poly-vinyl',
+        'polyurethane_foamed': 'foamed-3layer',
+        'aluminum_frame': 'fullview-glass',
+        'wood': 'wood-solid'
+      };
+      return map[insType] || null;
+    }
+
+    function applyWeightParamsToEstimator() {
+      // Insulation → construction dropdown
+      const ins = document.getElementById('wpInsulation').value;
+      const cv = insulationToConstructionVal(ins);
+      if (cv) {
+        const cSel = document.getElementById('estConstruction');
+        if (cSel) cSel.value = cv;
+        customDensityOverride = null; // use dropdown density
+        const aiNote = document.getElementById('aiDensityOverrideNote');
+        if (aiNote) aiNote.style.display = 'none';
+      }
+
+      // Struts
+      const struts = parseInt(document.getElementById('wpStruts').value) || 0;
+      const strutSel = document.getElementById('estStruts');
+      if (strutSel) {
+        // Map count to nearest option (0,1,2,3,4)
+        const opts = [0,1,2,3,4];
+        const closest = opts.reduce((a, b) => Math.abs(b-struts) < Math.abs(a-struts) ? b : a);
+        strutSel.value = String(closest);
+      }
+
+      // Glass
+      const glassRows = parseInt(document.getElementById('wpGlassRows').value) || 0;
+      const glassSel = document.getElementById('estGlass');
+      if (glassSel) {
+        if (glassRows === 0) glassSel.value = 'none';
+        else if (glassRows >= 2) glassSel.value = 'full-glass-row';
+        else glassSel.value = '4-single';
+      }
+
+      calculateDoorWeight();
+      document.getElementById('weightParamsPanel').style.display = 'none';
+
+      // Flash the estimator
+      const wEl = document.getElementById('estTotalWeight');
+      if (wEl) { wEl.style.transition = 'color 0.4s'; wEl.style.color = '#38bdf8'; setTimeout(() => { wEl.style.color = ''; }, 800); }
+    }
+
+    // =====================================================================
+    // v40: MANUAL ENTRY WIZARD
+    // =====================================================================
+    function toggleManualEntryWizard() {
+      const wizard = document.getElementById('manualEntryWizard');
+      if (!wizard) return;
+      wizard.style.display = wizard.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function applyManualWizardToEstimator() {
+      const construction = document.getElementById('mwInsulation').value;
+      const struts = document.getElementById('mwStruts').value;
+      const glass = document.getElementById('mwGlass').value;
+
+      const cSel = document.getElementById('estConstruction');
+      if (cSel) cSel.value = construction;
+
+      const strutSel = document.getElementById('estStruts');
+      if (strutSel) strutSel.value = struts;
+
+      const glassSel = document.getElementById('estGlass');
+      if (glassSel) glassSel.value = glass;
+
+      // Manual entry clears AI override
+      customDensityOverride = null;
+      const aiNote = document.getElementById('aiDensityOverrideNote');
+      if (aiNote) aiNote.style.display = 'none';
+
+      calculateDoorWeight();
+
+      // Collapse wizard and scroll to estimator
+      document.getElementById('manualEntryWizard').style.display = 'none';
+      const wEl = document.getElementById('estTotalWeight');
+      if (wEl) { wEl.style.transition = 'color 0.4s'; wEl.style.color = '#10b981'; setTimeout(() => { wEl.style.color = ''; }, 800); }
+    }
+
+
     // One reference photo or link per door model, stored locally on this
     // device via IndexedDB (photos are too big for localStorage at any
     // real volume) and keyed by the model's doorId, so saving again simply
@@ -6594,7 +6941,15 @@
         .map(e => ({ entry: e, model: DOOR_MODELS.find(m => m.id === e.doorId) }))
         .filter(x => x.model);
 
-      withModel.sort((a, b) => (b.entry.dateAdded || '').localeCompare(a.entry.dateAdded || ''));
+      withModel.sort((a, b) => {
+        // v40: prefer high-quality reference photos (brightness × blurScore)
+        // so a dark or blurry auto-save doesn't degrade future scans.
+        // Fall back to date comparison as tiebreaker.
+        const qA = a.entry.imageQuality ? (a.entry.imageQuality.brightness * a.entry.imageQuality.blurScore) : 5000;
+        const qB = b.entry.imageQuality ? (b.entry.imageQuality.brightness * b.entry.imageQuality.blurScore) : 5000;
+        if (qB !== qA) return qB - qA;
+        return (b.entry.dateAdded || '').localeCompare(a.entry.dateAdded || '');
+      });
 
       const perMfgCount = {};
       const picked = [];
@@ -6613,6 +6968,15 @@
       const file = event.target.files[0];
       if (!file) return;
 
+      // v40: HEIC detection — iOS Safari converts on capture but uploaded
+      // HEIC files from Files.app may not be converted, causing silent
+      // canvas failure. Give a specific message instead of the generic one.
+      if (file.name && file.name.match(/\.heic$/i) || file.type === 'image/heic' || file.type === 'image/heif') {
+        alert('HEIC / HEIF format detected.\n\nUse the 📷 Take Photo button (captures as JPEG) or open the image in Photos, share it as "JPEG" first, then upload here.');
+        event.target.value = '';
+        return;
+      }
+
       const btnText = document.getElementById(`photo${slot}BtnText`);
       const priorText = btnText.innerText;
       btnText.innerText = 'Compressing...';
@@ -6630,11 +6994,24 @@
           document.getElementById('preview2Wrap').style.display = 'block';
           btnText.innerText = '🖼️ Replace Photo';
         }
+
+        // v40: run quality gate and show badge on the thumbnail
+        checkImageQuality(base64).then(quality => {
+          showQualityBadge(slot, quality);
+          if (!quality.ok) {
+            const photoStatusText = document.getElementById('photoStatusText');
+            if (photoStatusText) {
+              photoStatusText.innerText = `⚠️ Photo ${slot}: ${quality.issues.join(', ')} — try in better light or focus closer`;
+              photoStatusText.style.color = '#f87171';
+            }
+          }
+        });
+
         updateScanButtonState();
       } catch (err) {
         console.error('Image compression error:', err);
         btnText.innerText = priorText;
-        alert('Could not load that photo — try a different one, or take a new photo instead.');
+        alert('Could not load that photo — try a different one, or use the 📷 Take Photo button instead.');
       }
     }
 
@@ -6711,6 +7088,11 @@
       resultCard.style.display = 'none';
       spinner.style.display = 'block';
       statusText.innerText = 'Analyzing door...';
+      // v40: hide retry button and params panel from any prior scan
+      const scanRetryRow = document.getElementById('scanRetryRow');
+      if (scanRetryRow) scanRetryRow.style.display = 'none';
+      const wPanel = document.getElementById('weightParamsPanel');
+      if (wPanel) wPanel.style.display = 'none';
 
       try {
         const { url: proxyUrl, headers: proxyHeaders } = buildAiProxyRequest();
@@ -6779,8 +7161,19 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
   "rValue": "R-16",
   "density": 2.20,
   "visualCues": "Concise summary of visual evidence (e.g. 'Detected Amarr woodtone finish with SafeGuard pinch-protection joint contours')",
-  "constructionVal": "foamed-3layer" | "poly-vinyl" | "pan-25" | "commercial-heavy" | "fullview-glass"
+  "constructionVal": "foamed-3layer" | "poly-vinyl" | "pan-25" | "commercial-heavy" | "fullview-glass",
+  "weightParams": {
+    "sectionThickness_in": 1.75,
+    "gaugeEstimate": "26ga" | "25ga" | "24ga" | "27ga" | "20ga" | null,
+    "insulationType": "polyurethane_foamed" | "polystyrene" | "none" | "aluminum_frame" | "wood" | null,
+    "endStileProfile": "Brief description of joint/end stile shape visible in Image 2, or null",
+    "strutsVisible": 0,
+    "glassSections": 0,
+    "extractionConfidence": 72,
+    "extractionNotes": "One sentence: which visual cues support these estimates. Output null for any field you cannot determine from the image."
+  }
 }
+Only output the raw JSON — no markdown fences, no explanation text outside the JSON object.
 `;
 
         const parts = [{ text: promptText }];
@@ -6932,6 +7325,11 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
           const saveToLibraryRow = document.getElementById('aiSaveToLibraryRow');
           saveToLibraryRow.style.display = (photo1Base64 || photo2Base64) ? 'flex' : 'none';
           document.getElementById('aiSaveToLibraryCheck').checked = true;
+
+          // v40: show the weight parameters panel if AI returned extraction data
+          if (parsed.weightParams) {
+            showWeightParamsPanel(parsed.weightParams);
+          }
         } else if (data.error) {
           statusText.innerText = 'Error: ' + (data.error.message || 'unknown error');
           alert('API Error: ' + (data.error.message || 'unknown error'));
@@ -6943,8 +7341,10 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
         spinner.style.display = 'none';
         if (err.name === 'AbortError') {
           console.error('AI Scan Error: request timed out');
-          statusText.innerText = 'Scan timed out.';
-          alert('AI Scanner Error: the request took too long and timed out. Check your connection and try again, or use the manual picker below.');
+          statusText.innerText = 'Scan timed out — check connection.';
+          // v40: show inline retry button instead of a blocking alert
+          const retryRow = document.getElementById('scanRetryRow');
+          if (retryRow) retryRow.style.display = 'block';
         } else {
           console.error('AI Scan Error:', err);
           statusText.innerText = 'Scan failed.';
@@ -6992,13 +7392,21 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       const photoForReference = photo2Base64 || photo1Base64;
       if (!photoForReference) return false;
       try {
+        // v40: compute image quality before saving so the reference library
+        // can sort by quality and flag degraded entries.
+        let imageQuality = null;
+        try {
+          imageQuality = await checkImageQuality(photoForReference);
+        } catch (_) { /* fail open — quality metadata is non-critical */ }
+
         await endcapPut({
           doorId,
           type: 'image',
           url: photoForReference,
           label: `${manufacturer} ${modelName} — end cap reference`,
           note: 'Auto-saved from a confirmed AI door scan.',
-          dateAdded: new Date().toISOString()
+          dateAdded: new Date().toISOString(),
+          imageQuality: imageQuality ? { brightness: imageQuality.brightness, blurScore: imageQuality.blurScore } : null
         });
         await refreshEndCapCell(doorId);
         return true;
@@ -7034,6 +7442,11 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
         }
         if (lastAIAnalysis.rValue) {
           document.getElementById('badgeRVal').innerText = lastAIAnalysis.rValue + ' (AI estimate)';
+        }
+        // BUGFIX (v40): apply constructionVal to dropdown so UI matches AI detection
+        if (lastAIAnalysis.constructionVal) {
+          const cSel = document.getElementById('estConstruction');
+          if (cSel) cSel.value = lastAIAnalysis.constructionVal;
         }
         calculateDoorWeight();
         groundingNote.style.display = 'block';
@@ -7078,6 +7491,11 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
         }
         if (lastAIAnalysis.rValue) {
           document.getElementById('badgeRVal').innerText = lastAIAnalysis.rValue + ' (AI estimate)';
+        }
+        // BUGFIX (v40): apply constructionVal so dropdown matches AI detection
+        if (lastAIAnalysis.constructionVal) {
+          const cSel = document.getElementById('estConstruction');
+          if (cSel) cSel.value = lastAIAnalysis.constructionVal;
         }
         calculateDoorWeight();
       }
