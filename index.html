@@ -1797,6 +1797,7 @@
             </div>
             <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
               Snap <strong>Photo 1 (Front Face)</strong> to identify style & grain. Add <strong>Photo 2 (Side Joint / Stamp)</strong> if accessible for 95%+ precision.
+              Didn't take the photo yourself? Tap <strong>Upload from Photos</strong> to use a picture a customer texted or emailed you instead.
             </div>
 
             <!-- Two Photo Upload Slots -->
@@ -1809,10 +1810,16 @@
                 <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">
                   Panel pattern, woodtone, grain
                 </div>
-                <label class="btn-action primary" style="cursor: pointer; padding: 8px 12px; font-size: 11px; display: inline-flex; width: 100%; justify-content: center;">
-                  <span id="photo1BtnText">Snap / Upload Front</span>
-                  <input type="file" id="doorPhoto1" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 1)">
-                </label>
+                <div style="display: flex; gap: 6px;">
+                  <label class="btn-action primary" style="cursor: pointer; padding: 8px 10px; font-size: 11px; display: inline-flex; flex: 1; justify-content: center;">
+                    <span>📷 Take Photo</span>
+                    <input type="file" id="doorPhoto1Camera" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 1)">
+                  </label>
+                  <label class="btn-action" style="cursor: pointer; padding: 8px 10px; font-size: 11px; display: inline-flex; flex: 1; justify-content: center;">
+                    <span id="photo1BtnText">🖼️ Upload from Photos</span>
+                    <input type="file" id="doorPhoto1" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event, 1)">
+                  </label>
+                </div>
                 <div id="preview1Wrap" style="display: none; margin-top: 8px; position: relative;">
                   <img id="preview1Img" style="width: 100%; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
                   <button onclick="clearPhoto(1)" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.75); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
@@ -1828,10 +1835,16 @@
                 <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">
                   End stile stamp, thickness, joint
                 </div>
-                <label class="btn-action" style="cursor: pointer; padding: 8px 12px; font-size: 11px; display: inline-flex; width: 100%; justify-content: center; border-color: var(--accent); color: var(--accent);">
-                  <span id="photo2BtnText">Snap Side Profile</span>
-                  <input type="file" id="doorPhoto2" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 2)">
-                </label>
+                <div style="display: flex; gap: 6px;">
+                  <label class="btn-action" style="cursor: pointer; padding: 8px 10px; font-size: 11px; display: inline-flex; flex: 1; justify-content: center; border-color: var(--accent); color: var(--accent);">
+                    <span>📷 Take Photo</span>
+                    <input type="file" id="doorPhoto2Camera" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 2)">
+                  </label>
+                  <label class="btn-action" style="cursor: pointer; padding: 8px 10px; font-size: 11px; display: inline-flex; flex: 1; justify-content: center; border-color: var(--accent); color: var(--accent);">
+                    <span id="photo2BtnText">🖼️ Upload from Photos</span>
+                    <input type="file" id="doorPhoto2" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event, 2)">
+                  </label>
+                </div>
                 <div id="preview2Wrap" style="display: none; margin-top: 8px; position: relative;">
                   <img id="preview2Img" style="width: 100%; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border-color);">
                   <button onclick="clearPhoto(2)" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.75); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
@@ -1864,6 +1877,17 @@
                      name didn't match anything -- looking exactly like a real
                      match. This makes an unmatched result visibly honest. -->
                 <div id="aiGroundingNote" style="font-size: 11px; line-height: 1.4; margin-bottom: 12px; padding: 6px 8px; border-radius: 6px;"></div>
+                <!-- NEW (v39): "scan-to-library" flywheel. Instead of requiring
+                     someone to separately open the catalog table and upload a
+                     reference photo later, offer to save the photo just taken
+                     as this model's reference the moment a match is confirmed.
+                     Saves whichever confirmed model is actually applied below
+                     (post any manual correction), never the AI's raw guess, so
+                     a wrong guess can't quietly poison the reference library. -->
+                <div id="aiSaveToLibraryRow" style="display: none; align-items: flex-start; gap: 8px; margin-bottom: 12px; font-size: 11px; color: var(--text-muted); line-height: 1.3;">
+                  <input type="checkbox" id="aiSaveToLibraryCheck" checked style="width: 15px; height: 15px; margin-top: 1px; flex-shrink: 0;">
+                  <label for="aiSaveToLibraryCheck" style="cursor: pointer;">Save this photo as the reference for this model, so future scans of the same door are more accurate.</label>
+                </div>
                 <button class="btn-action primary" style="width: 100%; justify-content: center; padding: 10px; font-size: 13px;" onclick="applyAIResultToCalculator()">
                   ✅ Apply this Model to Weight Calculator →
                 </button>
@@ -2329,6 +2353,7 @@
                 <th>8x7 Base Wt</th>
                 <th>16x7 Base Wt</th>
                 <th>Stamp Location</th>
+                <th>End Cap Profile</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -5929,6 +5954,75 @@
 ];
 
     const DOOR_MODELS = DOOR_DATABASE;
+
+    // =====================================================================
+    // END CAP PROFILE REFERENCES
+    // Housed right on the manufacturer/model database (not a separate
+    // library) per manufacturer, since the app's own AI disambiguation
+    // rules already group joint/end-stile characteristics at the
+    // manufacturer level. MFG_ENDCAP_DEFAULTS below are seeded from each
+    // manufacturer's own published materials (a real photo where one could
+    // be found, an official spec/section-drawing page/PDF otherwise -- see
+    // README for the source list). Any specific model row can be given its
+    // own override photo (e.g. from a customer photo or a spec sheet you
+    // found) via the ✏️ icon in the "End Cap Profile" column -- that
+    // override always takes priority over the manufacturer-level default,
+    // and gets used by the AI Scanner for real photo-to-photo grounding.
+    // =====================================================================
+    const MFG_ENDCAP_DEFAULTS = {
+      "Amarr": {
+        type: "image",
+        url: "https://gw-assets.assaabloy.com/is/image/assaabloy/banner-4-ways-amarr-safeguard-system-keeps-your-family-safe",
+        label: "Amarr SafeGuard pinch-resistant joint (official photo)",
+        sourceUrl: "https://blog.amarr.com/4-ways-amarr-safeguard-system-keeps-your-family-safe"
+      },
+      "C.H.I.": {
+        type: "link",
+        url: "https://www.chiohd.com/hubfs/Professional/Specs/Commercial/Section-Drawings/CHI-3221_OverheadDoor_Section.pdf",
+        label: "C.H.I. official joint detail section drawing (PDF)",
+        sourceUrl: "https://www.chiohd.com/document-finder"
+      },
+      "Garaga": {
+        type: "link",
+        url: "https://cmsgaraga.garaga.com/Drupal/InstallationManual.pdf",
+        label: "Garaga installation manual — panel/joint diagrams (PDF)",
+        sourceUrl: "https://www.garaga.com"
+      },
+      "Steel-Craft": {
+        type: "link",
+        url: "https://steel-craft.ca/manuals/SpecsTD134138.pdf",
+        label: "Steel-Craft THERM-O-DOR spec sheet — WeatherLock joint (PDF)",
+        sourceUrl: "https://steel-craft.ca/"
+      },
+      "Clopay": {
+        type: "link",
+        url: "https://www.clopaydoor.com/insulated-polyurethane-doors",
+        label: "Clopay Intellicore construction detail (official page)",
+        sourceUrl: "https://www.clopaydoor.com/insulated-polyurethane-doors"
+      },
+      "Richards-Wilcox": {
+        type: "link",
+        url: "https://www.rwdoors.com/wp-content/uploads/2023/01/R-W_Thermatite-Brochure_Jan2023.pdf",
+        label: "Richards-Wilcox Thermatite brochure — joint construction (PDF)",
+        sourceUrl: "https://www.rwdoors.com/us/"
+      },
+      "Haas": {
+        type: "link",
+        url: "https://connect.haasdoor.com/Portals/0/technical/Technical%20Spec%20Sheets/2000%20Series/2080%20TechSheet.pdf",
+        label: "Haas Door tech spec sheet — extruded end cap detail (PDF)",
+        sourceUrl: "https://connect.haasdoor.com"
+      },
+      "Hormann": {
+        type: "link",
+        url: "https://www.hormann.co.uk/media-centre/download/311111en/02_EN_EBD_84607_Garage_Sektionaltor.pdf",
+        label: "Hörmann sectional door brochure — panel joint (PDF)",
+        sourceUrl: "https://www.hormann.co.uk"
+      }
+      // Wayne Dalton and Northwest Door: no official joint-profile image or
+      // diagram confirmed yet -- add one via the ✏️ icon on any of their
+      // rows in the catalog table below and it becomes the default for
+      // that model (and a good candidate to promote for the whole line).
+    };
     let customDensityOverride = null;
 
     function handleMfgChange() {
@@ -5981,10 +6075,12 @@
       calculateDoorWeight();
     }
 
-    function populateMfgTable() {
+    async function populateMfgTable() {
       const tbody = document.getElementById('mfgTableBody');
       if (!tbody) return;
       tbody.innerHTML = '';
+
+      const endcapOverrides = await endcapGetAllAsMap();
 
       DOOR_MODELS.forEach(m => {
         const sqft8x7 = 56;
@@ -6027,6 +6123,7 @@
           <td class="mono">~${wt8x7} lbs</td>
           <td class="mono font-bold" style="color: #38bdf8;">~${wt16x7} lbs</td>
           <td style="font-size: 11px; color: var(--text-muted); max-width: 180px;">${m.stamp_location || 'End stile'}</td>
+          <td id="endcapCell-${m.id}" style="text-align: center;">${renderEndCapCell(m.id, m.manufacturer, endcapOverrides)}</td>
           <td>
             <button class="btn-action primary" style="padding: 4px 8px; font-size: 10px;" onclick="applyCatalogModelToCalculator('${m.id}')">Use in Sizer →</button>
           </td>
@@ -6195,11 +6292,287 @@
       });
     }
 
+    // =====================================================================
+    // END CAP PROFILE REFERENCE STORE (per-model overrides)
+    // One reference photo or link per door model, stored locally on this
+    // device via IndexedDB (photos are too big for localStorage at any
+    // real volume) and keyed by the model's doorId, so saving again simply
+    // replaces the prior one. Falls back to MFG_ENDCAP_DEFAULTS above when
+    // no override has been set for that model. The AI Scanner pulls real
+    // uploaded photos from here to ground its guess in an actual picture.
+    // =====================================================================
+
+    const ENDCAP_DB_NAME = 'doormathpro_endcap_refs';
+    const ENDCAP_DB_VERSION = 1;
+    const ENDCAP_STORE = 'refs';
+    const ENDCAP_MAX_REFERENCE_IMAGES_PER_SCAN = 6; // cap extra images per AI scan (cost/latency)
+
+    let endcapPhotoBase64 = null;
+    let endcapModalDoorId = null;
+    let endcapDbPromise = null;
+    let endcapOverridesCache = null; // Map<doorId, entry>, loaded once and kept in sync locally
+
+    function openEndCapDB() {
+      if (endcapDbPromise) return endcapDbPromise;
+      endcapDbPromise = new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          reject(new Error('IndexedDB not supported in this browser'));
+          return;
+        }
+        const req = indexedDB.open(ENDCAP_DB_NAME, ENDCAP_DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(ENDCAP_STORE)) {
+            db.createObjectStore(ENDCAP_STORE, { keyPath: 'doorId' });
+          }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e.target.error);
+      });
+      return endcapDbPromise;
+    }
+
+    async function endcapGetAllAsMap() {
+      if (endcapOverridesCache) return endcapOverridesCache;
+      const map = new Map();
+      try {
+        const db = await openEndCapDB();
+        const all = await new Promise((resolve, reject) => {
+          const tx = db.transaction(ENDCAP_STORE, 'readonly');
+          const req = tx.objectStore(ENDCAP_STORE).getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => reject(req.error);
+        });
+        all.forEach(entry => map.set(entry.doorId, entry));
+      } catch (err) {
+        console.error('End Cap refs: could not read saved overrides', err);
+      }
+      endcapOverridesCache = map;
+      return map;
+    }
+
+    async function endcapPut(entry) {
+      const db = await openEndCapDB();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(ENDCAP_STORE, 'readwrite');
+        tx.objectStore(ENDCAP_STORE).put(entry);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+      const map = await endcapGetAllAsMap();
+      map.set(entry.doorId, entry);
+    }
+
+    async function endcapDelete(doorId) {
+      const db = await openEndCapDB();
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(ENDCAP_STORE, 'readwrite');
+        tx.objectStore(ENDCAP_STORE).delete(doorId);
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => reject(tx.error);
+      });
+      const map = await endcapGetAllAsMap();
+      map.delete(doorId);
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.innerText = str == null ? '' : str;
+      return div.innerHTML;
+    }
+
+    // Resolves the ref to show/use for a given model: a saved per-model
+    // override always wins, otherwise the manufacturer-level default.
+    function resolveEndCapRef(doorId, manufacturer, overridesMap) {
+      if (overridesMap && overridesMap.has(doorId)) return { ...overridesMap.get(doorId), isOverride: true };
+      if (MFG_ENDCAP_DEFAULTS[manufacturer]) return { ...MFG_ENDCAP_DEFAULTS[manufacturer], isOverride: false };
+      return null;
+    }
+
+    function renderEndCapCell(doorId, manufacturer, overridesMap) {
+      const ref = resolveEndCapRef(doorId, manufacturer, overridesMap);
+      const editBtn = `<button onclick="openEndCapRefModal('${doorId}')" title="Add or replace this reference" style="background: none; border: none; cursor: pointer; font-size: 12px; padding: 2px 4px; color: var(--text-dim);">✏️</button>`;
+
+      if (!ref) {
+        return `<div style="display:flex; align-items:center; gap:4px; justify-content:center;">
+          <button class="btn-action" style="padding: 3px 8px; font-size: 10px;" onclick="openEndCapRefModal('${doorId}')">+ Add</button>
+        </div>`;
+      }
+
+      if (ref.type === 'image') {
+        return `<div style="display:flex; align-items:center; gap:4px; justify-content:center;">
+          <img src="${ref.url}" title="${escapeHtml(ref.label || '')}" loading="lazy"
+               style="width: 44px; height: 34px; object-fit: cover; border-radius: 5px; border: 1px solid var(--border-color); cursor: pointer;"
+               onclick="window.open('${ref.sourceUrl || ref.url}', '_blank')"
+               onerror="this.closest('td').innerHTML = renderEndCapLinkFallback('${doorId}');">
+          ${editBtn}
+        </div>`;
+      }
+
+      // link type
+      return `<div style="display:flex; align-items:center; gap:4px; justify-content:center;">
+        <a href="${ref.url}" target="_blank" rel="noopener" title="${escapeHtml(ref.label || '')}" style="font-size: 16px; text-decoration: none;">🔗</a>
+        ${editBtn}
+      </div>`;
+    }
+
+    // Used as an onerror fallback when a hotlinked manufacturer image URL
+    // breaks (site redesign, moved asset, etc.) -- degrades to a plain link
+    // instead of a broken-image icon.
+    function renderEndCapLinkFallback(doorId) {
+      return `<div style="display:flex; align-items:center; gap:4px; justify-content:center;">
+        <span style="font-size: 10px; color: var(--text-dim);">image unavailable</span>
+        <button onclick="openEndCapRefModal('${doorId}')" style="background: none; border: none; cursor: pointer; font-size: 12px; padding: 2px 4px; color: var(--text-dim);">✏️</button>
+      </div>`;
+    }
+
+    async function refreshEndCapCell(doorId) {
+      const model = DOOR_MODELS.find(m => m.id === doorId);
+      if (!model) return;
+      const cell = document.getElementById(`endcapCell-${doorId}`);
+      if (!cell) return;
+      const overrides = await endcapGetAllAsMap();
+      cell.innerHTML = renderEndCapCell(doorId, model.manufacturer, overrides);
+    }
+
+    function openEndCapRefModal(doorId) {
+      const model = DOOR_MODELS.find(m => m.id === doorId);
+      if (!model) return;
+      endcapModalDoorId = doorId;
+      endcapPhotoBase64 = null;
+
+      document.getElementById('endcapModalTitle').innerText = `${model.manufacturer} — ${model.model_name}`;
+      document.getElementById('endcapLinkInput').value = '';
+      document.getElementById('endcapNoteInput').value = '';
+      document.getElementById('endcapPreviewWrap').style.display = 'none';
+      document.getElementById('endcapPhotoInput').value = '';
+
+      endcapGetAllAsMap().then(overrides => {
+        const existing = overrides.get(doorId);
+        if (existing && existing.type === 'link') {
+          document.getElementById('endcapLinkInput').value = existing.url || '';
+        }
+        if (existing && existing.note) {
+          document.getElementById('endcapNoteInput').value = existing.note;
+        }
+        document.getElementById('endcapRemoveBtn').style.display = existing ? 'inline-flex' : 'none';
+      });
+
+      document.getElementById('endcapRefModal').classList.add('open');
+    }
+
+    function closeEndCapRefModal() {
+      document.getElementById('endcapRefModal').classList.remove('open');
+      endcapModalDoorId = null;
+    }
+
+    async function handleEndCapPhotoSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        endcapPhotoBase64 = await compressImage(file, 1024, 0.85);
+        document.getElementById('endcapPreviewImg').src = endcapPhotoBase64;
+        document.getElementById('endcapPreviewWrap').style.display = 'block';
+      } catch (err) {
+        console.error('End cap photo compression error:', err);
+        alert('Could not load that photo. Try a different one.');
+      }
+    }
+
+    async function saveEndCapRef() {
+      if (!endcapModalDoorId) return;
+      const model = DOOR_MODELS.find(m => m.id === endcapModalDoorId);
+      if (!model) return;
+
+      const linkUrl = document.getElementById('endcapLinkInput').value.trim();
+      const note = document.getElementById('endcapNoteInput').value.trim();
+
+      if (!endcapPhotoBase64 && !linkUrl) {
+        alert('Upload a photo or paste a link before saving.');
+        return;
+      }
+
+      const entry = endcapPhotoBase64
+        ? {
+            doorId: endcapModalDoorId,
+            type: 'image',
+            url: endcapPhotoBase64,
+            label: `${model.manufacturer} ${model.model_name} — end cap reference`,
+            note: note,
+            dateAdded: new Date().toISOString()
+          }
+        : {
+            doorId: endcapModalDoorId,
+            type: 'link',
+            url: linkUrl,
+            label: `${model.manufacturer} ${model.model_name} — end cap reference`,
+            note: note,
+            dateAdded: new Date().toISOString()
+          };
+
+      try {
+        await endcapPut(entry);
+        await refreshEndCapCell(endcapModalDoorId);
+        closeEndCapRefModal();
+      } catch (err) {
+        console.error('End cap ref save error:', err);
+        alert('Could not save this reference. Your browser may be low on storage, or blocking IndexedDB (common in private/incognito mode).');
+      }
+    }
+
+    async function removeEndCapRef() {
+      if (!endcapModalDoorId) return;
+      if (!confirm('Remove this override and fall back to the manufacturer default (if any)?')) return;
+      try {
+        await endcapDelete(endcapModalDoorId);
+        await refreshEndCapCell(endcapModalDoorId);
+        closeEndCapRefModal();
+      } catch (err) {
+        console.error('End cap ref delete error:', err);
+      }
+    }
+
+    // Picks a small, varied set of REAL uploaded reference photos (per-model
+    // overrides only -- hotlinked manufacturer defaults are external URLs
+    // whose bytes we can't reliably read cross-origin) to ground the AI
+    // Scanner's guess. Returns [] until at least one photo has been
+    // uploaded via the End Cap Profile column, so scanning behaves exactly
+    // as before until then.
+    async function getReferenceImagesForScan() {
+      let overrides;
+      try {
+        overrides = await endcapGetAllAsMap();
+      } catch (err) {
+        return [];
+      }
+      const imageEntries = Array.from(overrides.values()).filter(e => e.type === 'image');
+      if (!imageEntries.length) return [];
+
+      const withModel = imageEntries
+        .map(e => ({ entry: e, model: DOOR_MODELS.find(m => m.id === e.doorId) }))
+        .filter(x => x.model);
+
+      withModel.sort((a, b) => (b.entry.dateAdded || '').localeCompare(a.entry.dateAdded || ''));
+
+      const perMfgCount = {};
+      const picked = [];
+      for (const x of withModel) {
+        const mfg = x.model.manufacturer;
+        perMfgCount[mfg] = perMfgCount[mfg] || 0;
+        if (perMfgCount[mfg] >= 2) continue; // at most 2 per manufacturer
+        picked.push({ manufacturer: mfg, modelName: x.model.model_name, photoBase64: x.entry.url });
+        perMfgCount[mfg]++;
+        if (picked.length >= ENDCAP_MAX_REFERENCE_IMAGES_PER_SCAN) break;
+      }
+      return picked;
+    }
+
     async function handlePhotoSelect(event, slot) {
       const file = event.target.files[0];
       if (!file) return;
 
       const btnText = document.getElementById(`photo${slot}BtnText`);
+      const priorText = btnText.innerText;
       btnText.innerText = 'Compressing...';
 
       try {
@@ -6208,17 +6581,18 @@
           photo1Base64 = base64;
           document.getElementById('preview1Img').src = base64;
           document.getElementById('preview1Wrap').style.display = 'block';
-          btnText.innerText = 'Retake Front';
+          btnText.innerText = '🖼️ Replace Photo';
         } else {
           photo2Base64 = base64;
           document.getElementById('preview2Img').src = base64;
           document.getElementById('preview2Wrap').style.display = 'block';
-          btnText.innerText = 'Retake Side';
+          btnText.innerText = '🖼️ Replace Photo';
         }
         updateScanButtonState();
       } catch (err) {
         console.error('Image compression error:', err);
-        btnText.innerText = 'Error loading';
+        btnText.innerText = priorText;
+        alert('Could not load that photo — try a different one, or take a new photo instead.');
       }
     }
 
@@ -6226,13 +6600,15 @@
       if (slot === 1) {
         photo1Base64 = null;
         document.getElementById('preview1Wrap').style.display = 'none';
-        document.getElementById('photo1BtnText').innerText = 'Snap / Upload Front';
+        document.getElementById('photo1BtnText').innerText = '🖼️ Upload from Photos';
         document.getElementById('doorPhoto1').value = '';
+        document.getElementById('doorPhoto1Camera').value = '';
       } else {
         photo2Base64 = null;
         document.getElementById('preview2Wrap').style.display = 'none';
-        document.getElementById('photo2BtnText').innerText = 'Snap Side Profile';
+        document.getElementById('photo2BtnText').innerText = '🖼️ Upload from Photos';
         document.getElementById('doorPhoto2').value = '';
+        document.getElementById('doorPhoto2Camera').value = '';
       }
       updateScanButtonState();
     }
@@ -6264,6 +6640,23 @@
       }
     }
 
+    // BUGFIX (v39 audit): the optional personal Gemini API key override used
+    // to be sent ONLY as a URL query parameter (?key=...), which tends to
+    // land in Cloudflare's own request logs, browser history, and any proxy
+    // logging in front of the Worker -- not a safe way to move a secret
+    // around. It is now ALSO sent as a request header. The query parameter
+    // is kept for backward compatibility until the Worker itself is updated
+    // to read the header -- once it does, the query fallback below can be
+    // deleted. Centralized here so both call sites (the AI scanner and the
+    // troubleshooting chatbot) stay in sync.
+    function buildAiProxyRequest() {
+      const userKey = localStorage.getItem('doormath_gemini_key') || '';
+      const url = `https://doormath-ai.chadneweragd.workers.dev${userKey ? '?key=' + encodeURIComponent(userKey) : ''}`;
+      const headers = { 'Content-Type': 'application/json' };
+      if (userKey) headers['X-Doormath-Gemini-Key'] = userKey;
+      return { url, headers };
+    }
+
     async function executeAiDoorScan() {
       if (!photo1Base64 && !photo2Base64) return;
 
@@ -6275,28 +6668,65 @@
       previewBox.style.display = 'block';
       resultCard.style.display = 'none';
       spinner.style.display = 'block';
-      statusText.innerText = 'Analyzing with Gemini Vision AI...';
+      statusText.innerText = 'Analyzing door...';
 
       try {
-        const userKey = localStorage.getItem('doormath_gemini_key') || '';
-        const proxyUrl = `https://doormath-ai.chadneweragd.workers.dev${userKey ? '?key=' + encodeURIComponent(userKey) : ''}`;
+        const { url: proxyUrl, headers: proxyHeaders } = buildAiProxyRequest();
+
+        // Ground the guess in real, confirmed photos saved on the "End Cap
+        // Profile" column of the manufacturer catalog (More Tools tab), if
+        // any -- an end profile is a fingerprint, and a real photo beats a
+        // written description every time.
+        const referenceEntries = await getReferenceImagesForScan();
+        if (referenceEntries.length) {
+          statusText.innerText = `Analyzing door... (grounded by ${referenceEntries.length} reference photo${referenceEntries.length === 1 ? '' : 's'})`;
+        }
+
+        const referenceIntro = referenceEntries.length
+          ? `\nBefore the door photo(s) to identify, you will see ${referenceEntries.length} REFERENCE photo(s) of already-confirmed doors, each labeled with its true manufacturer and model. Use these for direct visual comparison (joint shape, stile profile, panel texture) -- weigh a strong visual match against a reference photo more heavily than the text hints below, which are only general guidance. After the reference photos, a line marked "NOW IDENTIFY THIS DOOR:" introduces the actual unlabeled photo(s) you must identify -- never confuse a reference photo for the door being identified.\n`
+          : '';
 
         const promptText = `
 You are a master garage door engineering inspector with 25 years of field experience identifying doors across Canada and the US (specifically Garaga, Steel-Craft, Richards-Wilcox / RW, Amarr, C.H.I., Clopay, Hormann, Wayne Dalton, Haas, and Northwest Door).
-
-You are receiving 1 or 2 photographs of an overhead garage door.
+${referenceIntro}
+You are receiving 1 or 2 photographs of an overhead garage door to identify.
 - Image 1 is typically the Front Face (panel stamping, woodgrain/driftwood finish, window frame profiles).
 - Image 2 (if provided) is the Side Profile, Joint Geometry, End Stile, or Factory Stamp/Sticker.
 
-CRITICAL DISAMBIGUATION RULES:
-1. AMARR vs C.H.I. vs CLOPAY (WOODTONE & FLUSH PANELS):
-   - AMARR: Often features weathered driftwood, walnut, or golden oak woodgrain prints across "Amarr Designer's Choice", "Amarr Olympus", and "Amarr Heritage Flush / Plank". Hallmarks: Amarr SafeGuard rounded pinch-protection joint contour, low-profile flush hinges, tamper-resistant bottom brackets, Winston-Salem/Lawrence plant stencils. Do NOT default to C.H.I. Planks just because of horizontal woodgrain!
-   - C.H.I.: Planks / Model 2283 Accent Woodtones feature micro-grooved horizontal planks with standard tongue-and-groove joints.
-   - RICHARDS-WILCOX (RW Canada): Neufoam continuous polyurethane core (R-12 to R-18), WeatherLock joint, Landmark, Echo Ridge, Grandview, Thermatite commercial.
-   - STEEL-CRAFT (Canada): WeatherLock dual tongue-and-groove interlocking joint, ThermoCraft T-16/T-12, Edmonton factory tags.
-   - GARAGA (Canada): Standard+ (R-16), Acadia 138, continuous PVC weatherstrip in joint, heavy 14ga commercial end stiles.
-   - CLOPAY: Intellicore (R-18.4) Modern Steel / Gallery, Ultra-Grain prints, Safe-T-Bracket system.
+WORK THROUGH THIS IN TWO STAGES BEFORE YOU ANSWER. Do not skip Stage 1.
+
+STAGE 1 -- JOINT GEOMETRY FIRST (the real fingerprint):
+Woodgrain, driftwood, and paint finishes are cosmetic prints and are reused
+across brands -- never let finish color alone decide the manufacturer. The
+panel-to-panel joint and end-stile profile are a manufacturer's actual
+mechanical signature and do not change between finish colors. If Image 2
+(side profile / joint / end stile) is provided, use it FIRST to narrow the
+candidates by joint shape alone, before you look at the finish at all:
+   - AMARR: SafeGuard rounded pinch-protection joint contour, low-profile flush hinges, tamper-resistant bottom brackets, Winston-Salem/Lawrence plant stencils.
    - WAYNE DALTON: Teardrop pinch-resistant joint profile, integral hinge pockets, TorqueMaster spring system.
+   - STEEL-CRAFT (Canada): WeatherLock dual tongue-and-groove interlocking joint, Edmonton factory tags.
+   - RICHARDS-WILCOX (RW Canada): WeatherLock joint, continuous Neufoam polyurethane core (R-12 to R-18).
+   - GARAGA (Canada): continuous PVC weatherstrip in joint, heavy 14ga commercial end stiles.
+   - C.H.I.: standard tongue-and-groove joint, no pinch-guard contour, micro-grooved horizontal planks (Model 2283 Accent Woodtones).
+   - CLOPAY: Safe-T-Bracket system, Intellicore joint construction.
+Eliminate every manufacturer whose joint contour clearly does not match what
+you see in Image 2. Only fall back to Image 1's finish/woodgrain pattern to
+choose between manufacturers if Image 2 was not provided, or is too blurry
+or obstructed to read the joint.
+
+STAGE 2 -- MODEL & FINISH (only after the manufacturer is narrowed):
+Now use Image 1 (front face: panel stamping, woodgrain/driftwood finish,
+window frame profiles) plus the manufacturer's known model lines below to
+pick the specific model/series. Do NOT default to C.H.I. Planks just because
+of horizontal woodgrain -- Stage 1's joint contour should already have ruled
+C.H.I. in or out before you get here.
+   - AMARR: "Amarr Designer's Choice", "Amarr Olympus", "Amarr Heritage Flush / Plank" -- often weathered driftwood, walnut, or golden oak woodgrain prints.
+   - C.H.I.: Planks / Model 2283 Accent Woodtones.
+   - RICHARDS-WILCOX: Landmark, Echo Ridge, Grandview, Thermatite commercial.
+   - STEEL-CRAFT: ThermoCraft T-16/T-12.
+   - GARAGA: Standard+ (R-16), Acadia 138.
+   - CLOPAY: Intellicore (R-18.4) Modern Steel / Gallery, Ultra-Grain prints.
+   - WAYNE DALTON: TorqueMaster-equipped model lines.
 
 Respond ONLY with a valid raw JSON object matching this exact structure:
 {
@@ -6312,6 +6742,18 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
 `;
 
         const parts = [{ text: promptText }];
+
+        referenceEntries.forEach(ref => {
+          parts.push({ text: `REFERENCE PHOTO -- confirmed ${ref.manufacturer} ${ref.modelName}:` });
+          parts.push({
+            inlineData: { mimeType: 'image/jpeg', data: ref.photoBase64.split(',')[1] }
+          });
+        });
+
+        if (referenceEntries.length) {
+          parts.push({ text: 'NOW IDENTIFY THIS DOOR:' });
+        }
+
         if (photo1Base64) {
           parts.push({
             inlineData: { mimeType: 'image/jpeg', data: photo1Base64.split(',')[1] }
@@ -6333,7 +6775,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
         try {
           response = await fetch(proxyUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: proxyHeaders,
             body: JSON.stringify({
               contents: [{ parts: parts }],
               generationConfig: { responseMimeType: "application/json" }
@@ -6412,6 +6854,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
             document.getElementById('aiModelResult').innerText = 'Manufacturer/model not identified';
             document.getElementById('aiCuesText').innerText = parsed.visualCues || 'The photo didn\'t contain enough clear evidence to identify this door. Try a straight-on shot of the face and, if possible, a second photo of the end stile or joint profile, or use the manual picker below.';
             document.getElementById('aiGroundingNote').style.display = 'none';
+            document.getElementById('aiSaveToLibraryRow').style.display = 'none'; // nothing confirmed yet -- nothing to save
             return;
           }
 
@@ -6444,6 +6887,9 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
           document.getElementById('aiModelResult').innerText = `${parsed.manufacturer} — ${parsed.model}`;
           document.getElementById('aiCuesText').innerText = parsed.visualCues || 'Matched factory specifications.';
           document.getElementById('aiGroundingNote').style.display = 'none'; // set properly once Apply is pressed and matching runs
+          const saveToLibraryRow = document.getElementById('aiSaveToLibraryRow');
+          saveToLibraryRow.style.display = (photo1Base64 || photo2Base64) ? 'flex' : 'none';
+          document.getElementById('aiSaveToLibraryCheck').checked = true;
         } else if (data.error) {
           statusText.innerText = 'Error: ' + (data.error.message || 'unknown error');
           alert('API Error: ' + (data.error.message || 'unknown error'));
@@ -6492,7 +6938,35 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
     // model happened to be first in that manufacturer's list.
     const MODEL_MATCH_THRESHOLD = 0.34;
 
-    function applyAIResultToCalculator() {
+    // NEW (v39): called from applyAIResultToCalculator only once a specific
+    // catalog model has actually been confirmed (post any manual correction)
+    // -- never called with the AI's raw, unconfirmed guess, so a wrong guess
+    // can't quietly poison the reference library. Writes to the same
+    // IndexedDB store the catalog table's own ✏️ icon writes to, and prefers
+    // Photo 2 (the side/joint profile) as the reference image since that is
+    // the actual visual "fingerprint" -- falls back to Photo 1 if Photo 2
+    // wasn't taken.
+    async function saveScanToLibraryFromScan(doorId, manufacturer, modelName) {
+      const photoForReference = photo2Base64 || photo1Base64;
+      if (!photoForReference) return false;
+      try {
+        await endcapPut({
+          doorId,
+          type: 'image',
+          url: photoForReference,
+          label: `${manufacturer} ${modelName} — end cap reference`,
+          note: 'Auto-saved from a confirmed AI door scan.',
+          dateAdded: new Date().toISOString()
+        });
+        await refreshEndCapCell(doorId);
+        return true;
+      } catch (err) {
+        console.error('Scan-to-library auto-save failed:', err);
+        return false;
+      }
+    }
+
+    async function applyAIResultToCalculator() {
       if (!lastAIAnalysis) return;
       const groundingNote = document.getElementById('aiGroundingNote');
 
@@ -6571,10 +7045,32 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
         groundingNote.style.background = 'rgba(16,185,129,0.12)';
         groundingNote.style.color = '#34d399';
         groundingNote.innerText = `✓ Matched to catalog: ${matchedMfgValue} — ${matchedModelName} (${Math.round(bestScore * 100)}% name match). Verify against the door's actual stamp/label before finalizing.`;
+
+        // NEW (v39): "scan-to-library" flywheel -- save the photo used for
+        // THIS confirmed match as the model's reference photo, so future
+        // scans of the same door get grounded automatically over time
+        // instead of depending on someone remembering to upload one later.
+        const saveCheck = document.getElementById('aiSaveToLibraryCheck');
+        if (saveCheck && saveCheck.checked) {
+          const matchedModelObj = DOOR_MODELS.find(m => m.manufacturer === matchedMfgValue && m.model_name === matchedModelName);
+          if (matchedModelObj) {
+            const saved = await saveScanToLibraryFromScan(matchedModelObj.id, matchedMfgValue, matchedModelName);
+            if (saved) {
+              groundingNote.innerText += ' Saved this photo as the reference for this model.';
+            }
+          }
+        }
       } else {
         groundingNote.style.background = 'rgba(245,158,11,0.12)';
         groundingNote.style.color = '#f59e0b';
         groundingNote.innerText = `⚠️ No confident match for "${lastAIAnalysis.model}" in the ${matchedMfgValue} catalog -- applied the AI's estimated weight/R-value only, not a specific named model. Please verify manually or pick the closest model from the dropdown.`;
+        // NEW (v39): without this, a checked "save to library" box silently
+        // does nothing when the catalog model match fails -- explain why,
+        // rather than leaving it looking ignored.
+        const saveCheckUnmatched = document.getElementById('aiSaveToLibraryCheck');
+        if (saveCheckUnmatched && saveCheckUnmatched.checked) {
+          groundingNote.innerText += ' Nothing was saved to the reference library since no specific catalog model was confirmed -- pick the correct model from the dropdown, then use the ✏️ icon on its catalog row to save this photo manually.';
+        }
       }
 
       alert(matchedModelName
@@ -6611,8 +7107,7 @@ Respond ONLY with a valid raw JSON object matching this exact structure:
       const text = (input.value || '').trim();
       if (!text) return;
 
-      const userKey = localStorage.getItem('doormath_gemini_key') || '';
-      const proxyUrl = `https://doormath-ai.chadneweragd.workers.dev${userKey ? '?key=' + encodeURIComponent(userKey) : ''}`;
+      const { url: proxyUrl, headers: proxyHeaders } = buildAiProxyRequest();
 
       input.value = '';
       const chatBody = document.getElementById('chatBody');
@@ -6641,7 +7136,7 @@ Guidelines:
       try {
         const response = await fetch(proxyUrl, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: proxyHeaders,
           body: JSON.stringify({
             contents: [
               {
@@ -6945,6 +7440,52 @@ Guidelines:
       <div style="display: flex; justify-content: flex-end; gap: 10px;">
         <button class="btn-action" onclick="closeAISettingsModal()">Cancel</button>
         <button class="btn-action primary" onclick="saveAISettings()">Save API Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Cap Profile Reference Modal (per-model, from the manufacturer catalog table) -->
+  <div class="modal-backdrop" id="endcapRefModal">
+    <div class="modal-box" style="max-width: 480px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: #38bdf8;">📎 End Cap Reference</h3>
+        <button onclick="closeEndCapRefModal()" style="background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer;">✕</button>
+      </div>
+      <div id="endcapModalTitle" style="font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 14px;"></div>
+
+      <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 14px;">
+        Add a photo of this model's end stile/joint (yours, or one from a customer), or paste a link to the manufacturer's own spec sheet or product page. Whichever you save here replaces any default shown in the catalog for this model — and a photo also gets used by the AI Scanner to ground future scans in a real picture.
+      </div>
+
+      <div class="field-group" style="margin-bottom: 12px;">
+        <div class="field-label">Upload a photo</div>
+        <label class="btn-action" style="cursor: pointer; padding: 8px 12px; font-size: 12px; display: inline-flex; width: 100%; justify-content: center;">
+          <span>🖼️ Choose Photo</span>
+          <input type="file" id="endcapPhotoInput" accept="image/*" style="display: none;" onchange="handleEndCapPhotoSelect(event)">
+        </label>
+        <div id="endcapPreviewWrap" style="display: none; margin-top: 10px; position: relative; max-width: 220px;">
+          <img id="endcapPreviewImg" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);">
+        </div>
+      </div>
+
+      <div style="text-align: center; font-size: 11px; color: var(--text-dim); margin: 10px 0;">— or —</div>
+
+      <div class="field-group" style="margin-bottom: 12px;">
+        <div class="field-label">Paste a link (manufacturer page, spec sheet, PDF)</div>
+        <input type="text" id="endcapLinkInput" placeholder="https://..." class="input-select mono" style="font-size: 12px;">
+      </div>
+
+      <div class="field-group" style="margin-bottom: 16px;">
+        <div class="field-label">Note (optional)</div>
+        <input type="text" id="endcapNoteInput" placeholder="e.g. 'from customer text message, Sept 2026'" class="input-select" style="font-size: 12px;">
+      </div>
+
+      <div style="display: flex; justify-content: space-between; gap: 10px;">
+        <button id="endcapRemoveBtn" class="btn-action" style="display: none; color: #f87171; border-color: rgba(248,113,113,0.4);" onclick="removeEndCapRef()">Remove Override</button>
+        <div style="display: flex; gap: 10px; margin-left: auto;">
+          <button class="btn-action" onclick="closeEndCapRefModal()">Cancel</button>
+          <button class="btn-action primary" onclick="saveEndCapRef()">Save Reference</button>
+        </div>
       </div>
     </div>
   </div>
