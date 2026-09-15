@@ -2722,7 +2722,7 @@
     </button>
   </div>
 
-  <script>
+  <script>\nconst E = 30000000;
     // Comprehensive Standard Garage Door Spring Wire Database (ASTM A229 / DASMA)
     const STANDARD_SPRING_WIRES = [
     {
@@ -3083,7 +3083,7 @@
     // Calculate Single Spring IPPT
     function calcSingleIPPT(wire, id, length) {
       // DASMA Ground Truth: Furnished_IPPT = (E * d^4) / (10.18 * D_m * N)
-      const E = 30000000;
+      
       const D_m = id + wire;
       const N = length / wire;
       return (E * Math.pow(wire, 4)) / (10.18 * D_m * N);
@@ -3092,7 +3092,7 @@
     // Estimate Cycle Life
     function estimateCycles(wire, id, length, turns = 7.5) {
       // DASMA Ground Truth: Stress = (E * d * T) / (Math.PI * D_m * N)
-      const E = 30000000;
+      
       const D_m = id + wire;
       const N = length / wire;
       const stress = (E * wire * turns) / (Math.PI * D_m * N);
@@ -3388,84 +3388,79 @@
       }
 
       // 1. Dynamic Generation & Iteration
-      const E = 30000000;
+      
       const allCandidates = [];
       const errorLogs = [];
       
       const targetGauges = [0.177, 0.187, 0.192, 0.200, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283, 0.295];
       const targetIDs = [1.75, 2.0];
 
-      const findBestSpringForStress = (targetIPPT, maxTurns, targetID, targetStress, isSingle) => {
-        const E = 30000000;
-        const targetGauges = [0.192, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
+      
+      const E = 30000000;
+      let tempTargetGauges = [0.187, 0.192, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
+      
+      let validSprings = [];
+      const isSingle = springConfig === 'single';
+      const count = isSingle ? 1 : 2;
+      const targetIPPT_Calc = isSingle ? totalIPPT : eachIPPT;
+      const targetID = 2.0; // Assume 2.0 ID for standard residential
+      
+      tempTargetGauges.forEach(d => {
+        const D_m = targetID + d;
+        const N = (E * Math.pow(d, 4)) / (10.18 * D_m * targetIPPT_Calc);
+        const rawLength = N * d;
+        const L = Math.round(rawLength * 4) / 4;
+        const adjustedN = L / d;
         
-        let bestDiff = Infinity;
-        let bestSpring = null;
+        const woundLength = L + (turns * d);
+        const shaftSpace = ((width * 12) / count) - 3;
         
-        targetGauges.forEach(d => {
-          const D_m = targetID + d;
-          const N = (E * Math.pow(d, 4)) / (10.18 * D_m * targetIPPT);
-          const rawLength = N * d;
-          
-          // Round length to nearest quarter inch
-          const L = Math.round(rawLength * 4) / 4;
-          const adjustedN = L / d;
-          
-          const stress = (E * d * maxTurns) / (Math.PI * D_m * adjustedN);
+        if (L >= 10.0 && woundLength <= shaftSpace) {
+          const stress = (E * d * turns) / (Math.PI * D_m * adjustedN);
           const furnishedIPPT = (E * Math.pow(d, 4)) / (10.18 * D_m * adjustedN);
-          const woundLength = L + (maxTurns * d);
+          const wSpec = WIRE_SPECS.find(w => Math.abs(w.wire - d) < 0.001) || { name: d.toFixed(3), color: "Unknown" };
           
-          // Shaft constraint
-          const shaftSpace = isSingle ? ((width * 12) / 2 - 5) : ((width * 12) / 2 - 3);
+          // Truth-telling cycle logic
+          let badgeText = "";
+          let badgeColor = "";
+          if (stress >= 210000) { badgeText = "10K CYCLES"; badgeColor = "gray"; }
+          else if (stress >= 190000) { badgeText = "25K CYCLES"; badgeColor = "green"; }
+          else if (stress >= 170000) { badgeText = "50K CYCLES"; badgeColor = "purple"; }
+          else if (stress >= 140000) { badgeText = "75K CYCLES"; badgeColor = "blue"; }
+          else { badgeText = "100K+ CYCLES"; badgeColor = "warning"; }
           
-          // Max stress constraint (safety ceiling)
-          if (stress <= 215000 && woundLength <= shaftSpace && L >= 10.0 && L <= 60.0) {
-             const diff = Math.abs(stress - targetStress);
-             if (diff < bestDiff) {
-                bestDiff = diff;
-                const wSpec = WIRE_SPECS.find(w => Math.abs(w.wire - d) < 0.001) || { name: d.toFixed(3), color: "Unknown" };
-                bestSpring = {
-                  wire: d,
-                  name: wSpec.name,
-                  color: wSpec.color,
-                  id: targetID,
-                  len: L,
-                  furnishedIPPT: furnishedIPPT,
-                  stress: Math.round(stress),
-                  woundLength: woundLength,
-                  isSingle: isSingle,
-                  maxLift: Math.round((furnishedIPPT * (isSingle ? 1 : 2) * maxTurns) / drumInfo.radius)
-                };
-             }
+          // Safety cap
+          if (stress < 225000) {
+            validSprings.push({
+              wire: d,
+              name: wSpec.name,
+              color: wSpec.color,
+              id: targetID,
+              len: L,
+              furnishedIPPT: furnishedIPPT,
+              stress: Math.round(stress),
+              woundLength: woundLength,
+              isSingle: isSingle,
+              badgeText: badgeText,
+              badgeColor: badgeColor,
+              maxLift: Math.round((furnishedIPPT * count * turns) / drumInfo.radius)
+            });
           }
-        });
-        
-        return bestSpring;
-      };
-
-      // Generate the 3 Baseline Springs (Try standard 2.0" ID first, fallback to 1.75")
-      let targetIPPT_Calc = springConfig === 'single' ? totalIPPT : eachIPPT;
-      let stdSpring = findBestSpringForStress(targetIPPT_Calc, turns, 2.0, 210000, springConfig === 'single');
-      if (!stdSpring) stdSpring = findBestSpringForStress(targetIPPT_Calc, turns, 1.75, 210000, springConfig === 'single');
+        }
+      });
       
-      let hcSpring = findBestSpringForStress(targetIPPT_Calc, turns, 2.0, 190000, springConfig === 'single');
-      if (!hcSpring) hcSpring = findBestSpringForStress(targetIPPT_Calc, turns, 1.75, 190000, springConfig === 'single');
+      validSprings.sort((a, b) => a.wire - b.wire);
       
-      let maxSpring = findBestSpringForStress(targetIPPT_Calc, turns, 2.0, 170000, springConfig === 'single');
-      if (!maxSpring) maxSpring = findBestSpringForStress(targetIPPT_Calc, turns, 1.75, 170000, springConfig === 'single');
-      
-      const renderCard = (title, badgeText, badgeColor, opt) => {
+      const renderCard = (title, opt) => {
         if (!opt) return "";
-        const count = opt.isSingle ? 1 : 2;
         const idLabel = opt.id === 2.625 ? "2-5/8" : opt.id === 1.75 ? "1-3/4" : opt.id.toFixed(1);
-        
-        let stressColor = opt.stress > 195000 ? '#f59e0b' : opt.stress > 175000 ? '#10b981' : '#3b82f6';
+        let stressColor = opt.stress >= 210000 ? '#f59e0b' : opt.stress >= 170000 ? '#10b981' : '#3b82f6';
         
         return `
         <div class="card" style="margin-bottom: 12px; padding: 14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <div style="font-weight:700; font-size:13px; color:var(--text-main);">${title}</div>
-            <span class="badge ${badgeColor}">${badgeText}</span>
+            <span class="badge ${opt.badgeColor}">${opt.badgeText}</span>
           </div>
           <div style="font-size:16px; font-weight:800; color:var(--accent); font-family:ui-monospace, monospace; margin: 6px 0;">
             (${count}) Spring${count > 1 ? 's' : ''}: ${opt.name} (${opt.color}) x ${idLabel}" ID x ${opt.len.toFixed(2)}" L
@@ -3491,15 +3486,16 @@
       };
       
       let htmlCards = "";
-      if (!stdSpring && !hcSpring && !maxSpring) {
+      if (validSprings.length === 0) {
          htmlCards = `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
            <div style="font-weight: 800; color: #ef4444; margin-bottom: 8px;">⚠️ CRITICAL SAFETY WARNING</div>
-           <div style="font-size: 13px; color: var(--text-main);">No safe standard configurations found.</div>
+           <div style="font-size: 13px; color: var(--text-main);">No safe spring configurations found within standard wire limits.</div>
          </div>`;
       } else {
-         htmlCards += renderCard("Standard Option", "10K CYCLES", "gray", stdSpring);
-         htmlCards += renderCard("High Cycle Option", "25K CYCLES", "green", hcSpring);
-         htmlCards += renderCard("Max Life Option", "50K+ CYCLES", "purple", maxSpring);
+         const stdTitle = validSprings[0].badgeText === "10K CYCLES" ? "Standard Option" : "Baseline Option (High Cycle)";
+         htmlCards += renderCard(stdTitle, validSprings[0]);
+         if (validSprings.length > 1) htmlCards += renderCard("Upgrade Option", validSprings[1]);
+         if (validSprings.length > 2) htmlCards += renderCard("Max Life Option", validSprings[2]);
       }
 
       container.innerHTML = `
@@ -10467,7 +10463,7 @@ Guidelines:
   </div>
 
 
-  <script>
+  <script>\nconst E = 30000000;
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
