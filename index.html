@@ -3392,7 +3392,7 @@
       const allCandidates = [];
       const errorLogs = [];
       
-      const targetGauges = [0.192, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
+      const targetGauges = [0.177, 0.187, 0.192, 0.200, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283, 0.295];
       const targetIDs = [1.75, 2.0];
 
       const generateOptions = (target, isSingle) => {
@@ -3433,7 +3433,7 @@
                 const furnishedIPPT = (E * Math.pow(wire, 4)) / (10.18 * D_m * N);
                 // Calculate Max Lift Weight
                 const count = isSingle ? 1 : 2;
-                const maxLift = (furnishedIPPT * count) / drumInfo.radius;
+                const maxLift = (furnishedIPPT * count * turns) / drumInfo.radius;
                 
                 allCandidates.push({
                   wire: wire,
@@ -3523,8 +3523,16 @@
         return htmlStr;
       };
 
+      let fallbackBanner = "";
+      if (tier10k.length === 0 && tier25k.length === 0) {
+        fallbackBanner = `<div style="background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3); padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 12px; color: var(--text-main);">
+          <strong style="color: #38bdf8;">💡 Note:</strong> Door is too light to reach standard 10k/25k stress thresholds with standard wire sizes. Showing high-cycle alternatives.
+        </div>`;
+      }
+
       container.innerHTML = `
         <div style="max-height: 500px; overflow-y: auto; padding-right: 8px;">
+          ${fallbackBanner}
           ${renderTier("Standard Options (10K Cycles)", "gray", tier10k)}
           ${renderTier("Upgrade Options (25K Cycles)", "green", tier25k)}
           ${renderTier("Commercial Options (50K+ Cycles)", "purple", tier50k)}
