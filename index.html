@@ -3397,17 +3397,16 @@
 
       function calculateExactCycles(stress) {
         if (stress >= 215000) return -1;
-        if (stress <= 120000) return 250000;
+        
+        if (stress > 210000) {
+          return 10000 - (stress - 210000) * 0.75;
+        }
         
         const points = [
-          {s: 215000, c: 6250},
           {s: 210000, c: 10000},
           {s: 190000, c: 25000},
           {s: 170000, c: 50000},
-          {s: 160000, c: 75000},
-          {s: 150000, c: 100000},
-          {s: 130000, c: 200000},
-          {s: 120000, c: 250000}
+          {s: 150000, c: 100000}
         ];
         
         for (let i = 0; i < points.length - 1; i++) {
@@ -3418,7 +3417,8 @@
             return p1.c + pct * (p2.c - p1.c);
           }
         }
-        return 250000;
+        
+        return 100000 + (150000 - stress) * 2.5;
       }
 
       const generateOptions = (target, isSingle) => {
@@ -3432,7 +3432,8 @@
             const len = Math.round(exactLen * 10) / 10;
             const N = len / wire; 
             
-            if (len >= 15.0 && len <= 45.0) {
+            // 1. Adjust Minimum Length Constraint to 10"
+            if (len >= 10.0 && len <= 45.0) {
               const stress = (E * wire * turns) / (Math.PI * D_m * N);
               const woundLength = len + (turns * wire);
               const shaftSpace = isSingle ? ((width * 12) / 2 - 5) : ((width * 12) / 2 - 3);
@@ -3443,11 +3444,24 @@
                 const count = isSingle ? 1 : 2;
                 const maxLift = (furnishedIPPT * count * turns) / drumInfo.radius;
                 
-                const cycleK = Math.round(exactCycles / 1000);
+                // 3. Implement an Industry-Standard UI Cap
+                let cycleBadgeStr = "";
                 let badgeColor = "gray";
-                if (cycleK >= 100) badgeColor = "warning"; // We will style 'warning' as gold/orange
-                else if (cycleK >= 50) badgeColor = "purple";
-                else if (cycleK >= 20) badgeColor = "blue";
+                
+                if (exactCycles > 100000) {
+                  cycleBadgeStr = "100K+ CYCLES";
+                  badgeColor = "warning";
+                } else {
+                  const cycleK = Math.round(exactCycles / 1000);
+                  if (cycleK >= 100) {
+                    cycleBadgeStr = "100K+ CYCLES";
+                    badgeColor = "warning";
+                  } else {
+                    cycleBadgeStr = `${cycleK}K CYCLES`;
+                    if (cycleK >= 50) badgeColor = "purple";
+                    else if (cycleK >= 20) badgeColor = "blue";
+                  }
+                }
                 
                 allCandidates.push({
                   wire: wire,
@@ -3459,7 +3473,7 @@
                   stress: Math.round(stress),
                   woundLength: woundLength,
                   exactCycles: exactCycles,
-                  cycleBadgeStr: `${cycleK}k CYCLES`,
+                  cycleBadgeStr: cycleBadgeStr,
                   badgeColor: badgeColor,
                   isSingle: isSingle,
                   maxLift: Math.round(maxLift)
