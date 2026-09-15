@@ -3367,219 +3367,145 @@
         printTrackEl.innerText = trackSel.options[trackSel.selectedIndex].text;
       }
 
-      // 1. Catalog Hydration / Injection
+      // 1. Dynamic Generation & Iteration
       const E = 30000000;
       const allCandidates = [];
       const errorLogs = [];
       
-      const IDs = [2.0, 2.5, 2.625, 1.75]; // Added 2.5 as requested, common resi inventory
+      const targetGauges = [0.192, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
+      const targetIDs = [1.75, 2.0];
 
-      // Helper to evaluate a spring spec against target IPPT
-      const evaluateSpring = (target, tid, w, isSingle) => {
-        if (w.wire < 0.180 || w.wire > 0.312) return; // Standard resi gauges
-
-        const exactLen = (E * Math.pow(w.wire, 5)) / (10.18 * (tid + w.wire) * target);
-        if (exactLen >= 18.0 && exactLen <= 60.0) {
-          const len = Math.round(exactLen * 10) / 10;
-          const N = len / w.wire;
-          
-          const stress = (E * w.wire * turns) / (Math.PI * (tid + w.wire) * N);
-          const woundLength = len + (turns * w.wire);
-          const shaftSpace = isSingle ? (width * 12 - 8) : ((width * 12) / 2 - 5);
-          
-          const furnishedIPPT = (E * Math.pow(w.wire, 4)) / (10.18 * (tid + w.wire) * N);
-          const delta = furnishedIPPT - target;
-          const absTolerance = Math.abs(delta);
-          
-          let isSafe = true;
-          let bindFail = false;
-          let stressFail = false;
-          
-          if (stress > 220000) { isSafe = false; stressFail = true; }
-          if (woundLength > shaftSpace) { isSafe = false; bindFail = true; }
-          
-          const cycles = estimateCycles(w.wire, tid, len, turns);
-          
-          if (!isSafe) {
-             errorLogs.push(`${w.name} x ${tid}" rejected. Stress: ${Math.round(stress)}psi, Bind: ${bindFail}`);
-          }
-          
-          allCandidates.push({
-            wire: w.wire,
-            name: w.name,
-            color: w.color,
-            id: tid,
-            len: len,
-            furnishedIPPT: furnishedIPPT,
-            delta: delta,
-            absTolerance: absTolerance,
-            stress: Math.round(stress),
-            stressFail: stressFail,
-            bindFail: bindFail,
-            woundLength: woundLength,
-            cycles: cycles,
-            isSafe: isSafe,
-            isSingle: isSingle
+      const generateOptions = (target, isSingle) => {
+        targetIDs.forEach(tid => {
+          targetGauges.forEach(wire => {
+            // Find corresponding wire object to get name/color
+            const wSpec = WIRE_SPECS.find(w => Math.abs(w.wire - wire) < 0.001) || { wire: wire, name: wire.toFixed(3), color: "Unknown" };
+            const D_m = tid + wire;
+            
+            // a. Calculate required Active Coils (N)
+            const exactN = (E * Math.pow(wire, 4)) / (10.18 * D_m * target);
+            
+            // b. Calculate Spring Length
+            const exactLen = exactN * wire;
+            const len = Math.round(exactLen * 10) / 10;
+            const N = len / wire; // Recalculated for rounded length
+            
+            // c. Length Bounds
+            if (len >= 15.0 && len <= 45.0) {
+              // d. Calculate Bending Stress
+              const stress = (E * wire * turns) / (Math.PI * D_m * N);
+              const woundLength = len + (turns * wire);
+              const shaftSpace = isSingle ? (width * 12 - 8) : ((width * 12) / 2 - 5);
+              
+              // e. Map Stress to Cycle Life
+              let isSafe = true;
+              let cycles = 0;
+              let cycleTier = "";
+              if (stress > 215000) { isSafe = false; }
+              else if (woundLength > shaftSpace) { isSafe = false; }
+              else {
+                if (stress >= 195000) { cycles = 10000; cycleTier = "10K CYCLES"; }
+                else if (stress >= 175000) { cycles = 25000; cycleTier = "25K CYCLES"; }
+                else { cycles = 50000; cycleTier = "50K+ CYCLES"; }
+              }
+              
+              if (isSafe) {
+                const furnishedIPPT = (E * Math.pow(wire, 4)) / (10.18 * D_m * N);
+                // Calculate Max Lift Weight
+                const count = isSingle ? 1 : 2;
+                const maxLift = (furnishedIPPT * count) / drumInfo.radius;
+                
+                allCandidates.push({
+                  wire: wire,
+                  name: wSpec.name,
+                  color: wSpec.color,
+                  id: tid,
+                  len: len,
+                  furnishedIPPT: furnishedIPPT,
+                  stress: Math.round(stress),
+                  woundLength: woundLength,
+                  cycles: cycles,
+                  cycleTier: cycleTier,
+                  isSingle: isSingle,
+                  maxLift: Math.round(maxLift)
+                });
+              }
+            }
           });
-        }
+        });
       };
 
-      IDs.forEach(tid => {
-        WIRE_SPECS.forEach(w => {
-          evaluateSpring(eachIPPT, tid, w, false); // For Pairs
-          if (weight <= 190) {
-            evaluateSpring(totalIPPT, tid, w, true); // For Singles
-          }
-        });
-      });
-
-      // 2. Fallback Sorting Logic
-      let safePairs = allCandidates.filter(c => !c.isSingle && c.isSafe && c.absTolerance <= 2.0);
-      let safeSingles = allCandidates.filter(c => c.isSingle && c.isSafe && c.absTolerance <= 2.0);
+      // Generate pairs
+      generateOptions(eachIPPT, false);
       
-      let usingFallback = false;
-      let displayList = [];
+      // Group visually by Cycle Tier
+      let tier10k = allCandidates.filter(c => c.cycles === 10000);
+      let tier25k = allCandidates.filter(c => c.cycles === 25000);
+      let tier50k = allCandidates.filter(c => c.cycles === 50000);
+      
+      // Sort each tier by closest to 32" standard length
+      const sortByLen = (a, b) => Math.abs(a.len - 32.0) - Math.abs(b.len - 32.0);
+      tier10k.sort(sortByLen);
+      tier25k.sort(sortByLen);
+      tier50k.sort(sortByLen);
 
-      if (safePairs.length > 0 || safeSingles.length > 0) {
-         // Bin into three distinct industry-standard tiers based on Bending Stress
-         const bucket1 = safePairs.filter(c => c.stress >= 195000 && c.stress <= 215000); // 10k Cycles
-         const bucket2 = safePairs.filter(c => c.stress >= 175000 && c.stress < 195000);  // 25k Cycles
-         const bucket3 = safePairs.filter(c => c.stress < 175000);                        // 50k+ Cycles
-         
-         // Sort buckets by closest IPPT match
-         bucket1.sort((a, b) => a.absTolerance - b.absTolerance);
-         bucket2.sort((a, b) => a.absTolerance - b.absTolerance);
-         bucket3.sort((a, b) => a.absTolerance - b.absTolerance);
-         
-         // Standard Residential Pair
-         let stdPair = bucket1.length > 0 ? bucket1[0] : null;
-         if (!stdPair && bucket2.length > 0) {
-            // Fallback to lowest stress option in Bucket 2 (meaning highest cycle)
-            let b2SortedByStress = [...bucket2].sort((a, b) => a.stress - b.stress);
-            stdPair = b2SortedByStress[0];
-         }
-         
-         if (stdPair) {
-            stdPair.title = "Standard Residential Pair";
-            stdPair.cycles = stdPair.stress >= 195000 ? 10000 : 25000;
-            displayList.push(stdPair);
-         }
-         
-         // High-Cycle Extended Life Pair
-         let hcPair = bucket2.length > 0 ? bucket2[0] : null;
-         // Deduplicate if stdPair used Bucket 2
-         if (hcPair && stdPair && hcPair.wire === stdPair.wire && hcPair.id === stdPair.id) {
-            hcPair = bucket2.length > 1 ? bucket2[1] : null;
-         }
-         if (hcPair) {
-            hcPair.title = "High-Cycle Extended Life Pair";
-            hcPair.cycles = 25000;
-            displayList.push(hcPair);
-         }
-         
-         // Max Life / Commercial
-         let maxPair = bucket3.length > 0 ? bucket3[0] : null;
-         if (maxPair) {
-            maxPair.title = "Max Life / Commercial Pair";
-            maxPair.cycles = 50000;
-            displayList.push(maxPair);
-         }
-         
-         // Single Option
-         if (safeSingles.length > 0) {
-            // Pick a solid single spring, ideally 10k-15k to keep wire size manageable
-            const singleBucket = safeSingles.filter(c => c.stress >= 185000 && c.stress <= 215000);
-            singleBucket.sort((a, b) => a.absTolerance - b.absTolerance);
-            const single = singleBucket.length > 0 ? singleBucket[0] : safeSingles.sort((a, b) => a.absTolerance - b.absTolerance)[0];
-            single.title = "Single Spring Alternative";
-            single.cycles = single.stress < 175000 ? 50000 : single.stress < 195000 ? 25000 : 10000;
-            displayList.push(single);
-         }
-      } else {
-         // Tolerance fallback logic
-         usingFallback = true;
-         let safeOnlyAll = allCandidates.filter(c => !c.stressFail && !c.bindFail);
-         safeOnlyAll.sort((a, b) => a.absTolerance - b.absTolerance);
-         
-         displayList = safeOnlyAll.slice(0, 3);
-         displayList.forEach((c, idx) => {
-            c.title = `Closest Match #${idx + 1} (${c.isSingle ? 'Single' : 'Pair'})`;
-            c.cycles = c.stress < 175000 ? 50000 : c.stress < 195000 ? 25000 : 10000;
-         });
-      }
-
-      if (displayList.length === 0) {
+      // 3. Update the UI to a List View
+      if (allCandidates.length === 0) {
          container.innerHTML = `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
            <div style="font-weight: 800; color: #ef4444; margin-bottom: 8px;">⚠️ CRITICAL SAFETY WARNING</div>
-           <div style="font-size: 13px; color: var(--text-main);">No safe spring configurations found for this door size and weight. All candidates failed DASMA safety limits (exceeds 220,000 psi bending stress or fails coil bind check).</div>
-           <details style="margin-top: 10px; font-size: 11px; color: var(--text-muted);">
-             <summary style="cursor: pointer;">View Rejection Logs</summary>
-             <div style="margin-top: 6px; white-space: pre-wrap;">${errorLogs.slice(0, 10).join('\n')}...</div>
-           </details>
+           <div style="font-size: 13px; color: var(--text-main);">No safe spring configurations found between 15" and 45" length. All candidates exceed 215,000 psi or fail coil bind checks.</div>
          </div>`;
          return;
       }
       
-      if (usingFallback) {
-         const warnDiv = document.createElement('div');
-         warnDiv.style.background = 'rgba(245, 158, 11, 0.1)';
-         warnDiv.style.border = '1px solid rgba(245, 158, 11, 0.4)';
-         warnDiv.style.color = '#f59e0b';
-         warnDiv.style.padding = '12px';
-         warnDiv.style.borderRadius = '8px';
-         warnDiv.style.fontSize = '12px';
-         warnDiv.style.marginBottom = '12px';
-         warnDiv.innerHTML = `<strong>⚠️ Exact Match Unavailable:</strong> No safe springs found within ±2.0 in-lbs tolerance. Showing the closest safe alternatives sorted by IPPT accuracy.`;
-         container.appendChild(warnDiv);
-      }
-
-      // 3. Card Rendering Payload
-      displayList.forEach(opt => {
-        const count = opt.isSingle ? 1 : 2;
-        const targetIPPT = opt.isSingle ? totalIPPT : eachIPPT;
-        const idLabel = opt.id === 2.625 ? "2-5/8" : opt.id === 1.75 ? "1-3/4" : opt.id.toFixed(1);
+      const renderTier = (tierName, badgeColor, items) => {
+        if (items.length === 0) return "";
+        let htmlStr = `<div style="margin-top: 16px; margin-bottom: 8px; font-weight: 800; font-size: 14px; color: var(--text-muted); border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">${tierName}</div>`;
         
-        let stressColor = 'var(--text-main)';
-        if (opt.stress > 190000) stressColor = '#ef4444'; // Red
-        else if (opt.stress > 170000) stressColor = '#f59e0b'; // Yellow
-        else stressColor = '#10b981'; // Green
-        
-        const deltaSign = opt.delta > 0 ? '+' : '';
-        const cycleStr = opt.cycles >= 50000 ? "50K+ CYCLES" : opt.cycles >= 25000 ? "25K CYCLES" : "10K CYCLES";
-        const cycleColor = opt.cycles >= 50000 ? "purple" : opt.cycles >= 25000 ? "green" : "gray";
+        items.forEach(opt => {
+          const count = opt.isSingle ? 1 : 2;
+          const idLabel = opt.id === 2.625 ? "2-5/8" : opt.id === 1.75 ? "1-3/4" : opt.id.toFixed(1);
+          
+          let stressColor = 'var(--text-main)';
+          if (opt.stress > 195000) stressColor = '#f59e0b';
+          else if (opt.stress > 175000) stressColor = '#10b981';
+          else stressColor = '#3b82f6';
+          
+          htmlStr += `
+          <div class="card" style="margin-bottom: 12px; padding: 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <div style="font-weight:700; font-size:13px; color:var(--text-main);">(${count}) Springs: ${opt.name} x ${idLabel}" ID x ${opt.len.toFixed(1)}" L</div>
+              <span class="badge ${badgeColor}">${opt.cycleTier}</span>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
+              <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.03); padding:4px 8px; border-radius:4px;">
+                <span>Max Lift Capacity:</span>
+                <strong style="color:var(--text-main);">${opt.maxLift} lbs</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:0 8px;">
+                <span>Furnished IPPT:</span>
+                <strong style="color:var(--text-main);">${opt.furnishedIPPT.toFixed(2)} in-lbs</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:0 8px;">
+                <span>Bending Stress:</span>
+                <strong style="color:${stressColor};">${opt.stress.toLocaleString()} psi</strong>
+              </div>
+            </div>
+            <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+              <button class="btn-action primary" style="padding:6px 12px; font-size:12px; border-radius:var(--radius-full);" onclick="selectReplacement(${opt.wire}, ${opt.id}, ${opt.len.toFixed(1)}, ${opt.cycles}, '${opt.name}', ${count}); openSpecSheet();">Print Spec Sheet ➔</button>
+            </div>
+          </div>`;
+        });
+        return htmlStr;
+      };
 
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.style.marginBottom = '12px';
-        card.style.padding = '14px';
-        card.innerHTML = `
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <div style="font-weight:700; font-size:14px; color:var(--text-main);">${opt.title}</div>
-            <span class="badge ${cycleColor}">${cycleStr}</span>
-          </div>
-          <div style="font-size:16px; font-weight:800; color:var(--accent); font-family:ui-monospace, monospace; margin: 6px 0;">
-            (${count}) Spring${count > 1 ? 's' : ''}: ${opt.name} (${opt.color}) x ${idLabel}" ID x ${opt.len.toFixed(1)}" L
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px; font-size: 12px; color: var(--text-muted);">
-            <div style="display: flex; justify-content: space-between;">
-              <span>Furnished IPPT:</span>
-              <strong style="color:var(--text-main);">${opt.furnishedIPPT.toFixed(1)} <span style="font-weight:normal; color:${opt.absTolerance > 2.0 ? '#ef4444' : 'var(--text-dim)'}">(${deltaSign}${opt.delta.toFixed(1)} in-lbs)</span></strong>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span>Bending Stress:</span>
-              <strong style="color:${stressColor};">${opt.stress.toLocaleString()} psi</strong>
-            </div>
-            <div style="display: flex; justify-content: space-between;">
-              <span>Coil Bind Check:</span>
-              <strong style="color:${opt.bindFail ? '#ef4444' : '#10b981'};">${opt.bindFail ? 'FAIL' : 'PASS'} (${opt.woundLength.toFixed(1)}" wound)</strong>
-            </div>
-          </div>
-          <div style="margin-top:12px; display:flex; justify-content:flex-end;">
-            <button class="btn-action primary" style="padding:6px 12px; font-size:12px; border-radius:var(--radius-full);" onclick="selectReplacement(${opt.wire}, ${opt.id}, ${opt.len.toFixed(1)}, ${opt.cycles}, '${opt.name}', ${count}); openSpecSheet();">Print Spec Sheet ➔</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
+      container.innerHTML = `
+        <div style="max-height: 500px; overflow-y: auto; padding-right: 8px;">
+          ${renderTier("Standard Options (10K Cycles)", "gray", tier10k)}
+          ${renderTier("Upgrade Options (25K Cycles)", "green", tier25k)}
+          ${renderTier("Commercial Options (50K+ Cycles)", "purple", tier50k)}
+        </div>
+      `;
     }
 function stepVal(id, delta) {
       const el = document.getElementById(id);
