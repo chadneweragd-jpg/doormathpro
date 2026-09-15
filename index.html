@@ -3292,21 +3292,33 @@
 
     // TAB 2: Spring Sizer Logic
     function runSpringSizer() {
-      const height = parseFloat(document.getElementById('doorHeight').value);
-      const width = parseFloat(document.getElementById('doorWidth').value);
-      const weight = parseFloat(document.getElementById('doorWeight').value);
+      const height = parseFloat(document.getElementById('doorHeight').value) || 0;
+      const width = parseFloat(document.getElementById('doorWidth').value) || 0;
+      const weight = parseFloat(document.getElementById('doorWeight').value) || 0;
       const drum = document.getElementById('drumModel').value;
       const trackRadiusEl = document.getElementById('trackRadius');
       const trackRadiusVal = trackRadiusEl ? trackRadiusEl.value : '15';
 
+      const container = document.getElementById('engineeredOptionsContainer');
+      container.innerHTML = '';
+
+      // 4. Empty State Guard
+      if (height === 0 || width === 0 || weight === 0) {
+        document.getElementById('sizerTurns').innerText = '0.0';
+        document.getElementById('sizerTurnsSub').innerText = '0 turns + 0 quarter turns (0 total)';
+        document.getElementById('sizerTotalIPPT').innerText = '0.0';
+        document.getElementById('sizerEachIPPT').innerText = '0.0';
+        
+        container.innerHTML = `<div style="padding: 24px; text-align: center; border: 2px dashed rgba(255,255,255,0.1); border-radius: 12px; margin-top: 20px;">
+          <div style="font-size: 32px; margin-bottom: 12px;">📐</div>
+          <div style="font-weight: 700; color: var(--text-main); margin-bottom: 6px;">Awaiting Door Specs</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Enter door dimensions and weight above, or scan a model to auto-populate recommendations.</div>
+        </div>`;
+        return;
+      }
+
       const drumInfo = DRUM_SPECS[drum] || DRUM_SPECS["400-8"];
 
-      // BUGFIX (field report, Sept 2026): total cable travel is door height
-      // PLUS any additional High Lift distance. The "High Lift Distance"
-      // field was already being collected from the tech but was never
-      // actually used anywhere -- turns (and therefore IPPT) were silently
-      // calculated as if every High Lift door were a Standard Lift door of
-      // the same height, undercounting the extra travel entirely.
       let effectiveHeightIn = height * 12;
       if (drumInfo.type === 'High Lift') {
         const hlEl = document.getElementById('highLiftInches');
@@ -3314,26 +3326,12 @@
         effectiveHeightIn += hlExtra;
       }
 
-      // BUGFIX: track curve radius has a small but real effect on total cable
-      // travel. A tighter 12in radius curve needs about 3in less vertical
-      // travel than the 15in standard curve (consistent with the ~3in of
-      // headroom a 12in radius is widely documented to save vs. 15in). The
-      // drum constants above already assume the 15in standard baseline (the
-      // dropdown's default), so only 12in gets an adjustment here.
-      // Low Headroom (LHR-F/LHR-R) mounts are NOT simply "an even smaller
-      // radius" -- they're a different mechanical system (a separate
-      // jackshaft/pulley arrangement per most low-headroom conversion kits),
-      // so this calculator deliberately does not invent a numeric adjustment
-      // for them; see the advisory note wired to the LHR options below.
       let trackAdjustIn = 0;
       if (trackRadiusVal === '12') trackAdjustIn = -3;
 
       const effectiveHeightFt = (effectiveHeightIn + trackAdjustIn) / 12;
       const turns = (effectiveHeightFt * drumInfo.turnsPerFt) + drumInfo.deadTurns;
 
-      // BUGFIX (v40): guard division-by-zero. turns can only reach 0 if
-      // turnsPerFt = 0 AND deadTurns = 0 (no real drum does this, but bad
-      // data from a future drum entry would silently produce Infinity IPPT).
       if (!turns || turns <= 0) {
         document.getElementById('sizerTurns').innerText = '—';
         document.getElementById('sizerTurnsSub').innerText = 'Invalid drum configuration';
@@ -3345,9 +3343,6 @@
       const totalIPPT = (weight * drumInfo.radius) / turns;
       const eachIPPT = totalIPPT / 2.0;
 
-      // Low Headroom mounts use a genuinely different mechanical system --
-      // flag it rather than silently presenting a number as if it were fully
-      // engineered for that configuration.
       const lhrWarning = document.getElementById('lhrAdvisory');
       if (lhrWarning) {
         lhrWarning.style.display = (trackRadiusVal === 'LHR-F' || trackRadiusVal === 'LHR-R') ? 'block' : 'none';
@@ -3360,116 +3355,124 @@
       document.getElementById('sizerTotalIPPT').innerText = totalIPPT.toFixed(1);
       document.getElementById('sizerEachIPPT').innerText = eachIPPT.toFixed(1);
 
-      // Populate spec sheet defaults
       document.getElementById('printDoorSize').innerText = `${width}'0" W x ${height}'0" H`;
       document.getElementById('printDoorWeight').innerText = `${weight} lbs`;
       document.getElementById('printDrum').innerText = drum;
       document.getElementById('printTotalIPPT').innerText = totalIPPT.toFixed(1);
       document.getElementById('printTurns').innerText = `${turns.toFixed(1)} turns (${Math.round(turns * 4)} quarter turns)`;
 
-      // BUGFIX (field report, Sept 2026): #printTrack was a static "15"
-      // Standard" placeholder that never updated -- the printed spec sheet
-      // always showed the default track config no matter what the tech
-      // actually selected. Now it reflects the real selection.
       const trackSel = document.getElementById('trackRadius');
       const printTrackEl = document.getElementById('printTrack');
       if (trackSel && printTrackEl) {
         printTrackEl.innerText = trackSel.options[trackSel.selectedIndex].text;
       }
 
-      // Dynamically select realistic, field-practical spring wire sizes
-      const container = document.getElementById('engineeredOptionsContainer');
-      container.innerHTML = '';
-
-      // Find all realistic pair options (lengths between 22" and 42")
-            const E = 30000000;
-      const candidatePairs = [];
-      const errorLogs = []; // Store warnings for UI
+      // 1. Catalog Hydration / Injection
+      const E = 30000000;
+      const allCandidates = [];
+      const errorLogs = [];
       
-      [2.0, 1.75, 2.625].forEach(tid => {
+      const IDs = [2.0, 2.5, 2.625, 1.75]; // Added 2.5 as requested, common resi inventory
+
+      // Helper to evaluate a spring spec against target IPPT
+      const evaluateSpring = (target, tid, w, isSingle) => {
+        if (w.wire < 0.180 || w.wire > 0.312) return; // Standard resi gauges
+
+        const exactLen = (E * Math.pow(w.wire, 5)) / (10.18 * (tid + w.wire) * target);
+        if (exactLen >= 18.0 && exactLen <= 60.0) {
+          const len = Math.round(exactLen * 10) / 10;
+          const N = len / w.wire;
+          
+          const stress = (E * w.wire * turns) / (Math.PI * (tid + w.wire) * N);
+          const woundLength = len + (turns * w.wire);
+          const shaftSpace = isSingle ? (width * 12 - 8) : ((width * 12) / 2 - 5);
+          
+          const furnishedIPPT = (E * Math.pow(w.wire, 4)) / (10.18 * (tid + w.wire) * N);
+          const delta = furnishedIPPT - target;
+          const absTolerance = Math.abs(delta);
+          
+          let isSafe = true;
+          let bindFail = false;
+          let stressFail = false;
+          
+          if (stress > 220000) { isSafe = false; stressFail = true; }
+          if (woundLength > shaftSpace) { isSafe = false; bindFail = true; }
+          
+          const cycles = estimateCycles(w.wire, tid, len, turns);
+          
+          if (!isSafe) {
+             errorLogs.push(`${w.name} x ${tid}" rejected. Stress: ${Math.round(stress)}psi, Bind: ${bindFail}`);
+          }
+          
+          allCandidates.push({
+            wire: w.wire,
+            name: w.name,
+            color: w.color,
+            id: tid,
+            len: len,
+            furnishedIPPT: furnishedIPPT,
+            delta: delta,
+            absTolerance: absTolerance,
+            stress: Math.round(stress),
+            stressFail: stressFail,
+            bindFail: bindFail,
+            woundLength: woundLength,
+            cycles: cycles,
+            isSafe: isSafe,
+            isSingle: isSingle
+          });
+        }
+      };
+
+      IDs.forEach(tid => {
         WIRE_SPECS.forEach(w => {
-          // Exact required length
-          const exactLen = (E * Math.pow(w.wire, 5)) / (10.18 * (tid + w.wire) * eachIPPT);
-          if (exactLen >= 22.0 && exactLen <= 44.0) {
-            // Field reality: springs are cut to nearest tenth
-            const len = Math.round(exactLen * 10) / 10;
-            const N = len / w.wire;
-            
-            // Ground Truth Safety Checks
-            const stress = (E * w.wire * turns) / (Math.PI * (tid + w.wire) * N);
-            const woundLength = len + (turns * w.wire);
-            const shaftSpace = (width * 12) / 2 - 5; // Approx shaft space per side
-            const furnishedIPPT = (E * Math.pow(w.wire, 4)) / (10.18 * (tid + w.wire) * N);
-            const tolerance = Math.abs(furnishedIPPT - eachIPPT);
-            
-            let isSafe = true;
-            let err = '';
-            if (stress > 220000) { isSafe = false; err = 'Exceeds 220,000 psi'; }
-            else if (woundLength > shaftSpace) { isSafe = false; err = 'Coil bind exceeds shaft space'; }
-            else if (tolerance > 2.0) { isSafe = false; err = `IPPT tolerance > 2.0 (off by ${tolerance.toFixed(1)})`; }
-            
-            if (isSafe) {
-              const cycles = estimateCycles(w.wire, tid, len, turns);
-              candidatePairs.push({
-                wire: w.wire,
-                name: w.name,
-                color: w.color,
-                id: tid,
-                len: len,
-                cycles: cycles,
-                diffFromStandard: Math.abs(len - 31.0)
-              });
-            } else {
-              errorLogs.push(`${w.name} x ${tid}" ID rejected: ${err}`);
-            }
+          evaluateSpring(eachIPPT, tid, w, false); // For Pairs
+          if (weight <= 190) {
+            evaluateSpring(totalIPPT, tid, w, true); // For Singles
           }
         });
       });
 
-      candidatePairs.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
+      // 2. Fallback Sorting Logic
+      let safePairs = allCandidates.filter(c => !c.isSingle && c.isSafe && c.absTolerance <= 2.0);
+      let safeSingles = allCandidates.filter(c => c.isSingle && c.isSafe && c.absTolerance <= 2.0);
+      
+      let usingFallback = false;
+      let displayList = [];
 
-      const standardPair = candidatePairs.find(c => c.cycles <= 15000 && c.id === 2.0) || candidatePairs.find(c => c.cycles <= 20000) || candidatePairs[0];
-      const highCyclePair = candidatePairs.find(c => c.cycles >= 25000 && c.wire > (standardPair ? standardPair.wire : 0)) || candidatePairs.find(c => c.cycles >= 25000) || candidatePairs[1];
-
-      let singleOption = null;
-      if (weight <= 190) {
-        const candidateSingles = [];
-        [2.0, 1.75].forEach(tid => {
-          WIRE_SPECS.forEach(w => {
-            const exactLen = (E * Math.pow(w.wire, 5)) / (10.18 * (tid + w.wire) * totalIPPT);
-            if (exactLen >= 25.0 && exactLen <= 40.0) {
-              const len = Math.round(exactLen * 10) / 10;
-              const N = len / w.wire;
-              
-              const stress = (E * w.wire * turns) / (Math.PI * (tid + w.wire) * N);
-              const woundLength = len + (turns * w.wire);
-              const shaftSpace = (width * 12) - 8; // Full shaft space
-              const furnishedIPPT = (E * Math.pow(w.wire, 4)) / (10.18 * (tid + w.wire) * N);
-              const tolerance = Math.abs(furnishedIPPT - totalIPPT);
-              
-              if (stress <= 220000 && woundLength <= shaftSpace && tolerance <= 2.0) {
-                const cycles = estimateCycles(w.wire, tid, len, turns);
-                candidateSingles.push({
-                  wire: w.wire,
-                  name: w.name,
-                  color: w.color,
-                  id: tid,
-                  len: len,
-                  cycles: cycles,
-                  diffFromStandard: Math.abs(len - 32.0)
-                });
-              }
-            }
-          });
-        });
-        candidateSingles.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
-        if (candidateSingles.length > 0) singleOption = candidateSingles[0];
+      if (safePairs.length > 0 || safeSingles.length > 0) {
+         // Sort by standard lengths (e.g. diff from 32")
+         safePairs.forEach(c => c.diffFromStandard = Math.abs(c.len - 32.0));
+         safePairs.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
+         
+         const stdPair = safePairs.find(c => c.cycles <= 15000) || safePairs[0];
+         const hcPair = safePairs.find(c => c.cycles >= 25000 && c.wire > (stdPair ? stdPair.wire : 0)) || safePairs.find(c => c.cycles >= 25000) || safePairs[1];
+         
+         if (stdPair) { stdPair.title = "Standard Residential Pair"; displayList.push(stdPair); }
+         if (hcPair && hcPair !== stdPair) { hcPair.title = "High-Cycle Extended Life Pair"; displayList.push(hcPair); }
+         
+         if (safeSingles.length > 0) {
+           safeSingles.forEach(c => c.diffFromStandard = Math.abs(c.len - 32.0));
+           safeSingles.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
+           const single = safeSingles[0];
+           single.title = "Single Spring Alternative";
+           displayList.push(single);
+         }
+      } else {
+         // Fallback logic
+         usingFallback = true;
+         // Find safest closest matches (even if > 2.0 tolerance, but MUST be safe from coil bind and stress!)
+         let safeOnlyAll = allCandidates.filter(c => !c.stressFail && !c.bindFail);
+         safeOnlyAll.sort((a, b) => a.absTolerance - b.absTolerance); // closest to target IPPT
+         
+         // Take top 3
+         displayList = safeOnlyAll.slice(0, 3);
+         displayList.forEach((c, idx) => {
+            c.title = `Closest Match #${idx + 1} (${c.isSingle ? 'Single' : 'Pair'})`;
+         });
       }
 
-      const displayCards = [];
-      
-      // Inject Error UI if no safe springs found
-      if (!standardPair && !singleOption) {
+      if (displayList.length === 0) {
          container.innerHTML = `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
            <div style="font-weight: 800; color: #ef4444; margin-bottom: 8px;">⚠️ CRITICAL SAFETY WARNING</div>
            <div style="font-size: 13px; color: var(--text-main);">No safe spring configurations found for this door size and weight. All candidates failed DASMA safety limits (exceeds 220,000 psi bending stress or fails coil bind check).</div>
@@ -3478,45 +3481,71 @@
              <div style="margin-top: 6px; white-space: pre-wrap;">${errorLogs.slice(0, 10).join('\n')}...</div>
            </details>
          </div>`;
+         return;
+      }
+      
+      if (usingFallback) {
+         const warnDiv = document.createElement('div');
+         warnDiv.style.background = 'rgba(245, 158, 11, 0.1)';
+         warnDiv.style.border = '1px solid rgba(245, 158, 11, 0.4)';
+         warnDiv.style.color = '#f59e0b';
+         warnDiv.style.padding = '12px';
+         warnDiv.style.borderRadius = '8px';
+         warnDiv.style.fontSize = '12px';
+         warnDiv.style.marginBottom = '12px';
+         warnDiv.innerHTML = `<strong>⚠️ Exact Match Unavailable:</strong> No safe springs found within ±2.0 in-lbs tolerance. Showing the closest safe alternatives sorted by IPPT accuracy.`;
+         container.appendChild(warnDiv);
       }
 
-      const duplexOption = calculateDuplexPair(eachIPPT, 36.0);
-      if (duplexOption) {
-        displayCards.push({
-          title: "Commercial Duplex Assembly (Nested Inner + Outer)",
-          badge: "Duplex 25k+",
-          badgeClass: "purple",
-          count: 2,
-          isDuplex: true,
-          duplexData: duplexOption
-        });
-      }
+      // 3. Card Rendering Payload
+      displayList.forEach(opt => {
+        const count = opt.isSingle ? 1 : 2;
+        const targetIPPT = opt.isSingle ? totalIPPT : eachIPPT;
+        const idLabel = opt.id === 2.625 ? "2-5/8" : opt.id === 1.75 ? "1-3/4" : opt.id.toFixed(1);
+        
+        let stressColor = 'var(--text-main)';
+        if (opt.stress > 190000) stressColor = '#ef4444'; // Red
+        else if (opt.stress > 170000) stressColor = '#f59e0b'; // Yellow
+        else stressColor = '#10b981'; // Green
+        
+        const deltaSign = opt.delta > 0 ? '+' : '';
+        const cycleStr = opt.cycles >= 50000 ? "50k+ Cycles" : opt.cycles >= 25000 ? "25k Cycles" : opt.cycles >= 15000 ? "15k Cycles" : "10k Cycles";
+        const cycleColor = opt.cycles >= 25000 ? "purple" : opt.cycles >= 15000 ? "green" : "gray";
 
-      displayCards.forEach(opt => {
-        const idLabel = opt.id === 2.625 ? "2-5/8\" ID" : opt.id === 1.75 ? "1-3/4\" ID" : "2.0\" ID";
         const card = document.createElement('div');
-        card.style.background = 'var(--bg-card-sub)';
-        card.style.border = '1px solid var(--border-color)';
-        card.style.borderRadius = '10px';
+        card.className = 'card';
+        card.style.marginBottom = '12px';
         card.style.padding = '14px';
         card.innerHTML = `
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-            <div style="font-weight:700; font-size:14px;">${opt.title}</div>
-            <span class="badge ${opt.badgeClass}">~${opt.cycles.toLocaleString()} Cycles</span>
+            <div style="font-weight:700; font-size:14px; color:var(--text-main);">${opt.title}</div>
+            <span class="badge ${cycleColor}">${cycleStr}</span>
           </div>
-          <div style="font-size:16px; font-weight:800; color:var(--accent); font-family:ui-monospace, monospace; margin: 4px 0;">
-            (${opt.count}) Spring${opt.count > 1 ? 's' : ''}: ${opt.name} (${opt.color}) x ${idLabel} ID x ${opt.len.toFixed(1)}" Cut Length
+          <div style="font-size:16px; font-weight:800; color:var(--accent); font-family:ui-monospace, monospace; margin: 6px 0;">
+            (${count}) Spring${count > 1 ? 's' : ''}: ${opt.name} (${opt.color}) x ${idLabel}" ID x ${opt.len.toFixed(1)}" L
           </div>
-          <div style="font-size:12px; color:var(--text-muted); display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
-            <span>IPPT: ${(opt.count === 2 ? eachIPPT : totalIPPT).toFixed(1)} ${opt.count === 2 ? 'each' : 'total'} | Turns: ${turns.toFixed(1)}</span>
-            <button class="btn-action" style="padding:4px 8px; font-size:11px;" onclick="selectReplacement(${opt.wire}, ${opt.id}, ${opt.len.toFixed(1)}, ${opt.cycles}, '${opt.name}', ${opt.count}); openSpecSheet();">Use on Spec Sheet →</button>
+          <div style="display: flex; flex-direction: column; gap: 4px; margin-top: 8px; font-size: 12px; color: var(--text-muted);">
+            <div style="display: flex; justify-content: space-between;">
+              <span>Furnished IPPT:</span>
+              <strong style="color:var(--text-main);">${opt.furnishedIPPT.toFixed(1)} <span style="font-weight:normal; color:${opt.absTolerance > 2.0 ? '#ef4444' : 'var(--text-dim)'}">(${deltaSign}${opt.delta.toFixed(1)} in-lbs)</span></strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Bending Stress:</span>
+              <strong style="color:${stressColor};">${opt.stress.toLocaleString()} psi</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Coil Bind Check:</span>
+              <strong style="color:${opt.bindFail ? '#ef4444' : '#10b981'};">${opt.bindFail ? 'FAIL' : 'PASS'} (${opt.woundLength.toFixed(1)}" wound)</strong>
+            </div>
+          </div>
+          <div style="margin-top:12px; display:flex; justify-content:flex-end;">
+            <button class="btn-action primary" style="padding:6px 12px; font-size:12px; border-radius:var(--radius-full);" onclick="selectReplacement(${opt.wire}, ${opt.id}, ${opt.len.toFixed(1)}, ${opt.cycles}, '${opt.name}', ${count}); openSpecSheet();">Print Spec Sheet ➔</button>
           </div>
         `;
         container.appendChild(card);
       });
     }
-
-    function stepVal(id, delta) {
+function stepVal(id, delta) {
       const el = document.getElementById(id);
       let val = Math.max(1, parseFloat(el.value) + delta);
       el.value = val;
