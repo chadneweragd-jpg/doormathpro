@@ -1638,15 +1638,28 @@
             <div class="field-group">
               <div class="field-label">Door Height (ft)</div>
               <div class="stepper-control">
-                <button class="stepper-btn" onclick="stepVal('truckDoorHeight', -0.5); runTruckMatch();">−</button>
-                <input type="number" step="0.5" class="stepper-input mono" id="truckDoorHeight" value="7" oninput="runTruckMatch()">
-                <button class="stepper-btn" onclick="stepVal('truckDoorHeight', 0.5); runTruckMatch();">+</button>
-              </div>
+          <div class="field-group" style="margin-top: 10px;">
+            <div class="field-label">Door Height (ft)</div>
+            <div class="stepper-control">
+              <button class="stepper-btn" onclick="stepVal('truckDoorHeight', -0.5); runTruckMatch();">−</button>
+              <input type="number" step="0.5" class="stepper-input mono" id="truckDoorHeight" value="7" oninput="runTruckMatch()">
+              <button class="stepper-btn" onclick="stepVal('truckDoorHeight', 0.5); runTruckMatch();">+</button>
             </div>
-            <div class="field-group">
+          </div>
+
+          <div class="grid-2" style="margin-bottom: 14px;">
+            <div class="field-group" style="margin-bottom: 0;">
+              <div class="field-label">Track Radius</div>
+              <select class="input-select" id="truckTrackRadius" onchange="runTruckMatch()" style="height: 44px; font-size: 13px; padding: 0 10px;">
+                <option value="12">12" Radius</option>
+                <option value="15" selected>15" Radius (Standard)</option>
+                <option value="32">32" Radius</option>
+              </select>
+            </div>
+            <div class="field-group" style="margin-bottom: 0;">
               <div class="field-label">Cable Drum Model</div>
               <select class="input-select" id="truckDrumModel" onchange="runTruckMatch()" style="height: 44px; font-size: 13px; padding: 0 10px;">
-                <optgroup label="── Standard Lift (Residential & Commercial) ──">
+                <optgroup label="— Standard Lift (Residential & Commercial) —">
                   <option value="400-8" selected>OMI / Apco / Canimex 400-8 (Up to 8' Door)</option>
                   <option value="400-12">OMI / Apco / Canimex 400-12 (Up to 12' Door)</option>
                   <option value="400-18">Canimex / Apco 400-18 (Up to 18' Commercial)</option>
@@ -3093,22 +3106,47 @@ const E = 30000000;
     let targetSpringCount = 2;
     let selectedReplacement = null;
 
+    // Calculate Drum Multiplier
+    function getDrumMultiplier(drum, height, trackRadius) {
+      const h = Math.round(height);
+      const ssc = {
+        "400-8": {
+          "15": { 7: 0.285, 8: 0.257806 },
+          "12": { 7: 0.292, 8: 0.265 } // Approximate placeholder for 12" 400-8
+        }
+      };
+      
+      const drumModel = ssc[drum];
+      if (drumModel && drumModel[trackRadius] && drumModel[trackRadius][h]) {
+        return drumModel[trackRadius][h];
+      }
+      
+      const drumInfo = DRUM_SPECS[drum] || DRUM_SPECS["400-8"];
+      const turns = (height * drumInfo.turnsPerFt) + drumInfo.deadTurns;
+      return drumInfo.radius / turns;
+    }
+
     // Calculate Single Spring IPPT
     function calcSingleIPPT(wire, id, length) {
-      // DASMA Ground Truth: Furnished_IPPT = (E * d^4) / (10.18 * D_m * N)
-      
+      // DASMA Ground Truth: Furnished_IPPT = (E * d^4) / (3670 * (ID + d) * N_a)
+      const E = 28500000;
       const D_m = id + wire;
-      const N = length / wire;
-      return (E * Math.pow(wire, 4)) / (10.18 * D_m * N);
+      const N_a = length / wire;
+      return (E * Math.pow(wire, 4)) / (3670 * D_m * N_a);
     }
 
     // Estimate Cycle Life
-    function estimateCycles(wire, id, length, turns = 7.5) {
+    function estimateCycles(wire, id, length, turns = 7.5, providedIPPT = null) {
       const D_m = id + wire;
-      const N = length / wire;
-      const stress = (E * wire * turns) / (D_m * N);
+      const N_a = length / wire;
+      const E = 28500000;
+      const IPPT = providedIPPT !== null ? providedIPPT : (E * Math.pow(wire, 4)) / (3670 * D_m * N_a);
       
-      return calculateExactCycles(stress);
+      const C = D_m / wire;
+      const K_w = ((4 * C - 1) / (4 * C - 4)) + (0.615 / C);
+      const sigma_max = (32 * IPPT * turns) / (Math.PI * Math.pow(wire, 3)) * K_w;
+      
+      return calculateExactCycles(sigma_max, wire);
     }
 
     // TAB 1: Run Truck Stock Matcher
@@ -3130,11 +3168,14 @@ const E = 30000000;
       // FEATURE: Compute Rated Lifting Capacity live with clear assumptions
       const truckHeight = parseFloat(document.getElementById('truckDoorHeight') ? document.getElementById('truckDoorHeight').value : 7) || 7;
       const truckDrum = document.getElementById('truckDrumModel') ? document.getElementById('truckDrumModel').value : "400-8";
+      const truckTrackRadius = document.getElementById('truckTrackRadius') ? document.getElementById('truckTrackRadius').value : "15";
       const drumInfo = DRUM_SPECS[truckDrum] || DRUM_SPECS["400-8"];
       const turns = (truckHeight * drumInfo.turnsPerFt) + drumInfo.deadTurns;
-      const equivalentWeight = Math.round((totalSystemIPPT * turns) / drumInfo.radius);
+      
+      const multiplier = getDrumMultiplier(truckDrum, truckHeight, truckTrackRadius);
+      const equivalentWeight = Math.round(totalSystemIPPT / multiplier);
 
-      const oldCycleEst = estimateCycles(wire, id, length, turns);
+      const oldCycleEst = estimateCycles(wire, id, length, turns, singleIPPT);
       const oldCyclesEl = document.getElementById('oldCycles');
       oldCyclesEl.innerText = oldCycleEst.toLocaleString();
       oldCyclesEl.style.color = oldCycleEst < 10000 ? 'var(--danger)' : '';
@@ -3165,8 +3206,8 @@ const E = 30000000;
       WIRE_SPECS.forEach(w => {
         targetIDs.forEach(tid => {
           // Calculate length required to hit targetIPPTPerSpring
-          // L = (E * d^5) / (10.8 * (ID + d) * IPPT)
-          const targetL = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (tid + w.wire) * targetIPPTPerSpring);
+          // L = (E * d^5) / (3670 * (ID + d) * IPPT)
+          const targetL = (28500000 * Math.pow(w.wire, 5)) / (3670 * (tid + w.wire) * targetIPPTPerSpring);
 
           // Only keep practical spring lengths between 18" and 60"
           if (targetL >= 18.0 && targetL <= 58.0) {
@@ -3249,11 +3290,11 @@ const E = 30000000;
       // Update Rated Lifting Capacity tile for this replacement candidate
       const truckHeight = parseFloat(document.getElementById('truckDoorHeight') ? document.getElementById('truckDoorHeight').value : 7) || 7;
       const truckDrum = document.getElementById('truckDrumModel') ? document.getElementById('truckDrumModel').value : "400-8";
-      const drumInfo = DRUM_SPECS[truckDrum] || DRUM_SPECS["400-8"];
-      const turns = (truckHeight * drumInfo.turnsPerFt) + drumInfo.deadTurns;
+      const truckTrackRadius = document.getElementById('truckTrackRadius') ? document.getElementById('truckTrackRadius').value : "15";
       const candSingleIPPT = calcSingleIPPT(wire, id, len);
       const candTotalIPPT = candSingleIPPT * count;
-      const candWeight = Math.round((candTotalIPPT * turns) / drumInfo.radius);
+      const multiplier = getDrumMultiplier(truckDrum, truckHeight, truckTrackRadius);
+      const candWeight = Math.round(candTotalIPPT / multiplier);
 
       const capEl = document.getElementById('ratedLiftingCapacity');
       const capAssumpEl = document.getElementById('ratedCapacityAssumption');
@@ -3308,34 +3349,35 @@ const E = 30000000;
     }
 
     // TAB 2: Spring Sizer Logic
-    function calculateExactCycles(stress) {
+    function calculateExactCycles(sigma_max, wire) {
+      // UTS based on ASTM A229 oil-tempered wire
+      const UTS = 147000 * Math.pow(wire, -0.187);
+      const stressRatio = sigma_max / UTS;
+      
       const points = [
-        { s: 210000, c: 10000 },
-        { s: 190000, c: 25000 },
-        { s: 170000, c: 50000 },
-        { s: 150000, c: 100000 }
+        { sr: 1.6, c: 1000 },
+        { sr: 1.456, c: 9000 },
+        { sr: 1.3, c: 20000 },
+        { sr: 1.1, c: 50000 },
+        { sr: 0.9, c: 100000 }
       ];
       
-      // Above 210,000 psi: linear extrapolation downward
-      if (stress > 210000) {
-        return Math.max(0, Math.round(10000 - (stress - 210000) * 0.75));
+      if (stressRatio >= points[0].sr) {
+        return Math.max(0, Math.round(1000 - (stressRatio - 1.6) * 10000));
       }
       
-      // Exact interpolation between benchmark points
       for (let i = 0; i < points.length - 1; i++) {
         const hi = points[i];
         const lo = points[i + 1];
-        if (stress <= hi.s && stress >= lo.s) {
-          const pct = (hi.s - stress) / (hi.s - lo.s);
+        if (stressRatio <= hi.sr && stressRatio > lo.sr) {
+          const pct = (hi.sr - stressRatio) / (hi.sr - lo.sr);
           return Math.round(hi.c + pct * (lo.c - hi.c));
         }
       }
       
-      // Below 150,000 psi: linear extrapolation from 100k toward 300k
-      // At 100,000 psi we target ~250,000 cycles
-      if (stress < 150000) {
-        const pct = (150000 - stress) / (150000 - 100000);
-        return Math.round(100000 + pct * 150000); // 100k -> 250k
+      if (stressRatio <= points[points.length - 1].sr) {
+        const pct = (points[points.length - 1].sr - stressRatio) / (points[points.length - 1].sr - 0.7);
+        return Math.round(100000 + pct * 100000); 
       }
       
       return 10000;
@@ -3413,7 +3455,8 @@ const E = 30000000;
         return;
       }
 
-      const totalIPPT = (weight * drumInfo.radius) / turns;
+      const multiplier = getDrumMultiplier(drum, height, trackRadiusVal);
+      const totalIPPT = weight * multiplier;
       const eachIPPT = totalIPPT / 2.0;
 
       const lhrWarning = document.getElementById('lhrAdvisory');
@@ -3460,7 +3503,7 @@ const E = 30000000;
       const targetIDs = [1.75, 2.0];
 
       
-      const E = 30000000;
+      const E = 28500000;
       let tempTargetGauges = [0.187, 0.192, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
       
       const standardWires = [0.177, 0.187, 0.192, 0.200, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
@@ -3477,38 +3520,37 @@ const E = 30000000;
 
       standardWires.forEach(function(d) {
         const D_m = targetID + d;
-        const N = (E * Math.pow(d, 4)) / (10.18 * D_m * targetIPPT_Calc);
+        const N = (E * Math.pow(d, 4)) / (3670 * D_m * targetIPPT_Calc);
         const rawLen = N * d;
         const L = Math.round(rawLen * 4) / 4;
         const adjN = L / d;
         const woundLength = L + (turns * d);
 
         if (L >= minLen && woundLength <= maxLen) {
-          const stress = (E * d * turns) / (D_m * adjN);
-          const furnishedIPPT = (E * Math.pow(d, 4)) / (10.18 * D_m * adjN);
+          const furnishedIPPT = (E * Math.pow(d, 4)) / (3670 * D_m * adjN);
           const wSpec = WIRE_SPECS.find(function(w) { return Math.abs(w.wire - d) < 0.001; }) || { name: d.toFixed(3), color: "Unknown" };
           const maxLift = Math.round((furnishedIPPT * count * turns) / drumInfo.radius);
+          const exactCycles = estimateCycles(d, targetID, L, turns, furnishedIPPT);
 
           const spring = {
             wire: d, name: wSpec.name, color: wSpec.color,
             id: targetID, len: L, furnishedIPPT: furnishedIPPT,
-            stress: Math.round(stress), woundLength: woundLength,
+            stress: 0, woundLength: woundLength,
             isSingle: isSingle, maxLift: maxLift,
-            exactCycles: null
+            exactCycles: exactCycles
           };
 
-          // STRICT BOUNDARIES — springs outside these ranges are silently discarded
-          if (stress >= 200000 && stress <= 215000) {
-            spring.badgeText = "10K CYCLES"; spring.badgeColor = "gray"; spring.exactCycles = 10000;
+          // STRICT BOUNDARIES -- springs outside these ranges are silently discarded
+          if (exactCycles >= 5000 && exactCycles < 15000) {
+            spring.badgeText = "10K CYCLES"; spring.badgeColor = "gray";
             options10k.push(spring);
-          } else if (stress >= 180000 && stress < 200000) {
-            spring.badgeText = "25K CYCLES"; spring.badgeColor = "green"; spring.exactCycles = 25000;
+          } else if (exactCycles >= 15000 && exactCycles < 35000) {
+            spring.badgeText = "25K CYCLES"; spring.badgeColor = "green";
             options25k.push(spring);
-          } else if (stress >= 160000 && stress < 180000) {
-            spring.badgeText = "50K CYCLES"; spring.badgeColor = "purple"; spring.exactCycles = 50000;
+          } else if (exactCycles >= 35000 && exactCycles <= 120000) {
+            spring.badgeText = "50K+ CYCLES"; spring.badgeColor = "purple";
             options50k.push(spring);
           }
-          // anything else is discarded — no 395K springs shown
         }
       });
 
@@ -3897,8 +3939,8 @@ function stepVal(id, delta) {
 
       const results = [];
       WIRE_SPECS.forEach(w => {
-        // L = (E * d^5) / (10.8 * (ID + d) * IPPT)
-        const L = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (targetID + w.wire) * targetIPPT);
+        // L = (E * d^5) / (3670 * (ID + d) * IPPT)
+        const L = (28500000 * Math.pow(w.wire, 5)) / (3670 * (targetID + w.wire) * targetIPPT);
         if (L >= 18.0 && L <= 58.0) {
           const cycles = estimateCycles(w.wire, targetID, L, targetIPPT, 7.6);
           results.push({
@@ -8852,8 +8894,8 @@ function stepVal(id, delta) {
       commWires.forEach(wOut => {
         commWires.forEach(wIn => {
           if (wIn <= wOut) {
-            const ipptOut = (E_MODULUS * Math.pow(wOut, 5)) / (10.8 * (outerID + wOut) * desiredLength);
-            const ipptIn = (E_MODULUS * Math.pow(wIn, 5)) / (10.8 * (innerID + wIn) * desiredLength);
+            const ipptOut = (28500000 * Math.pow(wOut, 5)) / (3670 * (outerID + wOut) * desiredLength);
+            const ipptIn = (28500000 * Math.pow(wIn, 5)) / (3670 * (innerID + wIn) * desiredLength);
             const total = ipptOut + ipptIn;
             const diff = Math.abs(total - targetIPPT);
 
