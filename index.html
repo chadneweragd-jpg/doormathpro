@@ -1682,7 +1682,7 @@
             </div>
             <div class="metric-card">
               <div class="metric-label">Baseline Cycles</div>
-              <div class="metric-val mono success" id="oldCycles">~10,000</div>
+              <div class="metric-val mono success" id="oldCycles">10,000</div>
               <div class="metric-sub">Standard DASMA</div>
             </div>
             <div class="metric-card">
@@ -3108,10 +3108,7 @@ const E = 30000000;
       const N = length / wire;
       const stress = (E * wire * turns) / (D_m * N);
       
-      if (stress >= 215000) return -1; // UNSAFE
-      if (stress < 180000) return 50000;
-      if (stress < 200000) return 25000;
-      return 10000; 
+      return calculateExactCycles(stress);
     }
 
     // TAB 1: Run Truck Stock Matcher
@@ -3138,7 +3135,9 @@ const E = 30000000;
       const equivalentWeight = Math.round((totalSystemIPPT * turns) / drumInfo.radius);
 
       const oldCycleEst = estimateCycles(wire, id, length, turns);
-      document.getElementById('oldCycles').innerText = oldCycleEst > 0 ? "~" + oldCycleEst.toLocaleString() : "UNSAFE";
+      const oldCyclesEl = document.getElementById('oldCycles');
+      oldCyclesEl.innerText = oldCycleEst.toLocaleString();
+      oldCyclesEl.style.color = oldCycleEst < 10000 ? 'var(--danger)' : '';
 
       const capEl = document.getElementById('ratedLiftingCapacity');
       const capAssumpEl = document.getElementById('ratedCapacityAssumption');
@@ -3310,14 +3309,17 @@ const E = 30000000;
 
     // TAB 2: Spring Sizer Logic
     function calculateExactCycles(stress) {
-      if (stress >= 215000) return -1; // Unsafe
-      
       const points = [
         { s: 210000, c: 10000 },
         { s: 190000, c: 25000 },
         { s: 170000, c: 50000 },
         { s: 150000, c: 100000 }
       ];
+      
+      // Above 210,000 psi: linear extrapolation downward
+      if (stress > 210000) {
+        return Math.max(0, Math.round(10000 - (stress - 210000) * 0.75));
+      }
       
       // Exact interpolation between benchmark points
       for (let i = 0; i < points.length - 1; i++) {
