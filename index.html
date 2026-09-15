@@ -3558,12 +3558,20 @@ const E = 30000000;
       
       let htmlCards = "";
       if (validSprings.length === 0) {
-         htmlCards = `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
-           <div style="font-weight: 800; color: #ef4444; margin-bottom: 8px;">⚠️ CRITICAL SAFETY WARNING</div>
-           <div style="font-size: 13px; color: var(--text-main);">No safe spring configurations found within standard wire limits.</div>
+         const isSingleMode = springConfig === 'single';
+         const switchTip = isSingleMode
+           ? "Try increasing the door weight, or consult your supplier about thinner wire stock."
+           : "Switch to <strong>(1) Single Spring</strong> mode above &mdash; a single spring can reach standard lengths for this door weight.";
+         htmlCards = `<div style="background: rgba(245, 158, 11, 0.08); border: 2px solid #F59E0B; padding: 20px; border-radius: 12px; margin-bottom: 16px;">
+           <div style="font-size: 18px; margin-bottom: 8px;">&#9888; Physics Limit Reached</div>
+           <div style="font-weight: 800; font-size: 14px; color: #F59E0B; margin-bottom: 10px;">No standard spring fits a 22&quot;+ minimum for this configuration.</div>
+           <div style="font-size: 13px; color: var(--text-main); line-height: 1.6; margin-bottom: 12px;">
+             At this door weight, the required spring length falls <strong>below the 22&quot; residential minimum</strong> for the selected spring count. This means the math engine would produce springs too short for reliable winding.
+           </div>
+           <div style="font-size: 13px; color: var(--text-muted); padding: 10px; background: rgba(255,255,255,0.04); border-radius: 6px;">${switchTip}</div>
          </div>`;
       } else {
-         const stdTitle = validSprings[0].badgeText === "10K CYCLES" ? "Standard Option" : "Baseline Option (High Cycle)";
+         const stdTitle = validSprings[0].exactCycles <= 12000 ? "Standard Option" : "Baseline Option (High Cycle)";
          htmlCards += renderCard(stdTitle, validSprings[0]);
          if (validSprings.length > 1) htmlCards += renderCard("Upgrade Option", validSprings[1]);
          if (validSprings.length > 2) htmlCards += renderCard("Max Life Option", validSprings[2]);
