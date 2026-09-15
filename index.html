@@ -3074,22 +3074,26 @@
 
     // Calculate Single Spring IPPT
     function calcSingleIPPT(wire, id, length) {
-      const meanDiameter = id + wire;
-      return (E_MODULUS * Math.pow(wire, 5)) / (10.8 * meanDiameter * length);
+      // DASMA Ground Truth: Furnished_IPPT = (E * d^4) / (10.18 * D_m * N)
+      const E = 30000000;
+      const D_m = id + wire;
+      const N = length / wire;
+      return (E * Math.pow(wire, 4)) / (10.18 * D_m * N);
     }
 
     // Estimate Cycle Life
-    function estimateCycles(wire, id, length, ippt, turns = 7.5) {
-      const maxMoment = ippt * turns;
-      const bendingStress = (32 * maxMoment) / (Math.PI * Math.pow(wire, 3));
-      const tensileStrength = 275000 - 280000 * wire;
-      const ratio = bendingStress / tensileStrength;
+    function estimateCycles(wire, id, length, turns = 7.5) {
+      // DASMA Ground Truth: Stress = (E * d * T) / (Math.PI * D_m * N)
+      const E = 30000000;
+      const D_m = id + wire;
+      const N = length / wire;
+      const stress = (E * wire * turns) / (Math.PI * D_m * N);
       
-      if (ratio < 0.65) return 50000;
-      if (ratio < 0.73) return 25000;
-      if (ratio < 0.82) return 15000;
-      if (ratio < 0.90) return 10000;
-      return 7500;
+      if (stress > 220000) return -1; // UNSAFE
+      if (stress <= 170000) return 50000;
+      if (stress <= 190000) return 25000;
+      if (stress <= 210000) return 10000;
+      return 7500; // between 210k and 220k
     }
 
     // TAB 1: Run Truck Stock Matcher
@@ -3378,50 +3382,83 @@
       container.innerHTML = '';
 
       // Find all realistic pair options (lengths between 22" and 42")
+            const E = 30000000;
       const candidatePairs = [];
+      const errorLogs = []; // Store warnings for UI
+      
       [2.0, 1.75, 2.625].forEach(tid => {
         WIRE_SPECS.forEach(w => {
-          const len = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (tid + w.wire) * eachIPPT);
-          if (len >= 22.0 && len <= 44.0) {
-            const cycles = estimateCycles(w.wire, tid, len, eachIPPT, turns);
-            candidatePairs.push({
-              wire: w.wire,
-              name: w.name,
-              color: w.color,
-              id: tid,
-              len: len,
-              cycles: cycles,
-              diffFromStandard: Math.abs(len - 31.0)
-            });
-          }
-        });
-      });
-
-      // Sort by closest to standard 30-32 inch residential length
-      candidatePairs.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
-
-      // Pick Standard (10k-15k) and High-Cycle (25k+)
-      const standardPair = candidatePairs.find(c => c.cycles <= 15000 && c.id === 2.0) || candidatePairs.find(c => c.cycles <= 20000) || candidatePairs[0];
-      const highCyclePair = candidatePairs.find(c => c.cycles >= 25000 && c.wire > (standardPair ? standardPair.wire : 0)) || candidatePairs.find(c => c.cycles >= 25000) || candidatePairs[1];
-
-      // Also find Single Spring alternative (lengths 26" to 38")
-      let singleOption = null;
-      if (weight <= 190) {
-        const candidateSingles = [];
-        [2.0, 1.75].forEach(tid => {
-          WIRE_SPECS.forEach(w => {
-            const len = (E_MODULUS * Math.pow(w.wire, 5)) / (10.8 * (tid + w.wire) * totalIPPT);
-            if (len >= 25.0 && len <= 40.0) {
-              const cycles = estimateCycles(w.wire, tid, len, totalIPPT, turns);
-              candidateSingles.push({
+          // Exact required length
+          const exactLen = (E * Math.pow(w.wire, 5)) / (10.18 * (tid + w.wire) * eachIPPT);
+          if (exactLen >= 22.0 && exactLen <= 44.0) {
+            // Field reality: springs are cut to nearest tenth
+            const len = Math.round(exactLen * 10) / 10;
+            const N = len / w.wire;
+            
+            // Ground Truth Safety Checks
+            const stress = (E * w.wire * turns) / (Math.PI * (tid + w.wire) * N);
+            const woundLength = len + (turns * w.wire);
+            const shaftSpace = (width * 12) / 2 - 5; // Approx shaft space per side
+            const furnishedIPPT = (E * Math.pow(w.wire, 4)) / (10.18 * (tid + w.wire) * N);
+            const tolerance = Math.abs(furnishedIPPT - eachIPPT);
+            
+            let isSafe = true;
+            let err = '';
+            if (stress > 220000) { isSafe = false; err = 'Exceeds 220,000 psi'; }
+            else if (woundLength > shaftSpace) { isSafe = false; err = 'Coil bind exceeds shaft space'; }
+            else if (tolerance > 2.0) { isSafe = false; err = `IPPT tolerance > 2.0 (off by ${tolerance.toFixed(1)})`; }
+            
+            if (isSafe) {
+              const cycles = estimateCycles(w.wire, tid, len, turns);
+              candidatePairs.push({
                 wire: w.wire,
                 name: w.name,
                 color: w.color,
                 id: tid,
                 len: len,
                 cycles: cycles,
-                diffFromStandard: Math.abs(len - 32.0)
+                diffFromStandard: Math.abs(len - 31.0)
               });
+            } else {
+              errorLogs.push(`${w.name} x ${tid}" ID rejected: ${err}`);
+            }
+          }
+        });
+      });
+
+      candidatePairs.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
+
+      const standardPair = candidatePairs.find(c => c.cycles <= 15000 && c.id === 2.0) || candidatePairs.find(c => c.cycles <= 20000) || candidatePairs[0];
+      const highCyclePair = candidatePairs.find(c => c.cycles >= 25000 && c.wire > (standardPair ? standardPair.wire : 0)) || candidatePairs.find(c => c.cycles >= 25000) || candidatePairs[1];
+
+      let singleOption = null;
+      if (weight <= 190) {
+        const candidateSingles = [];
+        [2.0, 1.75].forEach(tid => {
+          WIRE_SPECS.forEach(w => {
+            const exactLen = (E * Math.pow(w.wire, 5)) / (10.18 * (tid + w.wire) * totalIPPT);
+            if (exactLen >= 25.0 && exactLen <= 40.0) {
+              const len = Math.round(exactLen * 10) / 10;
+              const N = len / w.wire;
+              
+              const stress = (E * w.wire * turns) / (Math.PI * (tid + w.wire) * N);
+              const woundLength = len + (turns * w.wire);
+              const shaftSpace = (width * 12) - 8; // Full shaft space
+              const furnishedIPPT = (E * Math.pow(w.wire, 4)) / (10.18 * (tid + w.wire) * N);
+              const tolerance = Math.abs(furnishedIPPT - totalIPPT);
+              
+              if (stress <= 220000 && woundLength <= shaftSpace && tolerance <= 2.0) {
+                const cycles = estimateCycles(w.wire, tid, len, turns);
+                candidateSingles.push({
+                  wire: w.wire,
+                  name: w.name,
+                  color: w.color,
+                  id: tid,
+                  len: len,
+                  cycles: cycles,
+                  diffFromStandard: Math.abs(len - 32.0)
+                });
+              }
             }
           });
         });
@@ -3430,52 +3467,19 @@
       }
 
       const displayCards = [];
-      if (standardPair) {
-        displayCards.push({
-          title: "Standard Residential Pair (Recommended)",
-          badge: standardPair.cycles >= 25000 ? "25k High" : standardPair.cycles >= 15000 ? "15k Std" : "10k Std",
-          badgeClass: standardPair.cycles >= 25000 ? "green" : "gray",
-          count: 2,
-          wire: standardPair.wire,
-          name: standardPair.name,
-          color: standardPair.color,
-          id: standardPair.id,
-          len: standardPair.len,
-          cycles: standardPair.cycles
-        });
+      
+      // Inject Error UI if no safe springs found
+      if (!standardPair && !singleOption) {
+         container.innerHTML = `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.4); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+           <div style="font-weight: 800; color: #ef4444; margin-bottom: 8px;">⚠️ CRITICAL SAFETY WARNING</div>
+           <div style="font-size: 13px; color: var(--text-main);">No safe spring configurations found for this door size and weight. All candidates failed DASMA safety limits (exceeds 220,000 psi bending stress or fails coil bind check).</div>
+           <details style="margin-top: 10px; font-size: 11px; color: var(--text-muted);">
+             <summary style="cursor: pointer;">View Rejection Logs</summary>
+             <div style="margin-top: 6px; white-space: pre-wrap;">${errorLogs.slice(0, 10).join('\n')}...</div>
+           </details>
+         </div>`;
       }
 
-      if (highCyclePair && highCyclePair !== standardPair) {
-        displayCards.push({
-          title: "High-Cycle Extended Life Pair",
-          badge: highCyclePair.cycles >= 50000 ? "50k+ Com" : "25k High",
-          badgeClass: highCyclePair.cycles >= 50000 ? "purple" : "green",
-          count: 2,
-          wire: highCyclePair.wire,
-          name: highCyclePair.name,
-          color: highCyclePair.color,
-          id: highCyclePair.id,
-          len: highCyclePair.len,
-          cycles: highCyclePair.cycles
-        });
-      }
-
-      if (singleOption) {
-        displayCards.push({
-          title: "Single Spring Alternative (Economy)",
-          badge: singleOption.cycles >= 15000 ? "15k Std" : "10k Std",
-          badgeClass: "gray",
-          count: 1,
-          wire: singleOption.wire,
-          name: singleOption.name,
-          color: singleOption.color,
-          id: singleOption.id,
-          len: singleOption.len,
-          cycles: singleOption.cycles
-        });
-      }
-
-      // Commercial Duplex Option (Nested Inner 2-5/8" + Outer 3-3/4" Spring)
       const duplexOption = calculateDuplexPair(eachIPPT, 36.0);
       if (duplexOption) {
         displayCards.push({
