@@ -1214,13 +1214,13 @@
 
       /* Native Mobile Bottom Sheet Chatbot */
       .chatbot-window {
-        bottom: 75px !important; /* Sit exactly on top of bottom nav */
+        bottom: 0 !important;
         right: 0 !important;
         left: 0 !important;
         width: 100% !important;
         max-width: 100% !important;
-        height: 75vh !important; /* Adjusted so it fits nicely above nav */
-        max-height: 75vh !important;
+        height: 85vh !important;
+        max-height: 85vh !important;
         border-radius: 20px 20px 0 0 !important;
         border-bottom: none !important;
       }
@@ -1332,58 +1332,8 @@
       .house-ad-content.footer-variant .house-ad-desc {
         display: block !important;
         font-size: 11px;
-        margin-bottom: 4px;
+        margin: 6px 0 8px 0;
       }
-    }
-
-    /* Fixed Bottom Navigation Bar (v40 Update) */
-    body {
-      padding-bottom: 75px; /* Space for bottom nav */
-    }
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: rgba(15, 23, 42, 0.98); /* High contrast dark blue/slate */
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      padding: 10px 0 12px 0; /* Extra padding for modern phones */
-      z-index: 1000;
-      box-shadow: 0 -4px 15px rgba(0,0,0,0.6);
-    }
-    .bottom-nav .tab-btn {
-      flex: 1 1 0;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: none;
-      border: none;
-      color: rgba(255, 255, 255, 0.6); /* More visible unselected state */
-      font-size: 10px;
-      font-weight: 700;
-      padding: 4px 2px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: normal;
-      text-align: center;
-      line-height: 1.1;
-    }
-    .bottom-nav .tab-btn span:first-child {
-      font-size: 20px; /* Slightly smaller icons to fit 5 */
-      margin-bottom: 3px;
-    }
-    .bottom-nav .tab-btn.active, .bottom-nav .tab-btn:hover {
-      color: var(--accent); /* Lights up orange/accent */
-    }
-    .bottom-nav .tab-btn.active span:first-child {
-      transform: scale(1.15);
-      text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); /* Glow effect */
     }
 
 
@@ -1427,8 +1377,8 @@
 
 
   <div class="app-container">
-    <!-- Home / Dashboard Section -->
-    <section id="pane-home" class="tab-pane active">
+    <!-- Hero / Landing Page Section -->
+    <section class="hero-section" id="hero-landing">
       <div class="hero-badge">
         <span class="pulse-dot"></span> Free Trade Suite • Field-Ready
       </div>
@@ -1440,39 +1390,12 @@
       </p>
 
       <div class="hero-actions">
-        <button class="btn-action primary hero-cta-btn" onclick="switchTab('spring-sizer'); scrollToTools();">
-          📐 Start Engineering
+        <button class="btn-action primary hero-cta-btn" onclick="switchTab('spring-scan'); scrollToTools();">
+          📏 Identify Wire Size
         </button>
         <button class="btn-action" onclick="openSpecSheet()">
           📄 View Spec Sheet
         </button>
-      </div>
-
-      <!-- Feature Highlight Cards (Dashboard Menu) -->
-      <div class="hero-features-grid">
-        <div class="hero-feature-card" onclick="switchTab('spring-scan'); window.scrollTo(0,0);">
-          <div class="feature-icon">📏</div>
-          <div class="feature-name">20-Coil Wire ID</div>
-          <div class="feature-desc">Measure 20 coils with a tape measure and get exact wire size, DASMA color code & paint marker.</div>
-        </div>
-
-        <div class="hero-feature-card" onclick="switchTab('weight-est'); window.scrollTo(0,0);">
-          <div class="feature-icon">🚪</div>
-          <div class="feature-name">Door Weight & AI Scanner</div>
-          <div class="feature-desc">58+ factory models across 10 manufacturers plus optional 2-slot camera vision ID.</div>
-        </div>
-
-        <div class="hero-feature-card" onclick="switchTab('truck-stock'); window.scrollTo(0,0);">
-          <div class="feature-icon">🔄</div>
-          <div class="feature-name">Truck Stock Matcher</div>
-          <div class="feature-desc">Live matrix converting broken springs to any wire gauge available on your truck shelves.</div>
-        </div>
-
-        <div class="hero-feature-card" onclick="switchTab('quick-tools'); window.scrollTo(0,0);">
-          <div class="feature-icon">📚</div>
-          <div class="feature-name">Reference & Tools</div>
-          <div class="feature-desc">Direct IPPT lookup, OD to ID conversion, and standard cycle ratings.</div>
-        </div>
       </div>
 
       <div class="hero-trust">
@@ -1485,12 +1408,39 @@
         <span>📶 Runs Offline</span>
       </div>
 
+      <!-- Feature Highlight Cards (4 Primary Actions) -->
+      <div class="hero-features-grid">
+        <div class="hero-feature-card" onclick="switchTab('spring-scan'); scrollToTools();">
+          <div class="feature-icon">📏</div>
+          <div class="feature-name">20-Coil Wire ID</div>
+          <div class="feature-desc">Measure 20 coils with a tape measure and get exact wire size, DASMA color code & paint marker — no camera, no guesswork.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('spring-sizer'); scrollToTools();">
+          <div class="feature-icon">⚖️</div>
+          <div class="feature-name">Engineer Spring (IPPT)</div>
+          <div class="feature-desc">Exact counterbalance torque & DASMA cycle ratings across 12 standard, high-lift & vertical drums.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('weight-est'); scrollToTools();">
+          <div class="feature-icon">🚪</div>
+          <div class="feature-name">Door Weight & AI Scanner</div>
+          <div class="feature-desc">58+ factory models across 10 manufacturers plus optional 2-slot camera vision ID.</div>
+        </div>
+
+        <div class="hero-feature-card" onclick="switchTab('truck-stock'); scrollToTools();">
+          <div class="feature-icon">🔄</div>
+          <div class="feature-name">Truck Stock Matcher</div>
+          <div class="feature-desc">Live matrix converting broken springs to any wire gauge available on your truck shelves.</div>
+        </div>
+      </div>
+
       <div class="hero-tagline">
         🔧 Built by a tech, for techs.
       </div>
     </section>
 
-    <!-- Main Navigation Anchor -->
+    <!-- Main Navigation Tabs -->
     <div id="tools-anchor"></div>
     <!-- Ad Slot: Leaderboard (728x90 Desktop / 320x50 Mobile) -->
     <div class="ad-slot-wrapper no-print">
@@ -1507,6 +1457,30 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Main Navigation: 4 Primary Actions + More Tools (Section 14) -->
+    <div class="tab-nav-wrapper">
+      <nav class="tab-nav" id="mainTabNav">
+        <button class="tab-btn active" data-tab="spring-scan" onclick="switchTab('spring-scan')">
+          <span>📏</span> <span>Wire ID</span>
+        </button>
+        <button class="tab-btn" data-tab="spring-sizer" onclick="switchTab('spring-sizer')">
+          <span>⚖️</span> <span>Engineer Spring</span>
+        </button>
+        <button class="tab-btn" data-tab="weight-est" onclick="switchTab('weight-est')">
+          <span>🚪</span> <span>Door Weight</span>
+        </button>
+        <button class="tab-btn" data-tab="truck-stock" onclick="switchTab('truck-stock')">
+          <span>🔄</span> <span>Truck Stock</span>
+        </button>
+        <button class="tab-btn" data-tab="quick-tools" onclick="switchTab('quick-tools')">
+          <span>🛠️</span> <span>More Tools</span>
+        </button>
+      </nav>
+    </div>
+    <div class="tab-scroll-hint no-print">
+      <span>← Scroll for more tools →</span>
     </div>
     <!-- Active Wire ID Confirmation Banner -->
     <div id="springScanLiveIndicator" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 10px; padding: 10px 16px; margin-bottom: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
@@ -1721,7 +1695,7 @@
     </section>
 
     <!-- TAB 0: 20-COIL WIRE SIZE IDENTIFIER (replaces removed Spring Scan AI camera feature) -->
-    <section id="pane-spring-scan" class="tab-pane">
+    <section id="pane-spring-scan" class="tab-pane active">
       <div class="card">
         <div class="card-header">
           <div>
@@ -3816,7 +3790,33 @@
     "stamp_location": "Inside surface of section #2, ink-stenciled near left/right end stile with serial and Julian date code",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Signature dual-seal Interlocking thermal break with continuous PVC weatherstrip. Most common R-16 door across Canada."
+    "notes": "Signature dual-seal Interlocking thermal break with continuous PVC weatherstrip. Most common R-16 door across Canada.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": "pvc_strip"
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-acadia-138",
@@ -3843,7 +3843,33 @@
     "stamp_location": "Inside surface of section #2 near end stile",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "1-3/8in core popular in British Columbia tract home developments."
+    "notes": "1-3/8in core popular in British Columbia tract home developments.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-triforce",
@@ -3869,7 +3895,33 @@
     "stamp_location": "Stenciled on inside skin near top edge of section #2",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "2in expanded polystyrene sandwich with steel interior backing."
+    "notes": "2in expanded polystyrene sandwich with steel interior backing.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polystyrene",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-h-tech",
@@ -3896,7 +3948,33 @@
     "stamp_location": "Inside section #2 right end stile",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Extremely light due to aluminum skin. High R-value without steel weight; requires precision lighter spring sizing."
+    "notes": "Extremely light due to aluminum skin. High R-value without steel weight; requires precision lighter spring sizing.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Aluminum 0.050in skin",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-g5000",
@@ -3925,7 +4003,33 @@
     "stamp_location": "Inside end stile tag on section #1 and section #3",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Equipped with continuous 14ga commercial steel backup plates and heavy end stiles."
+    "notes": "Equipped with continuous 14ga commercial steel backup plates and heavy end stiles.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge / 20-gauge options",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-california",
@@ -3953,7 +4057,33 @@
     "stamp_location": "Bottom rail interior stenciled tag",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Dead weight varies sharply based on single vs double pane insulated glass units."
+    "notes": "Dead weight varies sharply based on single vs double pane insulated glass units.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded Aluminum 0.075in frame",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-alterna-legacy",
@@ -3979,7 +4109,33 @@
     "stamp_location": "Inside metal tag on section #2 or bottom bracket warning label",
     "status": "legacy",
     "constructionVal": "poly-vinyl",
-    "notes": "1-1/8in polyurethane core door manufactured widely in late 1990s through 2000s; frequent broken spring service target."
+    "notes": "1-1/8in polyurethane core door manufactured widely in late 1990s through 2000s; frequent broken spring service target.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-thermocraft-t16",
@@ -4009,7 +4165,33 @@
     "stamp_location": "Interior bottom right corner or bottom section end stile stenciled 'STEEL-CRAFT EDMONTON'",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Features patented WeatherLock interlock tongue-and-groove joint. Dominant overhead door throughout Western Canada."
+    "notes": "Features patented WeatherLock interlock tongue-and-groove joint. Dominant overhead door throughout Western Canada.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-thermocraft-t12",
@@ -4035,7 +4217,33 @@
     "stamp_location": "Interior bottom section or end stile stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "1-1/8in polyurethane core sandwich with WeatherLock system."
+    "notes": "1-1/8in polyurethane core sandwich with WeatherLock system.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-ranchcraft-rc16",
@@ -4062,7 +4270,33 @@
     "stamp_location": "Inside face of section #2, stenciled stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Long embossed carriage panels on T-16 polyurethane core."
+    "notes": "Long embossed carriage panels on T-16 polyurethane core.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-flush-contemporary",
@@ -4090,7 +4324,33 @@
     "stamp_location": "Inside end stile stenciled stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Flush exterior steel sheet with Dark Oak, Walnut, or Cedar woodgrain sublimation prints."
+    "notes": "Flush exterior steel sheet with Dark Oak, Walnut, or Cedar woodgrain sublimation prints.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-td134-industrial",
@@ -4120,7 +4380,33 @@
     "stamp_location": "Metal DASMA serial tag riveted to bottom corner bracket and section #3 end stile",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Standard commercial overhead door for fire halls, bays, and warehouses across BC and Alberta."
+    "notes": "Standard commercial overhead door for fire halls, bays, and warehouses across BC and Alberta.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge exterior / 26-gauge interior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-sa6000",
@@ -4147,7 +4433,33 @@
     "stamp_location": "Stenciled on inside of bottom rail",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Heavy extruded aluminum full-view door for car dealerships and commercial showrooms."
+    "notes": "Heavy extruded aluminum full-view door for car dealerships and commercial showrooms.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded 6063-T6 Aluminum",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-k134-legacy",
@@ -4174,7 +4486,33 @@
     "stamp_location": "Metal riveted plate on end stile",
     "status": "legacy",
     "constructionVal": "commercial-heavy",
-    "notes": "Extensively installed in older commercial bays across Canada; frequent spring failure replacement target."
+    "notes": "Extensively installed in older commercial bays across Canada; frequent spring failure replacement target.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polystyrene",
+        "exterior_skin_gauge": "24-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-landmark-premium",
@@ -4202,7 +4540,33 @@
     "stamp_location": "Interior ink stamp on section #2 near left hinge line stating 'RW CANADA NEUFOAM'",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Features Neufoam continuous closed-cell polyurethane core and patented WeatherLock joint profile."
+    "notes": "Features Neufoam continuous closed-cell polyurethane core and patented WeatherLock joint profile.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-landmark-classic",
@@ -4228,7 +4592,33 @@
     "stamp_location": "Interior stenciled stamp on section #2",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "1-3/8in Neufoam core; common residential spec across Ontario, Alberta, and BC."
+    "notes": "1-3/8in Neufoam core; common residential spec across Ontario, Alberta, and BC.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-echo-ridge",
@@ -4255,7 +4645,33 @@
     "stamp_location": "Inside section #2 right end stile",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Heavy composite exterior overlay on 2in Neufoam steel door; requires high-torque spring sizing."
+    "notes": "Heavy composite exterior overlay on 2in Neufoam steel door; requires high-torque spring sizing.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "26-gauge steel base + Cellular PVC composite overlays",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-thermatite-t175",
@@ -4284,7 +4700,33 @@
     "stamp_location": "Metal riveted certification plate on bottom section and serial sticker on section #3",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Continuous zero-ozone-depleting Neufoam core with dual vinyl bulb weatherstripping."
+    "notes": "Continuous zero-ozone-depleting Neufoam core with dual vinyl bulb weatherstripping.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge exterior / 26-gauge interior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-thermatite-t200",
@@ -4313,7 +4755,33 @@
     "stamp_location": "Metal plate on interior end stile",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "2in thick heavy commercial model with full steel thermal break."
+    "notes": "2in thick heavy commercial model with full steel thermal break.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge / 20-gauge options",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-alumatite",
@@ -4340,7 +4808,33 @@
     "stamp_location": "Bottom rail stamped label",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Commercial service station and auto dealership full-view door."
+    "notes": "Commercial service station and auto dealership full-view door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded 6063-T6 Aluminum (0.075in rails)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-designers-choice",
@@ -4369,7 +4863,33 @@
     "stamp_location": "Interior bottom section or section #2 end stile ink stencil with plant code (NC or KS)",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Features Amarr SafeGuard pinch-protection joint contour and low-profile flush hinges. Commonly finished in woodtone prints (Weathered Gray, Dark Oak, Walnut)."
+    "notes": "Features Amarr SafeGuard pinch-protection joint contour and low-profile flush hinges. Commonly finished in woodtone prints (Weathered Gray, Dark Oak, Walnut).",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "27-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-heritage-flush",
@@ -4396,7 +4916,33 @@
     "stamp_location": "Interior end stile or bottom rail stencil",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Heavy 24-gauge exterior steel with SafeGuard pinch-resistant joints and polystyrene insulation."
+    "notes": "Heavy 24-gauge exterior steel with SafeGuard pinch-resistant joints and polystyrene insulation.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Heavy 24-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-classica",
@@ -4423,7 +4969,33 @@
     "stamp_location": "Interior middle section stencil",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Unique 3-section tall panel design (sections are 28in tall instead of 21in); requires taller lift radius calculation."
+    "notes": "Unique 3-section tall panel design (sections are 28in tall instead of 21in); requires taller lift radius calculation.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "24-gauge steel exterior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-lincoln-1000",
@@ -4449,7 +5021,33 @@
     "stamp_location": "Interior skin stencil near center stile",
     "status": "current",
     "constructionVal": "pan-25",
-    "notes": "Single-layer hollow steel pan door with SafeGuard pinch-protection."
+    "notes": "Single-layer hollow steel pan door with SafeGuard pinch-protection.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-lincoln-2000",
@@ -4475,7 +5073,33 @@
     "stamp_location": "Interior vinyl backing stencil",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Polystyrene board insulation with vinyl backing."
+    "notes": "Polystyrene board insulation with vinyl backing.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-commercial-2700",
@@ -4503,7 +5127,33 @@
     "stamp_location": "Metal certification plate riveted to end stile of section #2",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "High-thermal commercial door with foamed-in-place polyurethane."
+    "notes": "High-thermal commercial door with foamed-in-place polyurethane.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "27-gauge exterior / 27-gauge interior steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-commercial-2400",
@@ -4530,7 +5180,33 @@
     "stamp_location": "Stenciled on inside center stile",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Deeply ribbed 24ga commercial steel pan door."
+    "notes": "Deeply ribbed 24ga commercial steel pan door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Heavy 24-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-horizon",
@@ -4557,7 +5233,33 @@
     "stamp_location": "Bottom rail stamped label",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Modern aluminum garage door with full glass lites."
+    "notes": "Modern aluminum garage door with full glass lites.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded Aluminum 2in frame",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-planks-2283",
@@ -4586,7 +5288,33 @@
     "stamp_location": "Interior stenciled stamp on section #2 or inside left end stile",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "CORRECTED Sept 2026: previously listed as R-17.54 three-layer polyurethane, which does not match C.H.I.'s published spec for this model (that R-value belongs to a different C.H.I. line). Verified spec: 2\" thick, 1-13/16\" CFC-free polystyrene glued both sides, 27ga steel skins, R-9.65. A polyurethane-insulated Planks-style option exists under C.H.I.'s Sterling line at higher R-value -- see chi-sterling-2717."
+    "notes": "CORRECTED Sept 2026: previously listed as R-17.54 three-layer polyurethane, which does not match C.H.I.'s published spec for this model (that R-value belongs to a different C.H.I. line). Verified spec: 2\" thick, 1-13/16\" CFC-free polystyrene glued both sides, 27ga steel skins, R-9.65. A polyurethane-insulated Planks-style option exists under C.H.I.'s Sterling line at higher R-value -- see chi-sterling-2717.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "27-gauge steel (2-sided)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-flush-2284",
@@ -4613,7 +5341,33 @@
     "stamp_location": "Interior section #2 stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Completely flush modern exterior panel with continuous polyurethane foam."
+    "notes": "Completely flush modern exterior panel with continuous polyurethane foam.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "27-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-raised-panel-2250",
@@ -4639,7 +5393,33 @@
     "stamp_location": "Stenciled on inside center stile",
     "status": "current",
     "constructionVal": "pan-25",
-    "notes": "Classic uninsulated single-layer pan steel door."
+    "notes": "Classic uninsulated single-layer pan steel door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-carriage-5283",
@@ -4666,7 +5446,33 @@
     "stamp_location": "Interior stencil on section #2",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "CORRECTED Sept 2026: previously listed as R-17.54 three-layer polyurethane; verified spec sheet confirms 1-13/16\" CFC-free polystyrene glued both sides, R-9.65, same insulation tier as Planks 2283/4283. Density estimated slightly above plain Planks to account for the applied composite carriage-house overlay boards."
+    "notes": "CORRECTED Sept 2026: previously listed as R-17.54 three-layer polyurethane; verified spec sheet confirms 1-13/16\" CFC-free polystyrene glued both sides, R-9.65, same insulation tier as Planks 2283/4283. Density estimated slightly above plain Planks to account for the applied composite carriage-house overlay boards.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "27-gauge steel with composite overlays (2-sided)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-commercial-3285",
@@ -4694,7 +5500,33 @@
     "stamp_location": "Metal plate riveted to interior end stile",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Micro-grooved commercial steel sandwich door for high-thermal requirements."
+    "notes": "Micro-grooved commercial steel sandwich door for high-thermal requirements.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge exterior / 27-gauge interior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-classic-3000",
@@ -4724,7 +5556,33 @@
     "stamp_location": "Inside bottom corner sticker and stenciled serial on section #2 end stile with Clopay logo",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Features Clopay proprietary Intellicore injected polyurethane foam with thermal break."
+    "notes": "Features Clopay proprietary Intellicore injected polyurethane foam with thermal break.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "27-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-modern-steel",
@@ -4751,7 +5609,33 @@
     "stamp_location": "Inside end stile ink stencil",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Flush or grooved exterior panel with Ultra-Grain woodtone finishes (Cypress, Walnut, Cherry)."
+    "notes": "Flush or grooved exterior panel with Ultra-Grain woodtone finishes (Cypress, Walnut, Cherry).",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "27-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-canyon-ridge",
@@ -4778,7 +5662,33 @@
     "stamp_location": "Riveted metal tag on bottom section end stile",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Extremely heavy high-end faux-wood composite cladding door. A 16x7 weighs ~430 lbs; requires heavy 2-5/8in or duplex commercial spring configurations."
+    "notes": "Extremely heavy high-end faux-wood composite cladding door. A 16x7 weighs ~430 lbs; requires heavy 2-5/8in or duplex commercial spring configurations.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "27-gauge steel base + 1/2in Composite cladding",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-classic-1000",
@@ -4804,7 +5714,33 @@
     "stamp_location": "Stenciled on inside center stile",
     "status": "current",
     "constructionVal": "pan-25",
-    "notes": "Single-layer uninsulated steel pan door."
+    "notes": "Single-layer uninsulated steel pan door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-classic-2000",
@@ -4830,7 +5766,33 @@
     "stamp_location": "Interior vinyl backing stencil",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "25ga steel pan with expanded polystyrene and vinyl backer."
+    "notes": "25ga steel pan with expanded polystyrene and vinyl backer.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-commercial-3720",
@@ -4859,7 +5821,33 @@
     "stamp_location": "Metal plate riveted to bottom end stile and certification sticker on section #3",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Heavy commercial door with thermal break and continuous backing plates."
+    "notes": "Heavy commercial door with thermal break and continuous backing plates.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "27-gauge exterior / 27-gauge interior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-avante",
@@ -4886,7 +5874,33 @@
     "stamp_location": "Stenciled on bottom rail inside face",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Heavy architectural aluminum full-view glass door."
+    "notes": "Heavy architectural aluminum full-view glass door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded Aluminum 2-1/8in frame",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "hormann-taurus-4250",
@@ -4913,7 +5927,33 @@
     "stamp_location": "Interior label on end stile of section #2 with German/US serial code",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "German engineered steel sandwich door with thermal break and between-section seals."
+    "notes": "German engineered steel sandwich door with thermal break and between-section seals.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "hormann-orion-4200",
@@ -4939,7 +5979,33 @@
     "stamp_location": "Interior vinyl back stencil",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "25-gauge steel pan with CFC-free polystyrene insulation and vinyl backing."
+    "notes": "25-gauge steel pan with CFC-free polystyrene insulation and vinyl backing.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "hormann-gemini-2100",
@@ -4965,7 +6031,33 @@
     "stamp_location": "Stenciled on inside center stile",
     "status": "current",
     "constructionVal": "pan-25",
-    "notes": "Uninsulated 25-gauge embossed steel pan door."
+    "notes": "Uninsulated 25-gauge embossed steel pan door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "hormann-sr9000",
@@ -4993,7 +6085,33 @@
     "stamp_location": "Metal serial tag on end stile",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Heavy commercial sectional door with reinforced hardware and dual weatherseals."
+    "notes": "Heavy commercial sectional door with reinforced hardware and dual weatherseals.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "24-gauge exterior / 26-gauge interior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "wd-classic-8300",
@@ -5020,7 +6138,33 @@
     "stamp_location": "Interior ink stamp on top edge of section #2 with serial code and Julian date",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Features Wayne Dalton integral pinch-resistant tongue-and-groove joint profile."
+    "notes": "Features Wayne Dalton integral pinch-resistant tongue-and-groove joint profile.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "wd-classic-8500",
@@ -5047,7 +6191,33 @@
     "stamp_location": "Inside end stile or section #2 face stencil",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "2in thick foamed-in-place polyurethane core with thermal break."
+    "notes": "2in thick foamed-in-place polyurethane core with thermal break.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "wd-model-9100",
@@ -5073,7 +6243,33 @@
     "stamp_location": "Toughgard backing printed label and TorqueMaster counter label",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Famous for patented teardrop pinch-resistant joint profile. Often originally installed with TorqueMaster springs; frequently converted to torsion."
+    "notes": "Famous for patented teardrop pinch-resistant joint profile. Often originally installed with TorqueMaster springs; frequently converted to torsion.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel + Vinyl Back",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "wd-classic-8000",
@@ -5099,7 +6295,33 @@
     "stamp_location": "Stenciled on inside center stile",
     "status": "current",
     "constructionVal": "pan-25",
-    "notes": "Lightweight uninsulated 25-gauge pan door."
+    "notes": "Lightweight uninsulated 25-gauge pan door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "wd-thermospan-200",
@@ -5127,7 +6349,33 @@
     "stamp_location": "Metal plate on interior end stile",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Patented continuous thermal break with interlock joint for heavy commercial facilities."
+    "notes": "Patented continuous thermal break with interlock joint for heavy commercial facilities.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge exterior / 26-gauge interior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "haas-700-series",
@@ -5154,7 +6402,33 @@
     "stamp_location": "Interior stenciled date & model code on section #2 left end stile",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Injected polyurethane foam with vinyl thermal break between skins."
+    "notes": "Injected polyurethane foam with vinyl thermal break between skins.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge galvanized steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "haas-600-series",
@@ -5180,7 +6454,33 @@
     "stamp_location": "Interior end stile stencil",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "1-3/8in polyurethane core residential model."
+    "notes": "1-3/8in polyurethane core residential model.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "haas-2000-commercial",
@@ -5208,7 +6508,33 @@
     "stamp_location": "Metal plate riveted to end stile of section #2",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "High-density commercial sectional door with heavy-duty internal hinge backup plates."
+    "notes": "High-density commercial sectional door with heavy-duty internal hinge backup plates.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge exterior / 26-gauge interior",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "haas-240-pan",
@@ -5234,7 +6560,33 @@
     "stamp_location": "Interior center stile stencil",
     "status": "current",
     "constructionVal": "pan-25",
-    "notes": "Economy residential steel pan door."
+    "notes": "Economy residential steel pan door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "24-gauge / 25-gauge steel options",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "nwd-therma-tech",
@@ -5261,7 +6613,33 @@
     "stamp_location": "Interior stenciled stamp on section #2 near left end stile",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Popular builder model throughout the Pacific Northwest and Western Canada."
+    "notes": "Popular builder model throughout the Pacific Northwest and Western Canada.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polystyrene",
+        "exterior_skin_gauge": "26-gauge galvanized steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "nwd-therma-tech-2",
@@ -5288,7 +6666,33 @@
     "stamp_location": "Interior end stile stencil",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "2in polystyrene insulated sandwich construction."
+    "notes": "2in polystyrene insulated sandwich construction.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polystyrene",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "nwd-therma-max",
@@ -5315,7 +6719,33 @@
     "stamp_location": "Interior section #2 stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Continuous polyurethane foam with flexible thermal break."
+    "notes": "Continuous polyurethane foam with flexible thermal break.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "26-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "nwd-500-commercial",
@@ -5342,7 +6772,33 @@
     "stamp_location": "Metal plate on interior end stile",
     "status": "current",
     "constructionVal": "commercial-heavy",
-    "notes": "Standard commercial ribbed pan door for warehouses and light industrial shops."
+    "notes": "Standard commercial ribbed pan door for warehouses and light industrial shops.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Heavy 24-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "nwd-modern-classic",
@@ -5369,7 +6825,33 @@
     "stamp_location": "Bottom rail stamped label",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Extruded aluminum residential and commercial full-view door."
+    "notes": "Extruded aluminum residential and commercial full-view door.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded 6063-T6 Aluminum (0.075in)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-gallery-steel",
@@ -5396,7 +6878,33 @@
     "stamp_location": "Interior end stile ID label",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Carriage-style grooved-panel design on Clopay's standard Intellicore polyurethane platform -- same insulation tier as Classic Steel 3000/Modern Steel, different panel styling."
+    "notes": "Carriage-style grooved-panel design on Clopay's standard Intellicore polyurethane platform -- same insulation tier as Classic Steel 3000/Modern Steel, different panel styling.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "24-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-bridgeport",
@@ -5423,7 +6931,33 @@
     "stamp_location": "Interior end stile ID label",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Shaker-style recessed-panel design (also sold as Bridgeport Inlay); same Intellicore R-18.4 construction tier as Classic Steel 3000."
+    "notes": "Shaker-style recessed-panel design (also sold as Bridgeport Inlay); same Intellicore R-18.4 construction tier as Classic Steel 3000.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "24-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-coachman-grandharbor",
@@ -5450,7 +6984,33 @@
     "stamp_location": "Interior end stile ID label",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Steel carriage-house door with applied composite overlay boards on a polystyrene-insulated base -- lighter insulation tier than Canyon Ridge's 4/5-layer composite doors."
+    "notes": "Steel carriage-house door with applied composite overlay boards on a polystyrene-insulated base -- lighter insulation tier than Canyon Ridge's 4/5-layer composite doors.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel with applied composite overlay",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-reserve-wood",
@@ -5476,7 +7036,33 @@
     "stamp_location": "No standard factory stamp -- custom order tag",
     "status": "current",
     "constructionVal": "wood-solid",
-    "notes": "Custom hardwood door (cedar, hemlock, redwood, etc). Weight varies far more than steel doors -- treat this density as a rough planning estimate only, not a substitute for the actual order spec."
+    "notes": "Custom hardwood door (cedar, hemlock, redwood, etc). Weight varies far more than steel doors -- treat this density as a rough planning estimate only, not a substitute for the actual order spec.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "N/A (solid/veneered wood panel)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "clopay-avante-sleek-vertistack",
@@ -5502,7 +7088,33 @@
     "stamp_location": "Bottom rail ID label",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Styling/track variants of the Avante aluminum-glass platform (Sleek = narrower stile, VertiStack = compact vertical stacking for low headroom) -- same frame construction and weight class as Avante Model AX."
+    "notes": "Styling/track variants of the Avante aluminum-glass platform (Sleek = narrower stile, VertiStack = compact vertical stacking for low headroom) -- same frame construction and weight class as Avante Model AX.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded aluminum frame",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-stratford",
@@ -5528,7 +7140,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Value-tier insulated steel door, similar construction class to Lincoln 2000 but standard (lighter) gauge steel."
+    "notes": "Value-tier insulated steel door, similar construction class to Lincoln 2000 but standard (lighter) gauge steel.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Standard-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-coastal-vinyl",
@@ -5554,7 +7192,33 @@
     "stamp_location": "Interior stamped ID tag",
     "status": "current",
     "constructionVal": "vinyl-solid",
-    "notes": "Solid vinyl panel construction -- resists denting/corrosion in coastal climates. Genuinely different material from Amarr's steel lines, so treat this weight as a distinct construction category, not a steel-tier estimate."
+    "notes": "Solid vinyl panel construction -- resists denting/corrosion in coastal climates. Genuinely different material from Amarr's steel lines, so treat this weight as a distinct construction category, not a steel-tier estimate.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "N/A (solid vinyl panel)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "amarr-hillcrest",
@@ -5581,7 +7245,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Value-positioned steel carriage-house design -- same construction class as Stratford, styled with faux carriage hardware."
+    "notes": "Value-positioned steel carriage-house design -- same construction class as Stratford, styled with faux carriage hardware.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "wd-9405-carriage",
@@ -5608,7 +7298,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Low-maintenance steel carriage-house design; same general insulation tier assumed as Classic Steel 8500 pending a published R-value."
+    "notes": "Low-maintenance steel carriage-house design; same general insulation tier assumed as Classic Steel 8500 pending a published R-value.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "wd-8800-modern-glass",
@@ -5634,7 +7350,33 @@
     "stamp_location": "Bottom rail ID label",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Aluminum-and-glass contemporary door, Wayne Dalton's equivalent to other manufacturers' full-view aluminum lines."
+    "notes": "Aluminum-and-glass contemporary door, Wayne Dalton's equivalent to other manufacturers' full-view aluminum lines.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded aluminum frame",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-sterling-2717",
@@ -5661,7 +7403,33 @@
     "stamp_location": "Interior section #2 stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Sterling's higher-R polyurethane variant. A lower-cost polystyrene variant (Model 2783, R-10.29) is also sold under the same collection name -- see notes on chi-planks-2283 for the equivalent lower tier."
+    "notes": "Sterling's higher-R polyurethane variant. A lower-cost polystyrene variant (Model 2783, R-10.29) is also sold under the same collection name -- see notes on chi-planks-2283 for the equivalent lower tier.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "24-gauge steel (2-sided)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-shoreline-2717",
@@ -5688,7 +7456,33 @@
     "stamp_location": "Interior section #2 stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "C.H.I.'s thickest standard residential door (2-1/2in) and the collection that actually carries the R-17.54 rating previously mis-assigned to Planks/Carriage House Stamped."
+    "notes": "C.H.I.'s thickest standard residential door (2-1/2in) and the collection that actually carries the R-17.54 rating previously mis-assigned to Planks/Carriage House Stamped.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "27-gauge steel (2-sided)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-recessed-panel",
@@ -5714,7 +7508,33 @@
     "stamp_location": "Interior section #2 stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Timeless-collection recessed-panel steel door on C.H.I.'s standard polystyrene platform."
+    "notes": "Timeless-collection recessed-panel steel door on C.H.I.'s standard polystyrene platform.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-full-view-aluminum",
@@ -5740,7 +7560,33 @@
     "stamp_location": "Bottom rail ID label",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "C.H.I. previously had no full-view aluminum entry in this database despite it being a standard collection -- added for completeness."
+    "notes": "C.H.I. previously had no full-view aluminum entry in this database despite it being a standard collection -- added for completeness.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded aluminum frame",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "chi-overlay-carriage",
@@ -5767,7 +7613,33 @@
     "stamp_location": "Interior section #2 stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Distinct from the all-steel Stamped Carriage House line -- uses applied wood/composite overlay boards, available in steel, wood or fiberglass per C.H.I.'s site."
+    "notes": "Distinct from the all-steel Stamped Carriage House line -- uses applied wood/composite overlay boards, available in steel, wood or fiberglass per C.H.I.'s site.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "25-gauge steel with composite overlay",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-vantage",
@@ -5794,7 +7666,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Also sold in 1-1/2in and 3in thickness variants (R-7 to R-15.1 depending on thickness); this entry represents the common 2in / R-15.1 configuration."
+    "notes": "Also sold in 1-1/2in and 3in thickness variants (R-7 to R-15.1 depending on thickness); this entry represents the common 2in / R-15.1 configuration.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "3-layer steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-regal",
@@ -5820,7 +7718,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Value-tier door, also available fully non-insulated (open-back)."
+    "notes": "Value-tier door, also available fully non-insulated (open-back).",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Open-back steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-top-tech",
@@ -5847,7 +7771,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Textured-steel finish on Garaga's standard R-16 polyurethane platform -- same insulation tier as Standard+."
+    "notes": "Textured-steel finish on Garaga's standard R-16 polyurethane platform -- same insulation tier as Standard+.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Textured steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "garaga-special-reserve",
@@ -5873,7 +7823,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Also available in a non-insulated (R-7) open-back version at the same weight class."
+    "notes": "Also available in a non-insulated (R-7) open-back version at the same weight class.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": "tongue_and_groove",
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "wood_block",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "4-layer steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-artisan",
@@ -5900,7 +7876,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Premium carriage-house styling on Steel-Craft's standard ThermoCraft insulation platform."
+    "notes": "Premium carriage-house styling on Steel-Craft's standard ThermoCraft insulation platform.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Standard steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-esteem",
@@ -5927,7 +7929,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Another carriage-house styling line on the same ThermoCraft-tier construction -- treat weight identically to Artisan/RanchCraft pending manufacturer-specific data."
+    "notes": "Another carriage-house styling line on the same ThermoCraft-tier construction -- treat weight identically to Artisan/RanchCraft pending manufacturer-specific data.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Standard steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "steelcraft-prairie-ridge",
@@ -5954,7 +7982,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Modern flush/grooved-panel styling variants on the same ThermoCraft-tier construction as Contemporary Flush/Woodtone."
+    "notes": "Modern flush/grooved-panel styling variants on the same ThermoCraft-tier construction as Contemporary Flush/Woodtone.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": "galvanized_steel",
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Standard steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-briarcrest",
@@ -5981,7 +8035,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Carriage-house door on the same Premium L200 (R-18) construction platform as Landmark Premium."
+    "notes": "Carriage-house door on the same Premium L200 (R-18) construction platform as Landmark Premium.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "2in Neufoam polyurethane core",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-echo-ridge-xl",
@@ -6008,7 +8088,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Fibrex composite overlay on the Premium (R-18) core, a step up from the entry-level Echo Ridge (L138ER)."
+    "notes": "Fibrex composite overlay on the Premium (R-18) core, a step up from the entry-level Echo Ridge (L138ER).",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "2in Neufoam core with Fibrex overlay",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "rw-rockwood",
@@ -6035,7 +8141,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Real 1in cedar board applied over the insulated core -- heaviest Richards-Wilcox residential door in this database due to the solid wood overlay."
+    "notes": "Real 1in cedar board applied over the insulated core -- heaviest Richards-Wilcox residential door in this database due to the solid wood overlay.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "2in core with 1in applied cedar board",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "hormann-carriage-style",
@@ -6062,7 +8194,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Steel version is on the same insulation tier as the Taurus line; an aluminum full-view carriage variant is also offered (see hormann-carriage-alum for that construction)."
+    "notes": "Steel version is on the same insulation tier as the Taurus line; an aluminum full-view carriage variant is also offered (see hormann-carriage-alum for that construction).",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Steel (aluminum variant also offered)",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "hormann-carriage-alum",
@@ -6088,7 +8246,33 @@
     "stamp_location": "Bottom rail ID label",
     "status": "current",
     "constructionVal": "fullview-glass",
-    "notes": "Hormann previously had no full-view aluminum entry in this database -- added for completeness."
+    "notes": "Hormann previously had no full-view aluminum entry in this database -- added for completeness.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": null,
+        "exterior_skin_gauge": "Extruded aluminum frame",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "haas-6300-carriage",
@@ -6115,7 +8299,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Carriage-house styling on the same polyurethane platform as the 700 Series."
+    "notes": "Carriage-house styling on the same polyurethane platform as the 700 Series.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Standard steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "nwd-heritage-classic",
@@ -6142,7 +8352,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "foamed-3layer",
-    "notes": "Carriage-house styling line (C-Series/E-Series variants) on the same polyurethane platform as Therma Max. Northwest Door's site now operates under the Hormann-Northwest Door brand."
+    "notes": "Carriage-house styling line (C-Series/E-Series variants) on the same polyurethane platform as Therma Max. Northwest Door's site now operates under the Hormann-Northwest Door brand.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polyurethane",
+        "exterior_skin_gauge": "Standard steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   },
   {
     "id": "nwd-protech-2500",
@@ -6168,7 +8404,33 @@
     "stamp_location": "Interior end stile stamp",
     "status": "current",
     "constructionVal": "poly-vinyl",
-    "notes": "Entry/value-tier residential line, same construction class as Therma Tech."
+    "notes": "Entry/value-tier residential line, same construction class as Therma Tech.",
+    "vision_diagnostic_features": {
+      "joint_profile": {
+        "joint_type": null,
+        "thermal_break_material": null
+      },
+      "end_stiles_and_caps": {
+        "material": null,
+        "fastening_method": null
+      },
+      "panel_construction": {
+        "core": "polystyrene",
+        "exterior_skin_gauge": "Standard steel",
+        "interior_skin_gauge": null
+      },
+      "face_texture_and_grooving": {
+        "texture": null,
+        "rib_patterns": null
+      },
+      "factory_color_palette": {
+        "available_finishes": []
+      },
+      "hardware_geometry": {
+        "center_hinge_footprint": null,
+        "end_roller_carrier_shape": null
+      }
+    }
   }
 ];
 
@@ -7137,613 +9399,30 @@
           : '';
 
         const promptText = `
-You are a master garage door engineering inspector with 25 years of field experience identifying doors across Canada and the US (specifically Garaga, Steel-Craft, Richards-Wilcox / RW, Amarr, C.H.I., Clopay, Hormann, Wayne Dalton, Haas, and Northwest Door).
+You are a master garage door engineering inspector with 25 years of field experience identifying doors across Canada and the US.
 ${referenceIntro}
 You are receiving 1 or 2 photographs of an overhead garage door to identify.
 - Image 1 is typically the Front Face (panel stamping, woodgrain/driftwood finish, window frame profiles).
 - Image 2 (if provided) is the Side Profile, Joint Geometry, End Stile, or Factory Stamp/Sticker.
 
-WORK THROUGH THIS IN TWO STAGES BEFORE YOU ANSWER. Do not skip Stage 1.
+You have access to a structured JSON database of vision diagnostic features for all 10 major North American manufacturers. 
+Use this data as a definitive diagnostic matrix to execute a process of elimination (cascading filter logic).
 
-STAGE 1 -- JOINT GEOMETRY FIRST (the real fingerprint):
-Woodgrain, driftwood, and paint finishes are cosmetic prints and are reused
-across brands -- never let finish color alone decide the manufacturer. The
-panel-to-panel joint and end-stile profile are a manufacturer's actual
-mechanical signature and do not change between finish colors. If Image 2
-(side profile / joint / end stile) is provided, use it FIRST to narrow the
-candidates by joint shape alone, before you look at the finish at all:
-   - AMARR: SafeGuard rounded pinch-protection joint contour, low-profile flush hinges, tamper-resistant bottom brackets, Winston-Salem/Lawrence plant stencils.
-   - WAYNE DALTON: Teardrop pinch-resistant joint profile, integral hinge pockets, TorqueMaster spring system.
-   - STEEL-CRAFT (Canada): WeatherLock dual tongue-and-groove interlocking joint, Edmonton factory tags.
-   - RICHARDS-WILCOX (RW Canada): WeatherLock joint, continuous Neufoam polyurethane core (R-12 to R-18).
-   - GARAGA (Canada): continuous PVC weatherstrip in joint, heavy 14ga commercial end stiles.
-   - C.H.I.: standard tongue-and-groove joint, no pinch-guard contour, micro-grooved horizontal planks (Model 2283 Accent Woodtones).
-   - CLOPAY: Safe-T-Bracket system, Intellicore joint construction.
-Eliminate every manufacturer whose joint contour clearly does not match what
-you see in Image 2. Only fall back to Image 1's finish/woodgrain pattern to
-choose between manufacturers if Image 2 was not provided, or is too blurry
-or obstructed to read the joint.
+STAGE 1 -- JOINT GEOMETRY & END STILES FIRST (the real fingerprint):
+Woodgrain and paint finishes are cosmetic and reused across brands -- never let finish color alone decide the manufacturer. 
+If Image 2 (side profile / joint / end stile) is provided, use it FIRST to narrow the candidates by joint shape and end stile material.
+Cross-reference the visual evidence in Image 2 against the 'joint_profile' and 'end_stiles_and_caps' attributes in the provided JSON schema.
+- For example, if you see a pinch-resistant joint, eliminate Garaga, Haas, and Steel-Craft.
+- If you see wood end blocks, eliminate manufacturers that use galvanized steel.
 
 STAGE 2 -- MODEL & FINISH (only after the manufacturer is narrowed):
-Now use Image 1 (front face: panel stamping, woodgrain/driftwood finish,
-window frame profiles) plus the manufacturer's known model lines below to
-pick the specific model/series. Do NOT default to C.H.I. Planks just because
-of horizontal woodgrain -- Stage 1's joint contour should already have ruled
-C.H.I. in or out before you get here.
-   - AMARR: "Amarr Designer's Choice", "Amarr Olympus", "Amarr Heritage Flush / Plank" -- often weathered driftwood, walnut, or golden oak woodgrain prints.
-   - C.H.I.: Planks / Model 2283 Accent Woodtones.
-   - RICHARDS-WILCOX: Landmark, Echo Ridge, Grandview, Thermatite commercial.
-   - STEEL-CRAFT: ThermoCraft T-16/T-12.
-   - GARAGA: Standard+ (R-16), Acadia 138.
-   - CLOPAY: Intellicore (R-18.4) Modern Steel / Gallery, Ultra-Grain prints.
-   - WAYNE DALTON: TorqueMaster-equipped model lines.
+Once the manufacturer is confidently identified or narrowed down to a few candidates, use Image 1 (front face) and the 'panel_construction', 'face_texture_and_grooving', and 'factory_color_palette' attributes to pick the specific model/series.
 
-Respond ONLY with a valid raw JSON object matching this exact structure:
-{
-  "identified": true,
-  "manufacturer": "Garaga" | "Steel-Craft" | "Richards-Wilcox" | "Amarr" | "C.H.I." | "Clopay" | "Hormann" | "Wayne Dalton" | "Haas" | "Northwest" | "Unknown",
-  "model": "Exact Model Series Name",
-  "confidence": 94,
-  "rValue": "R-16",
-  "density": 2.20,
-  "visualCues": "Concise summary of visual evidence (e.g. 'Detected Amarr woodtone finish with SafeGuard pinch-protection joint contours')",
-  "constructionVal": "foamed-3layer" | "poly-vinyl" | "pan-25" | "commercial-heavy" | "fullview-glass",
-  "weightParams": {
-    "sectionThickness_in": 1.75,
-    "gaugeEstimate": "26ga" | "25ga" | "24ga" | "27ga" | "20ga" | null,
-    "insulationType": "polyurethane_foamed" | "polystyrene" | "none" | "aluminum_frame" | "wood" | null,
-    "endStileProfile": "Brief description of joint/end stile shape visible in Image 2, or null",
-    "strutsVisible": 0,
-    "glassSections": 0,
-    "extractionConfidence": 72,
-    "extractionNotes": "One sentence: which visual cues support these estimates. Output null for any field you cannot determine from the image."
-  }
-}
-Only output the raw JSON — no markdown fences, no explanation text outside the JSON object.
+Here is the JSON reference matrix of all models:
+${JSON.stringify(DOOR_DATABASE.map(d => ({ id: d.id, manufacturer: d.manufacturer, model: d.model_name, vision_features: d.vision_diagnostic_features })), null, 2)}
+
+Return your final answer in the requested format.
 `;
-
-        const parts = [{ text: promptText }];
-
-        referenceEntries.forEach(ref => {
-          parts.push({ text: `REFERENCE PHOTO -- confirmed ${ref.manufacturer} ${ref.modelName}:` });
-          parts.push({
-            inlineData: { mimeType: 'image/jpeg', data: ref.photoBase64.split(',')[1] }
-          });
-        });
-
-        if (referenceEntries.length) {
-          parts.push({ text: 'NOW IDENTIFY THIS DOOR:' });
-        }
-
-        if (photo1Base64) {
-          parts.push({
-            inlineData: { mimeType: 'image/jpeg', data: photo1Base64.split(',')[1] }
-          });
-        }
-        if (photo2Base64) {
-          parts.push({
-            inlineData: { mimeType: 'image/jpeg', data: photo2Base64.split(',')[1] }
-          });
-        }
-
-        // BUGFIX (Sept 2026 audit): a hung Worker/API call used to leave the
-        // spinner running forever with no way out. Add a hard 30s timeout so
-        // a stalled request always resolves into a clear error state.
-        const abortController = new AbortController();
-        const timeoutId = setTimeout(() => abortController.abort(), 30000);
-
-        let response;
-        try {
-          response = await fetch(proxyUrl, {
-            method: 'POST',
-            headers: proxyHeaders,
-            body: JSON.stringify({
-              contents: [{ parts: parts }],
-              generationConfig: { responseMimeType: "application/json" }
-            }),
-            signal: abortController.signal
-          });
-        } finally {
-          clearTimeout(timeoutId);
-        }
-
-        spinner.style.display = 'none';
-
-        // BUGFIX: previously only HTTP 429 / a specific error string were
-        // handled -- any other non-OK status (500, 502, a changed Worker URL,
-        // etc.) fell through and produced a confusing "Unexpected response
-        // format" message. Give every failure path a clear, specific message.
-        if (response.status === 429) {
-          statusText.innerText = 'Daily AI limit reached for today';
-          alert('Daily AI limit reached for today — try again tomorrow, or use the manual calculators below.');
-          return;
-        }
-        if (!response.ok) {
-          statusText.innerText = `AI service error (HTTP ${response.status})`;
-          alert(`AI Scanner Error: the identification service returned an error (HTTP ${response.status}). Please try again, or use the manual manufacturer/model picker below.`);
-          return;
-        }
-
-        let data;
-        try {
-          data = await response.json();
-        } catch (parseErr) {
-          statusText.innerText = 'AI service returned an unreadable response.';
-          alert('AI Scanner Error: the identification service returned data we could not read. Please try again, or use the manual picker below.');
-          return;
-        }
-
-        if (data.error === 'daily_limit_reached') {
-          statusText.innerText = 'Daily AI limit reached for today';
-          alert('Daily AI limit reached for today — try again tomorrow, or use the manual calculators below.');
-          return;
-        }
-
-        if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-          const finishReason = data.candidates[0].finishReason;
-          const rawText = data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
-
-          if (!rawText) {
-            statusText.innerText = finishReason === 'SAFETY'
-              ? 'Photo could not be analyzed (content filter).'
-              : 'AI returned no result for this photo.';
-            alert('AI Scanner: no usable result was returned for this photo. Try a clearer, well-lit photo of the door face, or use the manual picker below.');
-            return;
-          }
-
-          let parsed;
-          try {
-            parsed = JSON.parse(rawText);
-          } catch (jsonErr) {
-            console.error('AI Scan: malformed JSON from model:', rawText);
-            statusText.innerText = 'AI returned malformed data.';
-            alert('AI Scanner Error: the AI\'s response could not be parsed. Please try again, or use the manual picker below.');
-            return;
-          }
-
-          // BUGFIX: validate the response actually has what we need before
-          // trusting it anywhere downstream -- an empty/partial object used
-          // to sail straight through and get applied to the calculator.
-          if (parsed.identified === false || !parsed.manufacturer || !parsed.model) {
-            lastAIAnalysis = null;
-            resultCard.style.display = 'block';
-            statusText.innerText = 'Could not confidently identify this door.';
-            document.getElementById('aiConfBadge').innerText = 'No match';
-            document.getElementById('aiConfBadge').className = 'badge';
-            document.getElementById('aiConfBadge').style.background = 'rgba(148,163,184,0.2)';
-            document.getElementById('aiConfBadge').style.color = '#94a3b8';
-            document.getElementById('aiModelResult').innerText = 'Manufacturer/model not identified';
-            document.getElementById('aiCuesText').innerText = parsed.visualCues || 'The photo didn\'t contain enough clear evidence to identify this door. Try a straight-on shot of the face and, if possible, a second photo of the end stile or joint profile, or use the manual picker below.';
-            document.getElementById('aiGroundingNote').style.display = 'none';
-            document.getElementById('aiSaveToLibraryRow').style.display = 'none'; // nothing confirmed yet -- nothing to save
-            return;
-          }
-
-          lastAIAnalysis = parsed;
-
-          resultCard.style.display = 'block';
-          statusText.innerText = 'Analysis complete';
-
-          const confidence = typeof parsed.confidence === 'number' ? parsed.confidence : 90;
-          const confBadge = document.getElementById('aiConfBadge');
-          confBadge.innerText = `${confidence}% Match`;
-          // BUGFIX: a low-confidence AI guess used to look identical (same
-          // green badge) to a high-confidence one. Now a shaky read is
-          // visibly flagged rather than presented with false certainty.
-          if (confidence < 60) {
-            confBadge.className = 'badge';
-            confBadge.style.background = 'rgba(239,68,68,0.2)';
-            confBadge.style.color = '#f87171';
-            confBadge.innerText = `${confidence}% Match — low confidence, verify manually`;
-          } else if (confidence < 80) {
-            confBadge.className = 'badge';
-            confBadge.style.background = 'rgba(245,158,11,0.2)';
-            confBadge.style.color = '#f59e0b';
-          } else {
-            confBadge.className = 'badge green';
-            confBadge.style.background = '';
-            confBadge.style.color = '';
-          }
-
-          document.getElementById('aiModelResult').innerText = `${parsed.manufacturer} — ${parsed.model}`;
-          document.getElementById('aiCuesText').innerText = parsed.visualCues || 'Matched factory specifications.';
-          document.getElementById('aiGroundingNote').style.display = 'none'; // set properly once Apply is pressed and matching runs
-          const saveToLibraryRow = document.getElementById('aiSaveToLibraryRow');
-          saveToLibraryRow.style.display = (photo1Base64 || photo2Base64) ? 'flex' : 'none';
-          document.getElementById('aiSaveToLibraryCheck').checked = true;
-
-          // v40: show the weight parameters panel if AI returned extraction data
-          if (parsed.weightParams) {
-            showWeightParamsPanel(parsed.weightParams);
-          }
-        } else if (data.error) {
-          statusText.innerText = 'Error: ' + (data.error.message || 'unknown error');
-          alert('API Error: ' + (data.error.message || 'unknown error'));
-        } else {
-          statusText.innerText = 'Unexpected response format.';
-          alert('AI Scanner Error: received an unexpected response format from the identification service. Please try again, or use the manual picker below.');
-        }
-      } catch (err) {
-        spinner.style.display = 'none';
-        if (err.name === 'AbortError') {
-          console.error('AI Scan Error: request timed out');
-          statusText.innerText = 'Scan timed out — check connection.';
-          // v40: show inline retry button instead of a blocking alert
-          const retryRow = document.getElementById('scanRetryRow');
-          if (retryRow) retryRow.style.display = 'block';
-        } else {
-          console.error('AI Scan Error:', err);
-          statusText.innerText = 'Scan failed.';
-          alert('AI Scanner Error: ' + (err.message || 'Check network connection.') + ' You can use the manual picker below in the meantime.');
-        }
-      }
-    }
-
-    // BUGFIX (Sept 2026 audit) -- helper: normalize a model name for comparison
-    // (lowercase, strip punctuation, collapse whitespace) so "C.H.I. Plank"
-    // and "chi plank" compare the same way.
-    function normalizeModelStr(s) {
-      return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-    }
-
-    // BUGFIX: word-overlap similarity score (0-1) between the AI's free-text
-    // model guess and a real catalog model name, instead of the old
-    // includes()-in-either-direction check (which matched almost anything
-    // short, and matched nothing sensibly for anything long/differently
-    // worded).
-    function scoreModelMatch(aiModel, candidateModel) {
-      const a = new Set(normalizeModelStr(aiModel).split(' ').filter(Boolean));
-      const b = new Set(normalizeModelStr(candidateModel).split(' ').filter(Boolean));
-      if (a.size === 0 || b.size === 0) return 0;
-      let overlap = 0;
-      a.forEach(tok => { if (b.has(tok)) overlap++; });
-      return overlap / Math.max(a.size, b.size);
-    }
-
-    // Minimum similarity before we'll present an AI model guess as a real
-    // catalog match. Below this, we tell the tech honestly that nothing in
-    // the database matched, instead of silently defaulting to whatever
-    // model happened to be first in that manufacturer's list.
-    const MODEL_MATCH_THRESHOLD = 0.34;
-
-    // NEW (v39): called from applyAIResultToCalculator only once a specific
-    // catalog model has actually been confirmed (post any manual correction)
-    // -- never called with the AI's raw, unconfirmed guess, so a wrong guess
-    // can't quietly poison the reference library. Writes to the same
-    // IndexedDB store the catalog table's own ✏️ icon writes to, and prefers
-    // Photo 2 (the side/joint profile) as the reference image since that is
-    // the actual visual "fingerprint" -- falls back to Photo 1 if Photo 2
-    // wasn't taken.
-    async function saveScanToLibraryFromScan(doorId, manufacturer, modelName) {
-      const photoForReference = photo2Base64 || photo1Base64;
-      if (!photoForReference) return false;
-      try {
-        // v40: compute image quality before saving so the reference library
-        // can sort by quality and flag degraded entries.
-        let imageQuality = null;
-        try {
-          imageQuality = await checkImageQuality(photoForReference);
-        } catch (_) { /* fail open — quality metadata is non-critical */ }
-
-        await endcapPut({
-          doorId,
-          type: 'image',
-          url: photoForReference,
-          label: `${manufacturer} ${modelName} — end cap reference`,
-          note: 'Auto-saved from a confirmed AI door scan.',
-          dateAdded: new Date().toISOString(),
-          imageQuality: imageQuality ? { brightness: imageQuality.brightness, blurScore: imageQuality.blurScore } : null
-        });
-        await refreshEndCapCell(doorId);
-        return true;
-      } catch (err) {
-        console.error('Scan-to-library auto-save failed:', err);
-        return false;
-      }
-    }
-
-    async function applyAIResultToCalculator() {
-      if (!lastAIAnalysis) return;
-      const groundingNote = document.getElementById('aiGroundingNote');
-
-      // BUGFIX: case/format-sensitive exact match used to silently fail
-      // (leaving whatever manufacturer was already selected) with zero
-      // indication that the AI's manufacturer guess wasn't applied at all.
-      const mfgSelect = document.getElementById('mfgSelect');
-      const mfgTarget = (lastAIAnalysis.manufacturer || '').trim().toLowerCase();
-      let matchedMfgValue = null;
-      for (const opt of mfgSelect.options) {
-        if (opt.value.toLowerCase() === mfgTarget) { matchedMfgValue = opt.value; break; }
-      }
-
-      if (!matchedMfgValue) {
-        // Manufacturer isn't one we have in the database (e.g. AI returned
-        // "Unknown" or a brand we don't carry) -- do not silently mutate the
-        // calculator to some other manufacturer. Apply only the AI's own
-        // material estimate (density/R-value), clearly labeled as such, and
-        // leave manufacturer/model selection to the technician.
-        if (typeof lastAIAnalysis.density === 'number') {
-          customDensityOverride = lastAIAnalysis.density;
-          document.getElementById('badgeDensity').innerText = lastAIAnalysis.density.toFixed(2) + ' lbs/sq ft (AI estimate, unverified)';
-        }
-        if (lastAIAnalysis.rValue) {
-          document.getElementById('badgeRVal').innerText = lastAIAnalysis.rValue + ' (AI estimate)';
-        }
-        // BUGFIX (v40): apply constructionVal to dropdown so UI matches AI detection
-        if (lastAIAnalysis.constructionVal) {
-          const cSel = document.getElementById('estConstruction');
-          if (cSel) cSel.value = lastAIAnalysis.constructionVal;
-        }
-        calculateDoorWeight();
-        groundingNote.style.display = 'block';
-        groundingNote.style.background = 'rgba(239,68,68,0.12)';
-        groundingNote.style.color = '#f87171';
-        groundingNote.innerText = `⚠️ "${lastAIAnalysis.manufacturer || 'Unknown'}" isn't in the manufacturer database -- applied the AI's estimated weight/R-value only. Please select the actual manufacturer/model manually if you can identify it.`;
-        alert(`Could not match "${lastAIAnalysis.manufacturer || 'Unknown'}" to a manufacturer in the database. Applied only the AI's estimated ${(lastAIAnalysis.density || 2.2).toFixed(2)} lbs/sq ft as a rough weight -- please verify manually.`);
-        return;
-      }
-
-      mfgSelect.value = matchedMfgValue;
-      handleMfgChange();
-
-      // BUGFIX: score every real model in this manufacturer's catalog against
-      // the AI's free-text guess and take the best one -- but only accept it
-      // above MODEL_MATCH_THRESHOLD. Previously, a failed match silently left
-      // whichever model was first in the list selected, indistinguishable
-      // from a real match.
-      const modelSelect = document.getElementById('modelSelect');
-      let bestIdx = -1;
-      let bestScore = 0;
-      for (let i = 0; i < modelSelect.options.length; i++) {
-        const score = scoreModelMatch(lastAIAnalysis.model, modelSelect.options[i].value);
-        if (score > bestScore) { bestScore = score; bestIdx = i; }
-      }
-
-      let matchedModelName = null;
-      if (bestIdx >= 0 && bestScore >= MODEL_MATCH_THRESHOLD) {
-        modelSelect.selectedIndex = bestIdx;
-        matchedModelName = modelSelect.options[bestIdx].value;
-        handleModelSelect(); // pulls the catalog's own verified/estimated density + R-value
-      }
-
-      // The AI's own density/R-value estimate is still useful even when we
-      // couldn't ground it to a named catalog model -- apply it as a
-      // clearly-labeled estimate rather than discarding it or, worse,
-      // silently attaching it to the wrong model.
-      if (!matchedModelName) {
-        if (typeof lastAIAnalysis.density === 'number') {
-          customDensityOverride = lastAIAnalysis.density;
-          document.getElementById('badgeDensity').innerText = lastAIAnalysis.density.toFixed(2) + ' lbs/sq ft (AI estimate, unverified)';
-        }
-        if (lastAIAnalysis.rValue) {
-          document.getElementById('badgeRVal').innerText = lastAIAnalysis.rValue + ' (AI estimate)';
-        }
-        // BUGFIX (v40): apply constructionVal so dropdown matches AI detection
-        if (lastAIAnalysis.constructionVal) {
-          const cSel = document.getElementById('estConstruction');
-          if (cSel) cSel.value = lastAIAnalysis.constructionVal;
-        }
-        calculateDoorWeight();
-      }
-
-      groundingNote.style.display = 'block';
-      if (matchedModelName) {
-        groundingNote.style.background = 'rgba(16,185,129,0.12)';
-        groundingNote.style.color = '#34d399';
-        groundingNote.innerText = `✓ Matched to catalog: ${matchedMfgValue} — ${matchedModelName} (${Math.round(bestScore * 100)}% name match). Verify against the door's actual stamp/label before finalizing.`;
-
-        // NEW (v39): "scan-to-library" flywheel -- save the photo used for
-        // THIS confirmed match as the model's reference photo, so future
-        // scans of the same door get grounded automatically over time
-        // instead of depending on someone remembering to upload one later.
-        const saveCheck = document.getElementById('aiSaveToLibraryCheck');
-        if (saveCheck && saveCheck.checked) {
-          const matchedModelObj = DOOR_MODELS.find(m => m.manufacturer === matchedMfgValue && m.model_name === matchedModelName);
-          if (matchedModelObj) {
-            const saved = await saveScanToLibraryFromScan(matchedModelObj.id, matchedMfgValue, matchedModelName);
-            if (saved) {
-              groundingNote.innerText += ' Saved this photo as the reference for this model.';
-            }
-          }
-        }
-      } else {
-        groundingNote.style.background = 'rgba(245,158,11,0.12)';
-        groundingNote.style.color = '#f59e0b';
-        groundingNote.innerText = `⚠️ No confident match for "${lastAIAnalysis.model}" in the ${matchedMfgValue} catalog -- applied the AI's estimated weight/R-value only, not a specific named model. Please verify manually or pick the closest model from the dropdown.`;
-        // NEW (v39): without this, a checked "save to library" box silently
-        // does nothing when the catalog model match fails -- explain why,
-        // rather than leaving it looking ignored.
-        const saveCheckUnmatched = document.getElementById('aiSaveToLibraryCheck');
-        if (saveCheckUnmatched && saveCheckUnmatched.checked) {
-          groundingNote.innerText += ' Nothing was saved to the reference library since no specific catalog model was confirmed -- pick the correct model from the dropdown, then use the ✏️ icon on its catalog row to save this photo manually.';
-        }
-      }
-
-      alert(matchedModelName
-        ? `Applied ${matchedMfgValue} — ${matchedModelName} (${customDensityOverride ? customDensityOverride.toFixed(2) : (lastAIAnalysis.density || 2.2).toFixed(2)} lbs/sq ft) to calculator. Please verify against the door's stamp before finalizing.`
-        : `No exact catalog model matched "${lastAIAnalysis.model}". Applied only the AI's estimated ${(lastAIAnalysis.density || 2.2).toFixed(2)} lbs/sq ft as a rough weight for ${matchedMfgValue} -- please verify manually or choose a specific model.`);
-    }
-
-
-    // AI Troubleshooting Chatbot Logic
-    let isChatOpen = false;
-
-    function toggleChatbot() {
-      isChatOpen = !isChatOpen;
-      const win = document.getElementById('chatbotWindow');
-      win.classList.toggle('open', isChatOpen);
-    }
-
-    function handleChatKeyDown(e) {
-      if (e.key === 'Enter') {
-        sendChatMessage();
-      }
-    }
-
-    function sendSuggestedQuestion(q) {
-      document.getElementById('chatTextInput').value = q;
-      sendChatMessage();
-    }
-
-    async function sendChatMessage() {
-      const input = document.getElementById('chatTextInput');
-      const text = (input.value || '').trim();
-      if (!text) return;
-
-      const { url: proxyUrl, headers: proxyHeaders } = buildAiProxyRequest();
-
-      input.value = '';
-      const chatBody = document.getElementById('chatBody');
-
-      // Append User message
-      const userBubble = document.createElement('div');
-      userBubble.className = 'chat-bubble user';
-      userBubble.innerText = text;
-      chatBody.appendChild(userBubble);
-      chatBody.scrollTop = chatBody.scrollHeight;
-
-      // Append Loading AI bubble
-      const aiBubble = document.createElement('div');
-      aiBubble.className = 'chat-bubble ai';
-      aiBubble.innerText = 'Thinking...';
-      chatBody.appendChild(aiBubble);
-      chatBody.scrollTop = chatBody.scrollHeight;
-
-      // v40: Context Awareness - grab live calculator state
-      const doorW = document.getElementById('doorWidth')?.value || '0';
-      const doorH = document.getElementById('doorHeight')?.value || '0';
-      const doorWt = document.getElementById('doorWeight')?.value || '0';
-
-      const systemPrompt = `You are DoorTech AI, a veteran commercial and residential garage door installer, service technician, and estimator with 25 years of field experience in North America.
-You provide direct, highly practical, field-tested troubleshooting advice for overhead doors, torsion springs, cable drums (standard lift, high lift, vertical lift), track clearances (12", 15", low headroom), operators (LiftMaster, Hormann, Manaras), and hardware.
-
-Current Calculator State (use this if the user asks a specific engineering question):
-- Door Width: ${doorW} ft
-- Door Height: ${doorH} ft
-- Door Weight: ${doorWt} lbs
-If these values are 0, the user hasn't entered them yet. If they ask a specific question requiring math and the values are 0, politely tell them to enter the door size and weight into the calculator on their screen so you can crunch the numbers for them.
-
-Guidelines:
-1. Keep answers concise, direct, bulleted, and scannable for a tech on a ladder.
-2. Safety first: remind technicians about winding bar safety and extreme spring tension when applicable.
-3. If asked to calculate exact spring sizes, remind them to use the built-in DoorMathPro tabs above for mathematical precision.`;
-
-      try {
-        const response = await fetch(proxyUrl, {
-          method: 'POST',
-          headers: proxyHeaders,
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [
-                  { text: systemPrompt + "\n\nUser Question: " + text }
-                ]
-              }
-            ]
-          })
-        });
-
-        const data = await response.json();
-
-        // Gracefully catch rate limit errors
-        if (data.error === 'daily_limit_reached' || response.status === 429) {
-          aiBubble.innerHTML = '<div style="color: #f59e0b; font-weight: 700; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; padding: 10px 12px; line-height: 1.4;">⏳ Daily AI limit reached for today — try again tomorrow, or use the manual calculators below.</div>';
-          chatBody.scrollTop = chatBody.scrollHeight;
-          return;
-        }
-
-        if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-          const reply = data.candidates[0].content.parts[0].text;
-          aiBubble.innerHTML = reply.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        } else if (data.error) {
-          aiBubble.innerHTML = '<span style="color:#ef4444; font-weight:700;">Error from API:</span> ' + (data.error.message || JSON.stringify(data.error));
-        } else {
-          aiBubble.innerText = 'Raw Response: ' + JSON.stringify(data);
-        }
-      } catch (err) {
-        console.error('Chat error:', err);
-        aiBubble.innerText = 'Connection error: ' + (err.message || 'Check network.');
-      }
-
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
-
-
-    // ===================================================
-    // WIRE ID CONFIRMATION STATE
-    // (Spring Scan AI camera engine removed completely — replaced by the
-    // static 20-Coil Wire Size Identifier + manual picker below)
-    // ===================================================
-    let confirmedScanWire = null;
-
-    // Confirm the wire size read off the 20-Coil Wire Size Identifier
-    // and load it into the rest of the engineering workflow.
-    function confirmTwentyCoilWire() {
-      const val = parseFloat(document.getElementById('twentyCoilInput').value);
-      let closest = WIRE_SPECS[0];
-      let minDiff = 999;
-      WIRE_SPECS.forEach(w => {
-        const diff = Math.abs(w.coils20 - val);
-        if (diff < minDiff) {
-          minDiff = diff;
-          closest = w;
-        }
-      });
-      applyConfirmedWireToEngineering({
-        wire: closest.wire,
-        name: closest.name,
-        color: closest.color,
-        confidence: 'MANUAL'
-      });
-    }
-
-    // BUGFIX (Sept 2026 audit): #oldWireSelect (Truck Stock Matcher's "old
-    // spring" wire dropdown) and #odWireSelect (OD-to-ID Converter) used to
-    // be separate, hand-typed <option> lists in the HTML that had fallen out
-    // of sync with the real wire gauge range -- oldWireSelect topped out at
-    // .375" and odWireSelect at .273", both silently unable to represent
-    // heavier real-world springs (up to .500"). Rebuild both dropdowns from
-    // WIRE_SPECS (the single source of truth) so they always cover the full,
-    // correct range and can never drift out of date again.
-    function populateWireSelects() {
-      const targets = [
-        { id: 'oldWireSelect', defaultWire: 0.25, showColor: true },
-        { id: 'odWireSelect', defaultWire: 0.25, showColor: false }
-      ];
-      targets.forEach(t => {
-        const sel = document.getElementById(t.id);
-        if (!sel) return;
-        const priorValue = sel.value; // preserve a user's existing selection across rebuilds
-        sel.innerHTML = '';
-        WIRE_SPECS.forEach(w => {
-          const opt = document.createElement('option');
-          opt.value = w.wire;
-          opt.innerText = t.showColor ? `${w.name} (${w.color})` : w.name;
-          sel.appendChild(opt);
-        });
-        const hasPrior = priorValue && Array.from(sel.options).some(o => Math.abs(parseFloat(o.value) - parseFloat(priorValue)) < 0.001);
-        sel.value = hasPrior ? priorValue : String(t.defaultWire);
-      });
-    }
-
-    // Initialize Manual Wire List in Modal
-    function populateManualWireModal() {
-      const tbody = document.getElementById('manualWireListBody');
-      if (!tbody) return;
-      tbody.innerHTML = '';
-
-      STANDARD_SPRING_WIRES.forEach(w => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong class="mono font-bold" style="color:var(--accent); font-size:15px;">${w.name}</strong></td>
-          <td><span class="badge" style="background:#1e293b; color:#f8fafc; border:1px solid #334155;">${w.color}</span></td>
-          <td class="mono font-bold">${w.coils20.toFixed(3)}" <span style="font-size:11px; color:#64748b;">(${w.dashes})</span></td>
-          <td>
-            <button class="btn-action primary" style="padding:4px 10px; font-size:11px;" onclick="selectManualWireFromModal(${w.wire}, '${w.name}', '${w.color}')">
-              Select
-            </button>
-          </td>
-        `;
         tbody.appendChild(tr);
       });
     }
@@ -7986,23 +9665,11 @@ Guidelines:
   </div>
 
 
-  <nav class="bottom-nav no-print" id="bottomNav">
-    <button class="tab-btn active" data-tab="home" onclick="switchTab('home'); window.scrollTo(0,0);">
-      <span>🏠</span><span>Home</span>
-    </button>
-    <button class="tab-btn" data-tab="spring-scan" onclick="switchTab('spring-scan'); window.scrollTo(0,0);">
-      <span>📏</span><span>Identify</span>
-    </button>
-    <button class="tab-btn" data-tab="spring-sizer" onclick="switchTab('spring-sizer'); window.scrollTo(0,0);">
-      <span>📐</span><span>Engineer</span>
-    </button>
-    <button class="tab-btn" data-tab="truck-stock" onclick="switchTab('truck-stock'); window.scrollTo(0,0);">
-      <span>📦</span><span>Stock</span>
-    </button>
-    <button class="tab-btn" onclick="toggleChatbot()">
-      <span>💬</span><span>AI Chat</span>
-    </button>
-  </nav>
+  <!-- Floating AI Assistant Button (Bug 2 Fix) -->
+  <button class="chatbot-fab no-print" onclick="toggleChatbot()" title="DoorTech AI Assistant">
+    <span class="fab-icon">💬</span>
+    <span class="fab-text">AI Tech Assistant</span>
+  </button>
 
   <!-- Floating Chatbot Window -->
   <div class="chatbot-window no-print" id="chatbotWindow">
