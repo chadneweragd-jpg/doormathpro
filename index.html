@@ -2671,6 +2671,30 @@
   </footer>
 
   <!-- Application Logic -->
+  <!-- Restored Bottom Navigation Bar -->
+  <div class="mobile-bottom-nav">
+    <button class="bottom-nav-btn active" id="bnav-home" onclick="scrollToTop(); updateBottomNav('home')">
+      <div class="bottom-nav-icon">🏠</div>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-btn" id="bnav-identify" onclick="switchTab('spring-scan'); scrollToTools(); updateBottomNav('identify')">
+      <div class="bottom-nav-icon">✏️</div>
+      <span>Identify</span>
+    </button>
+    <button class="bottom-nav-btn" id="bnav-engineer" onclick="switchTab('spring-sizer'); scrollToTools(); updateBottomNav('engineer')">
+      <div class="bottom-nav-icon">📐</div>
+      <span>Engineer</span>
+    </button>
+    <button class="bottom-nav-btn" id="bnav-stock" onclick="switchTab('truck-stock'); scrollToTools(); updateBottomNav('stock')">
+      <div class="bottom-nav-icon">🔄</div>
+      <span>Stock</span>
+    </button>
+    <button class="bottom-nav-btn" id="bnav-tools" onclick="switchTab('quick-tools'); scrollToTools(); updateBottomNav('tools')">
+      <div class="bottom-nav-icon">🧰</div>
+      <span>Tools</span>
+    </button>
+  </div>
+
   <script>
     // Comprehensive Standard Garage Door Spring Wire Database (ASTM A229 / DASMA)
     const STANDARD_SPRING_WIRES = [
@@ -10427,22 +10451,6 @@ Guidelines:
   </div>
 
 
-  <!-- Restored Bottom Navigation Bar -->
-  <div class="mobile-bottom-nav">
-    <button class="bottom-nav-btn active" id="bnav-home" onclick="scrollToTop(); updateBottomNav('home')">
-      <div class="bottom-nav-icon">🏠</div>
-      <span>Home</span>
-    </button>
-    <button class="bottom-nav-btn" id="bnav-identify" onclick="switchTab('spring-scan'); scrollToTools(); updateBottomNav('identify')">
-      <div class="bottom-nav-icon">✏️</div>
-      <span>Identify</span>
-    </button>
-    <button class="bottom-nav-btn" id="bnav-engineer" onclick="switchTab('spring-sizer'); scrollToTools(); updateBottomNav('engineer')">
-      <div class="bottom-nav-icon">📐</div>
-      <span>Engineer</span>
-    </button>
-  </div>
-
   <script>
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -10458,6 +10466,8 @@ Guidelines:
       originalSwitchTab(tabId);
       if (tabId === 'spring-scan') updateBottomNav('identify');
       else if (tabId === 'spring-sizer') updateBottomNav('engineer');
+      else if (tabId === 'truck-stock') updateBottomNav('stock');
+      else if (tabId === 'quick-tools') updateBottomNav('tools');
       else updateBottomNav(''); // clear active state for others
     };
   </script>
