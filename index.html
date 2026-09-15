@@ -8784,6 +8784,7 @@
     // AI Photo Door Scanner Logic (Dual-Vector with Optional Photo 2)
     let photo1Base64 = null;
     let photo2Base64 = null;
+    let photo3Base64 = null;
     let lastAIAnalysis = null;
 
     function openAISettingsModal() {
@@ -9335,75 +9336,63 @@
       return picked;
     }
 
-    async function handlePhotoSelect(event, slot) {
+        async function handlePhotoSelect(event, slot) {
       const file = event.target.files[0];
       if (!file) return;
 
-      // v40: HEIC detection — iOS Safari converts on capture but uploaded
-      // HEIC files from Files.app may not be converted, causing silent
-      // canvas failure. Give a specific message instead of the generic one.
       if (file.name && file.name.match(/\.heic$/i) || file.type === 'image/heic' || file.type === 'image/heif') {
-        alert('HEIC / HEIF format detected.\n\nUse the 📷 Take Photo button (captures as JPEG) or open the image in Photos, share it as "JPEG" first, then upload here.');
+        alert('HEIC / HEIF format detected.\n\nUse the 📸 Take Photo button or open the image in Photos, share it as "JPEG" first, then upload here.');
         event.target.value = '';
         return;
       }
 
-      const btnText = document.getElementById(`photo${slot}BtnText`);
-      const priorText = btnText.innerText;
-      btnText.innerText = 'Compressing...';
-
       try {
-        const base64 = await compressImage(file);
+        const base64 = await compressImage(file, 1024, 0.82);
         if (slot === 1) {
           photo1Base64 = base64;
           document.getElementById('preview1Img').src = base64;
           document.getElementById('preview1Wrap').style.display = 'block';
-          btnText.innerText = '🖼️ Replace Photo';
-        } else {
+          document.getElementById('nextBtn1').style.display = 'block';
+        } else if (slot === 2) {
           photo2Base64 = base64;
           document.getElementById('preview2Img').src = base64;
           document.getElementById('preview2Wrap').style.display = 'block';
-          btnText.innerText = '🖼️ Replace Photo';
+          document.getElementById('nextBtn2').style.display = 'block';
+        } else if (slot === 3) {
+          photo3Base64 = base64;
+          document.getElementById('preview3Img').src = base64;
+          document.getElementById('preview3Wrap').style.display = 'block';
+          document.getElementById('runAiScanBtn').style.display = 'block';
         }
-
-        // v40: run quality gate and show badge on the thumbnail
-        checkImageQuality(base64).then(quality => {
-          showQualityBadge(slot, quality);
-          if (!quality.ok) {
-            const photoStatusText = document.getElementById('photoStatusText');
-            if (photoStatusText) {
-              photoStatusText.innerText = `⚠️ Photo ${slot}: ${quality.issues.join(', ')} — try in better light or focus closer`;
-              photoStatusText.style.color = '#f87171';
-            }
-          }
-        });
-
-        updateScanButtonState();
       } catch (err) {
-        console.error('Image compression error:', err);
-        btnText.innerText = priorText;
-        alert('Could not load that photo — try a different one, or use the 📷 Take Photo button instead.');
+        console.error('Image compress error', err);
+        alert('Could not load that photo.');
       }
     }
-
-    function clearPhoto(slot) {
+    
+    // Ignore old handlePhotoSelect body, we'll replace the whole function block.
+function clearPhoto(slot) {
       if (slot === 1) {
         photo1Base64 = null;
-        document.getElementById('preview1Wrap').style.display = 'none';
-        document.getElementById('photo1BtnText').innerText = '🖼️ Upload from Photos';
         document.getElementById('doorPhoto1').value = '';
         document.getElementById('doorPhoto1Camera').value = '';
-      } else {
+        document.getElementById('preview1Wrap').style.display = 'none';
+        document.getElementById('nextBtn1').style.display = 'none';
+      } else if (slot === 2) {
         photo2Base64 = null;
-        document.getElementById('preview2Wrap').style.display = 'none';
-        document.getElementById('photo2BtnText').innerText = '🖼️ Upload from Photos';
         document.getElementById('doorPhoto2').value = '';
         document.getElementById('doorPhoto2Camera').value = '';
+        document.getElementById('preview2Wrap').style.display = 'none';
+        document.getElementById('nextBtn2').style.display = 'none';
+      } else if (slot === 3) {
+        photo3Base64 = null;
+        document.getElementById('doorPhoto3').value = '';
+        document.getElementById('doorPhoto3Camera').value = '';
+        document.getElementById('preview3Wrap').style.display = 'none';
+        document.getElementById('runAiScanBtn').style.display = 'none';
       }
-      updateScanButtonState();
     }
-
-    function updateScanButtonState() {
+function updateScanButtonState() {
       const scanBtn = document.getElementById('runAiScanBtn');
       const statusText = document.getElementById('photoStatusText');
 
@@ -9447,8 +9436,67 @@
       return { url, headers };
     }
 
-    async function executeAiDoorScan() {
-      if (!photo1Base64 && !photo2Base64) return;
+    // =====================================================================
+    // v41: AI DOOR SCANNER 3-POINT WIZARD LOGIC
+    // =====================================================================
+    function startAiWizard() {
+      document.getElementById('aiDashboardState').style.display = 'none';
+      document.getElementById('aiWizardState').style.display = 'block';
+      goToWizardStep(1);
+    }
+    
+    function cancelAiWizard() {
+      document.getElementById('aiWizardState').style.display = 'none';
+      document.getElementById('aiDashboardState').style.display = 'block';
+      clearPhoto(1);
+      clearPhoto(2);
+      clearPhoto(3);
+    }
+    
+    function goToWizardStep(stepNum) {
+      document.querySelectorAll('.wizard-step').forEach(step => step.style.display = 'none');
+      document.getElementById(`wizardStep${stepNum}`).style.display = 'block';
+      document.getElementById('wizardStepLabel').innerText = `Step ${stepNum} of 3`;
+      
+      const progress = stepNum === 1 ? 33 : stepNum === 2 ? 66 : 100;
+      document.getElementById('wizardProgressBar').style.width = `${progress}%`;
+    }
+
+    const aiLoadingPhases = [
+      "Analyzing panel texture...",
+      "Extracting joint geometry...",
+      "Mapping hardware signatures...",
+      "Calculating door weight...",
+      "Finalizing ID..."
+    ];
+    let aiLoadingInterval = null;
+
+    function startAiLoadingText() {
+      const statusEl = document.getElementById('photoStatusText');
+      if (!statusEl) return;
+      let phase = 0;
+      statusEl.innerText = aiLoadingPhases[0];
+      statusEl.style.color = '#38bdf8';
+      statusEl.style.fontWeight = 'bold';
+      
+      aiLoadingInterval = setInterval(() => {
+        phase++;
+        if (phase >= aiLoadingPhases.length) phase = aiLoadingPhases.length - 1;
+        statusEl.innerText = aiLoadingPhases[phase];
+      }, 1500);
+    }
+    
+    function stopAiLoadingText(finalMsg = null) {
+      if (aiLoadingInterval) clearInterval(aiLoadingInterval);
+      const statusEl = document.getElementById('photoStatusText');
+      if (statusEl && finalMsg) {
+        statusEl.innerText = finalMsg;
+        statusEl.style.color = 'var(--text-dim)';
+        statusEl.style.fontWeight = 'normal';
+      }
+    }
+async function executeAiDoorScan() {
+      if (!photo1Base64 && !photo2Base64 && !photo3Base64) return;
 
       const previewBox = document.getElementById('aiPreviewBox');
       const spinner = document.getElementById('aiLoadingSpinner');
@@ -9458,7 +9506,7 @@
       previewBox.style.display = 'block';
       resultCard.style.display = 'none';
       spinner.style.display = 'block';
-      statusText.innerText = 'Analyzing door...';
+      startAiLoadingText();
       // v40: hide retry button and params panel from any prior scan
       const scanRetryRow = document.getElementById('scanRetryRow');
       if (scanRetryRow) scanRetryRow.style.display = 'none';
@@ -9484,9 +9532,10 @@
         const promptText = `
 You are a master garage door engineering inspector with 25 years of field experience identifying doors across Canada and the US.
 ${referenceIntro}
-You are receiving 1 or 2 photographs of an overhead garage door to identify.
-- Image 1 is typically the Front Face (panel stamping, woodgrain/driftwood finish, window frame profiles).
-- Image 2 (if provided) is the Side Profile, Joint Geometry, End Stile, or Factory Stamp/Sticker.
+You are receiving 1 to 3 photographs of an overhead garage door to identify.
+- Image 1 is the Front View (panel stamping, woodgrain/driftwood finish, window grids).
+- Image 2 is the Side Profile (section joint geometry, end stile, pinch-resistance).
+- Image 3 is the Interior Back (strut configuration, hardware, tracking).
 
 You have access to a structured JSON database of vision diagnostic features for all 10 major North American manufacturers. 
 Use this data as a definitive diagnostic matrix to execute a process of elimination (cascading filter logic).
@@ -9552,7 +9601,7 @@ Return your final answer in the requested format.
           clearTimeout(timeoutId);
         }
 
-        spinner.style.display = 'none';
+        spinner.style.display = 'none'; stopAiLoadingText();
 
         // BUGFIX: previously only HTTP 429 / a specific error string were
         // handled -- any other non-OK status (500, 502, a changed Worker URL,
@@ -9669,7 +9718,7 @@ Return your final answer in the requested format.
           alert('AI Scanner Error: received an unexpected response format from the identification service. Please try again, or use the manual picker below.');
         }
       } catch (err) {
-        spinner.style.display = 'none';
+        spinner.style.display = 'none'; stopAiLoadingText();
         if (err.name === 'AbortError') {
           console.error('AI Scan Error: request timed out');
           statusText.innerText = 'Scan timed out — check connection.';
