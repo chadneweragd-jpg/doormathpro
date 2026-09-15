@@ -3464,64 +3464,70 @@ const E = 30000000;
       const E = 30000000;
       let tempTargetGauges = [0.187, 0.192, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
       
-      let validSprings = [];
+      const standardWires = [0.177, 0.187, 0.192, 0.200, 0.207, 0.218, 0.225, 0.234, 0.243, 0.250, 0.262, 0.273, 0.283];
       const isSingle = springConfig === 'single';
       const count = isSingle ? 1 : 2;
       const targetIPPT_Calc = isSingle ? totalIPPT : eachIPPT;
-      const targetID = 2.0; // Assume 2.0 ID for standard residential
-      
-      tempTargetGauges.forEach(d => {
+      const targetID = 2.0;
+      const minLen = 22.0;
+      const maxLen = isSingle ? ((width * 12) / 2) - 5 : ((width * 12) / 2) - 3;
+
+      let options10k = [];
+      let options25k = [];
+      let options50k = [];
+
+      standardWires.forEach(function(d) {
         const D_m = targetID + d;
         const N = (E * Math.pow(d, 4)) / (10.18 * D_m * targetIPPT_Calc);
-        const rawLength = N * d;
-        const L = Math.round(rawLength * 4) / 4;
-        const adjustedN = L / d;
-        
+        const rawLen = N * d;
+        const L = Math.round(rawLen * 4) / 4;
+        const adjN = L / d;
         const woundLength = L + (turns * d);
-        const shaftSpace = isSingle
-          ? ((width * 12) / 2) - 5    // Single: half shaft minus drum + bearing (5")
-          : ((width * 12) / 2) - 3;   // Pair: each half minus drum (3")
-        
-        if (L >= 22.0 && woundLength <= shaftSpace) {
-          const stress = (E * d * turns) / (Math.PI * D_m * adjustedN);
-          const furnishedIPPT = (E * Math.pow(d, 4)) / (10.18 * D_m * adjustedN);
-          const wSpec = WIRE_SPECS.find(w => Math.abs(w.wire - d) < 0.001) || { name: d.toFixed(3), color: "Unknown" };
-          
-          // Granular cycle life interpolation
-          const exactCycles = calculateExactCycles(stress);
-          let badgeText = "";
-          let badgeColor = "";
-          if (exactCycles < 0) {
-            badgeText = "UNSAFE"; badgeColor = "danger";
-          } else {
-            const cycleK = Math.round(exactCycles / 1000);
-            badgeText = `${cycleK}K CYCLES`;
-            if (cycleK >= 100)      { badgeColor = "warning"; }  // Gold — high-life
-            else if (cycleK >= 50)  { badgeColor = "purple"; }   // Purple — max-life
-            else if (cycleK >= 20)  { badgeColor = "green"; }    // Green — high cycle
-            else                    { badgeColor = "gray"; }     // Gray — standard
+
+        if (L >= minLen && woundLength <= maxLen) {
+          const stress = (E * d * turns) / (D_m * adjN);
+          const furnishedIPPT = (E * Math.pow(d, 4)) / (10.18 * D_m * adjN);
+          const wSpec = WIRE_SPECS.find(function(w) { return Math.abs(w.wire - d) < 0.001; }) || { name: d.toFixed(3), color: "Unknown" };
+          const maxLift = Math.round((furnishedIPPT * count * turns) / drumInfo.radius);
+
+          const spring = {
+            wire: d, name: wSpec.name, color: wSpec.color,
+            id: targetID, len: L, furnishedIPPT: furnishedIPPT,
+            stress: Math.round(stress), woundLength: woundLength,
+            isSingle: isSingle, maxLift: maxLift,
+            exactCycles: null
+          };
+
+          // STRICT BOUNDARIES — springs outside these ranges are silently discarded
+          if (stress >= 200000 && stress <= 215000) {
+            spring.badgeText = "10K CYCLES"; spring.badgeColor = "gray"; spring.exactCycles = 10000;
+            options10k.push(spring);
+          } else if (stress >= 180000 && stress < 200000) {
+            spring.badgeText = "25K CYCLES"; spring.badgeColor = "green"; spring.exactCycles = 25000;
+            options25k.push(spring);
+          } else if (stress >= 160000 && stress < 180000) {
+            spring.badgeText = "50K CYCLES"; spring.badgeColor = "purple"; spring.exactCycles = 50000;
+            options50k.push(spring);
           }
-          
-          // Safety cap
-          if (stress < 225000) {
-            validSprings.push({
-              wire: d,
-              name: wSpec.name,
-              color: wSpec.color,
-              id: targetID,
-              len: L,
-              furnishedIPPT: furnishedIPPT,
-              stress: Math.round(stress),
-              woundLength: woundLength,
-              isSingle: isSingle,
-              badgeText: badgeText,
-              badgeColor: badgeColor,
-              maxLift: Math.round((furnishedIPPT * count * turns) / drumInfo.radius)
-            });
-          }
+          // anything else is discarded — no 395K springs shown
         }
       });
-      
+
+      // Sort each bucket by closest IPPT match, take best pick
+      function sortByIPPT(arr) {
+        return arr.sort(function(a, b) {
+          return Math.abs(a.furnishedIPPT - targetIPPT_Calc) - Math.abs(b.furnishedIPPT - targetIPPT_Calc);
+        });
+      }
+      sortByIPPT(options10k); sortByIPPT(options25k); sortByIPPT(options50k);
+
+      const best10k = options10k[0] || null;
+      const best25k = options25k[0] || null;
+      const best50k = options50k[0] || null;
+
+      // Use validSprings alias for downstream rendering (for the empty-state check below)
+      const validSprings = [best10k, best25k, best50k].filter(Boolean);
+
       validSprings.sort((a, b) => a.wire - b.wire);
       
       const renderCard = (title, opt) => {
@@ -3573,10 +3579,16 @@ const E = 30000000;
            <div style="font-size: 13px; color: var(--text-muted); padding: 10px; background: rgba(255,255,255,0.04); border-radius: 6px;">${switchTip}</div>
          </div>`;
       } else {
-         const stdTitle = validSprings[0].exactCycles <= 12000 ? "Standard Option" : "Baseline Option (High Cycle)";
-         htmlCards += renderCard(stdTitle, validSprings[0]);
-         if (validSprings.length > 1) htmlCards += renderCard("Upgrade Option", validSprings[1]);
-         if (validSprings.length > 2) htmlCards += renderCard("Max Life Option", validSprings[2]);
+         if (best10k) htmlCards += renderCard("Standard Residential (10K)", best10k);
+         if (best25k) htmlCards += renderCard("High-Cycle Upgrade (25K)", best25k);
+         if (best50k) htmlCards += renderCard("Max Life Commercial (50K)", best50k);
+         if (!best10k && !best25k && !best50k) {
+           htmlCards = `<div style="background:rgba(245,158,11,0.1);border:2px solid #F59E0B;padding:20px;border-radius:12px;">
+             <div style="font-size:18px;margin-bottom:8px;">&#9888; Physics Limit Reached</div>
+             <div style="font-weight:800;font-size:14px;color:#F59E0B;margin-bottom:10px;">No standard spring (10K/25K/50K) fits within the 22&quot; length minimum for this configuration.</div>
+             <div style="font-size:13px;color:var(--text-main);line-height:1.6;">At this door weight, the required spring operates at stress levels outside the 160,000&ndash;215,000 psi industry bands for standard cycle ratings. ${isSingle ? "Consider a lighter wire gauge or verify the door weight." : "Try switching to <strong>Single Spring</strong> mode &mdash; the higher target IPPT will generate higher-stress (standard-cycle) springs."}</div>
+           </div>`;
+         }
       }
 
       container.innerHTML = `
