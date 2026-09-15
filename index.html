@@ -3301,6 +3301,36 @@ const E = 30000000;
     }
 
     // TAB 2: Spring Sizer Logic
+    function calculateExactCycles(stress) {
+      if (stress >= 215000) return -1; // Unsafe
+      
+      const points = [
+        { s: 210000, c: 10000 },
+        { s: 190000, c: 25000 },
+        { s: 170000, c: 50000 },
+        { s: 150000, c: 100000 }
+      ];
+      
+      // Exact interpolation between benchmark points
+      for (let i = 0; i < points.length - 1; i++) {
+        const hi = points[i];
+        const lo = points[i + 1];
+        if (stress <= hi.s && stress >= lo.s) {
+          const pct = (hi.s - stress) / (hi.s - lo.s);
+          return Math.round(hi.c + pct * (lo.c - hi.c));
+        }
+      }
+      
+      // Below 150,000 psi: linear extrapolation from 100k toward 300k
+      // At 100,000 psi we target ~250,000 cycles
+      if (stress < 150000) {
+        const pct = (150000 - stress) / (150000 - 100000);
+        return Math.round(100000 + pct * 150000); // 100k -> 250k
+      }
+      
+      return 10000;
+    }
+
     function setSpringConfig(val) {
       document.getElementById('springConfigToggle').value = val;
       const btnSingle = document.getElementById('toggleSingle');
@@ -3446,14 +3476,20 @@ const E = 30000000;
           const furnishedIPPT = (E * Math.pow(d, 4)) / (10.18 * D_m * adjustedN);
           const wSpec = WIRE_SPECS.find(w => Math.abs(w.wire - d) < 0.001) || { name: d.toFixed(3), color: "Unknown" };
           
-          // Truth-telling cycle logic
+          // Granular cycle life interpolation
+          const exactCycles = calculateExactCycles(stress);
           let badgeText = "";
           let badgeColor = "";
-          if (stress >= 210000) { badgeText = "10K CYCLES"; badgeColor = "gray"; }
-          else if (stress >= 190000) { badgeText = "25K CYCLES"; badgeColor = "green"; }
-          else if (stress >= 170000) { badgeText = "50K CYCLES"; badgeColor = "purple"; }
-          else if (stress >= 140000) { badgeText = "75K CYCLES"; badgeColor = "blue"; }
-          else { badgeText = "100K+ CYCLES"; badgeColor = "warning"; }
+          if (exactCycles < 0) {
+            badgeText = "UNSAFE"; badgeColor = "danger";
+          } else {
+            const cycleK = Math.round(exactCycles / 1000);
+            badgeText = `${cycleK}K CYCLES`;
+            if (cycleK >= 100)      { badgeColor = "warning"; }  // Gold — high-life
+            else if (cycleK >= 50)  { badgeColor = "purple"; }   // Purple — max-life
+            else if (cycleK >= 20)  { badgeColor = "green"; }    // Green — high cycle
+            else                    { badgeColor = "gray"; }     // Gray — standard
+          }
           
           // Safety cap
           if (stress < 225000) {
