@@ -2200,22 +2200,6 @@
 
 
 
-          <!-- Spring Config Toggle -->
-          <div style="margin-bottom: 14px;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px;">Spring Configuration</div>
-            <div style="display: flex; gap: 10px;">
-              <button id="toggleSingle" onclick="setSpringConfig('single')"
-                style="flex: 1; padding: 12px 10px; font-size: 13px; font-weight: 800; border: 2px solid #F59E0B; border-radius: 10px; cursor: pointer; background: #1E293B; color: #94a3b8; transition: all 0.2s;">
-                &#9675; (1) Single Spring
-              </button>
-              <button id="togglePair" onclick="setSpringConfig('pair')"
-                style="flex: 1; padding: 12px 10px; font-size: 13px; font-weight: 800; border: 2px solid #F59E0B; border-radius: 10px; cursor: pointer; background: #F59E0B; color: #000; transition: all 0.2s;">
-                &#11044; (2) Springs (Pair)
-              </button>
-            </div>
-            <input type="hidden" id="springConfigToggle" value="pair">
-          </div>
-
           <div class="metric-grid">
             <div class="metric-card">
               <div class="metric-label">Estimated Dead Weight</div>
@@ -2375,6 +2359,24 @@
             <div id="lhrAdvisory" style="display:none; background: rgba(245,158,11,0.12); border: 1px solid var(--warning); color: var(--warning); border-radius: 8px; padding: 10px 12px; font-size: 12px; margin-top: 8px;">
               ⚠️ Low Headroom mounts typically use a different spring/drum arrangement (often a separate jackshaft or pulley kit), not just a tighter track curve. The turns/IPPT below assume standard curved-track geometry and have NOT been adjusted for your specific LHR kit -- verify against that kit's own installation instructions before winding.
             </div>
+          </div>
+
+          <!-- ═══ SPRING CONFIGURATION TOGGLE ═══ -->
+          <div style="margin-bottom: 20px; padding: 15px; background-color: #1E293B; border-radius: 8px; border: 1px solid #334155;">
+            <label style="display: block; color: #94A3B8; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; font-weight: bold;">
+              Select Spring Configuration
+            </label>
+            <div style="display: flex; gap: 10px;">
+              <button id="toggleSingle" onclick="setSpringConfig('single')"
+                style="flex: 1; padding: 12px; background-color: #0F172A; color: #FFF; border: 1px solid #334155; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: all 0.2s;">
+                (1) Single Spring
+              </button>
+              <button id="togglePair" onclick="setSpringConfig('pair')"
+                style="flex: 1; padding: 12px; background-color: #F59E0B; color: #000; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: all 0.2s;">
+                (2) Springs (Pair)
+              </button>
+            </div>
+            <input type="hidden" id="springConfigToggle" value="pair">
           </div>
 
           <div class="metric-grid">
