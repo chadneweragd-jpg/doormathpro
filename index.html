@@ -3104,17 +3104,14 @@ const E = 30000000;
 
     // Estimate Cycle Life
     function estimateCycles(wire, id, length, turns = 7.5) {
-      // DASMA Ground Truth: Stress = (E * d * T) / (Math.PI * D_m * N)
-      
       const D_m = id + wire;
       const N = length / wire;
-      const stress = (E * wire * turns) / (Math.PI * D_m * N);
+      const stress = (E * wire * turns) / (D_m * N);
       
-      if (stress > 220000) return -1; // UNSAFE
-      if (stress <= 170000) return 50000;
-      if (stress <= 190000) return 25000;
-      if (stress <= 210000) return 10000;
-      return 7500; // between 210k and 220k
+      if (stress >= 215000) return -1; // UNSAFE
+      if (stress < 180000) return 50000;
+      if (stress < 200000) return 25000;
+      return 10000; 
     }
 
     // TAB 1: Run Truck Stock Matcher
@@ -3133,15 +3130,15 @@ const E = 30000000;
       document.getElementById('oldSingleIPPT').innerText = singleIPPT.toFixed(1);
       document.getElementById('oldTotalIPPT').innerText = totalSystemIPPT.toFixed(1);
       
-      const oldCycleEst = estimateCycles(wire, id, length, singleIPPT);
-      document.getElementById('oldCycles').innerText = "~" + oldCycleEst.toLocaleString();
-
       // FEATURE: Compute Rated Lifting Capacity live with clear assumptions
       const truckHeight = parseFloat(document.getElementById('truckDoorHeight') ? document.getElementById('truckDoorHeight').value : 7) || 7;
       const truckDrum = document.getElementById('truckDrumModel') ? document.getElementById('truckDrumModel').value : "400-8";
       const drumInfo = DRUM_SPECS[truckDrum] || DRUM_SPECS["400-8"];
       const turns = (truckHeight * drumInfo.turnsPerFt) + drumInfo.deadTurns;
       const equivalentWeight = Math.round((totalSystemIPPT * turns) / drumInfo.radius);
+
+      const oldCycleEst = estimateCycles(wire, id, length, turns);
+      document.getElementById('oldCycles').innerText = oldCycleEst > 0 ? "~" + oldCycleEst.toLocaleString() : "UNSAFE";
 
       const capEl = document.getElementById('ratedLiftingCapacity');
       const capAssumpEl = document.getElementById('ratedCapacityAssumption');
@@ -3174,7 +3171,7 @@ const E = 30000000;
 
           // Only keep practical spring lengths between 18" and 60"
           if (targetL >= 18.0 && targetL <= 58.0) {
-            const cycles = estimateCycles(w.wire, tid, targetL, targetIPPTPerSpring);
+            const cycles = estimateCycles(w.wire, tid, targetL, turns);
             if (!highCycleOnly || cycles >= 25000) {
               matches.push({
                 wire: w.wire,
