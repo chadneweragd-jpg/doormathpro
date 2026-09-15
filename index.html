@@ -3441,34 +3441,70 @@
       let displayList = [];
 
       if (safePairs.length > 0 || safeSingles.length > 0) {
-         // Sort by standard lengths (e.g. diff from 32")
-         safePairs.forEach(c => c.diffFromStandard = Math.abs(c.len - 32.0));
-         safePairs.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
+         // Bin into three distinct industry-standard tiers based on Bending Stress
+         const bucket1 = safePairs.filter(c => c.stress >= 195000 && c.stress <= 215000); // 10k Cycles
+         const bucket2 = safePairs.filter(c => c.stress >= 175000 && c.stress < 195000);  // 25k Cycles
+         const bucket3 = safePairs.filter(c => c.stress < 175000);                        // 50k+ Cycles
          
-         const stdPair = safePairs.find(c => c.cycles <= 15000) || safePairs[0];
-         const hcPair = safePairs.find(c => c.cycles >= 25000 && c.wire > (stdPair ? stdPair.wire : 0)) || safePairs.find(c => c.cycles >= 25000) || safePairs[1];
+         // Sort buckets by closest IPPT match
+         bucket1.sort((a, b) => a.absTolerance - b.absTolerance);
+         bucket2.sort((a, b) => a.absTolerance - b.absTolerance);
+         bucket3.sort((a, b) => a.absTolerance - b.absTolerance);
          
-         if (stdPair) { stdPair.title = "Standard Residential Pair"; displayList.push(stdPair); }
-         if (hcPair && hcPair !== stdPair) { hcPair.title = "High-Cycle Extended Life Pair"; displayList.push(hcPair); }
+         // Standard Residential Pair
+         let stdPair = bucket1.length > 0 ? bucket1[0] : null;
+         if (!stdPair && bucket2.length > 0) {
+            // Fallback to lowest stress option in Bucket 2 (meaning highest cycle)
+            let b2SortedByStress = [...bucket2].sort((a, b) => a.stress - b.stress);
+            stdPair = b2SortedByStress[0];
+         }
          
+         if (stdPair) {
+            stdPair.title = "Standard Residential Pair";
+            stdPair.cycles = stdPair.stress >= 195000 ? 10000 : 25000;
+            displayList.push(stdPair);
+         }
+         
+         // High-Cycle Extended Life Pair
+         let hcPair = bucket2.length > 0 ? bucket2[0] : null;
+         // Deduplicate if stdPair used Bucket 2
+         if (hcPair && stdPair && hcPair.wire === stdPair.wire && hcPair.id === stdPair.id) {
+            hcPair = bucket2.length > 1 ? bucket2[1] : null;
+         }
+         if (hcPair) {
+            hcPair.title = "High-Cycle Extended Life Pair";
+            hcPair.cycles = 25000;
+            displayList.push(hcPair);
+         }
+         
+         // Max Life / Commercial
+         let maxPair = bucket3.length > 0 ? bucket3[0] : null;
+         if (maxPair) {
+            maxPair.title = "Max Life / Commercial Pair";
+            maxPair.cycles = 50000;
+            displayList.push(maxPair);
+         }
+         
+         // Single Option
          if (safeSingles.length > 0) {
-           safeSingles.forEach(c => c.diffFromStandard = Math.abs(c.len - 32.0));
-           safeSingles.sort((a, b) => a.diffFromStandard - b.diffFromStandard);
-           const single = safeSingles[0];
-           single.title = "Single Spring Alternative";
-           displayList.push(single);
+            // Pick a solid single spring, ideally 10k-15k to keep wire size manageable
+            const singleBucket = safeSingles.filter(c => c.stress >= 185000 && c.stress <= 215000);
+            singleBucket.sort((a, b) => a.absTolerance - b.absTolerance);
+            const single = singleBucket.length > 0 ? singleBucket[0] : safeSingles.sort((a, b) => a.absTolerance - b.absTolerance)[0];
+            single.title = "Single Spring Alternative";
+            single.cycles = single.stress < 175000 ? 50000 : single.stress < 195000 ? 25000 : 10000;
+            displayList.push(single);
          }
       } else {
-         // Fallback logic
+         // Tolerance fallback logic
          usingFallback = true;
-         // Find safest closest matches (even if > 2.0 tolerance, but MUST be safe from coil bind and stress!)
          let safeOnlyAll = allCandidates.filter(c => !c.stressFail && !c.bindFail);
-         safeOnlyAll.sort((a, b) => a.absTolerance - b.absTolerance); // closest to target IPPT
+         safeOnlyAll.sort((a, b) => a.absTolerance - b.absTolerance);
          
-         // Take top 3
          displayList = safeOnlyAll.slice(0, 3);
          displayList.forEach((c, idx) => {
             c.title = `Closest Match #${idx + 1} (${c.isSingle ? 'Single' : 'Pair'})`;
+            c.cycles = c.stress < 175000 ? 50000 : c.stress < 195000 ? 25000 : 10000;
          });
       }
 
@@ -3509,8 +3545,8 @@
         else stressColor = '#10b981'; // Green
         
         const deltaSign = opt.delta > 0 ? '+' : '';
-        const cycleStr = opt.cycles >= 50000 ? "50k+ Cycles" : opt.cycles >= 25000 ? "25k Cycles" : opt.cycles >= 15000 ? "15k Cycles" : "10k Cycles";
-        const cycleColor = opt.cycles >= 25000 ? "purple" : opt.cycles >= 15000 ? "green" : "gray";
+        const cycleStr = opt.cycles >= 50000 ? "50K+ CYCLES" : opt.cycles >= 25000 ? "25K CYCLES" : "10K CYCLES";
+        const cycleColor = opt.cycles >= 50000 ? "purple" : opt.cycles >= 25000 ? "green" : "gray";
 
         const card = document.createElement('div');
         card.className = 'card';
