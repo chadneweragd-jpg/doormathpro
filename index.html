@@ -1337,6 +1337,69 @@
     }
 
 
+
+    /* ===================================================
+       BOTTOM NAVIGATION BAR (Restored)
+       =================================================== */
+    .mobile-bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-color);
+      display: none; /* Only show on mobile */
+      justify-content: space-around;
+      padding: 10px 0;
+      padding-bottom: calc(10px + env(safe-area-inset-bottom));
+      z-index: 100;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    }
+    @media (max-width: 900px) {
+      .mobile-bottom-nav {
+        display: flex;
+      }
+      .app-container {
+        padding-bottom: 90px !important;
+      }
+      .tab-nav-wrapper {
+        display: none !important; /* Hide old scrolling tabs on mobile since we use bottom nav */
+      }
+    }
+    .bottom-nav-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      flex: 1;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s;
+    }
+    .bottom-nav-btn.active {
+      color: var(--accent);
+    }
+    .bottom-nav-icon {
+      font-size: 22px;
+      width: 40px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      transition: all 0.2s;
+    }
+    .bottom-nav-btn.active .bottom-nav-icon {
+      background: rgba(245, 158, 11, 0.15);
+    }
+    .bottom-nav-btn:hover {
+      color: var(--text-main);
+    }
 </style>
 </head>
 <body>
@@ -10367,5 +10430,40 @@ Guidelines:
     </div>
   </div>
 
+
+  <!-- Restored Bottom Navigation Bar -->
+  <div class="mobile-bottom-nav">
+    <button class="bottom-nav-btn active" id="bnav-home" onclick="scrollToTop(); updateBottomNav('home')">
+      <div class="bottom-nav-icon">🏠</div>
+      <span>Home</span>
+    </button>
+    <button class="bottom-nav-btn" id="bnav-identify" onclick="switchTab('spring-scan'); scrollToTools(); updateBottomNav('identify')">
+      <div class="bottom-nav-icon">✏️</div>
+      <span>Identify</span>
+    </button>
+    <button class="bottom-nav-btn" id="bnav-engineer" onclick="switchTab('spring-sizer'); scrollToTools(); updateBottomNav('engineer')">
+      <div class="bottom-nav-icon">📐</div>
+      <span>Engineer</span>
+    </button>
+  </div>
+
+  <script>
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function updateBottomNav(activeId) {
+      document.querySelectorAll('.bottom-nav-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById('bnav-' + activeId);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+    // Hook into switchTab to sync bottom nav
+    const originalSwitchTab = switchTab;
+    switchTab = function(tabId) {
+      originalSwitchTab(tabId);
+      if (tabId === 'spring-scan') updateBottomNav('identify');
+      else if (tabId === 'spring-sizer') updateBottomNav('engineer');
+      else updateBottomNav(''); // clear active state for others
+    };
+  </script>
 </body>
 </html>
