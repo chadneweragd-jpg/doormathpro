@@ -2198,6 +2198,14 @@
             </select>
           </div>
 
+          <div class="field-group">
+            <div class="field-label">Target Spring Configuration</div>
+            <select class="input-select" id="springConfigToggle" onchange="runSpringSizer()">
+              <option value="pair" selected>Two Springs (Pair)</option>
+              <option value="single">Single Spring</option>
+            </select>
+          </div>
+
           <div class="metric-grid">
             <div class="metric-card">
               <div class="metric-label">Estimated Dead Weight</div>
@@ -3298,6 +3306,7 @@
       const drum = document.getElementById('drumModel').value;
       const trackRadiusEl = document.getElementById('trackRadius');
       const trackRadiusVal = trackRadiusEl ? trackRadiusEl.value : '15';
+      const springConfig = document.getElementById('springConfigToggle') ? document.getElementById('springConfigToggle').value : 'pair';
 
       const container = document.getElementById('engineeredOptionsContainer');
       container.innerHTML = '';
@@ -3353,7 +3362,18 @@
       const quarterTurns = Math.round((turns - fullTurns) * 4);
       document.getElementById('sizerTurnsSub').innerText = `${fullTurns} turns + ${quarterTurns} quarter turns (${Math.round(turns * 4)} total)`;
       document.getElementById('sizerTotalIPPT').innerText = totalIPPT.toFixed(1);
-      document.getElementById('sizerEachIPPT').innerText = eachIPPT.toFixed(1);
+            const sizerEachIPPTNode = document.getElementById('sizerEachIPPT');
+      const sizerLabelNode = sizerEachIPPTNode.previousElementSibling;
+      const sizerSubNode = sizerEachIPPTNode.nextElementSibling;
+      if (springConfig === 'single') {
+        sizerLabelNode.innerText = 'TARGET IPPT';
+        sizerSubNode.innerText = 'target for 1 spring';
+        sizerEachIPPTNode.innerText = totalIPPT.toFixed(1);
+      } else {
+        sizerLabelNode.innerText = 'PER SPRING (PAIR)';
+        sizerSubNode.innerText = 'target for 2 springs';
+        sizerEachIPPTNode.innerText = eachIPPT.toFixed(1);
+      }
 
       document.getElementById('printDoorSize').innerText = `${width}'0" W x ${height}'0" H`;
       document.getElementById('printDoorWeight').innerText = `${weight} lbs`;
@@ -3395,7 +3415,7 @@
               // d. Calculate Bending Stress
               const stress = (E * wire * turns) / (Math.PI * D_m * N);
               const woundLength = len + (turns * wire);
-              const shaftSpace = isSingle ? (width * 12 - 8) : ((width * 12) / 2 - 5);
+              const shaftSpace = isSingle ? ((width * 12) / 2 - 5) : ((width * 12) / 2 - 3);
               
               // e. Map Stress to Cycle Life
               let isSafe = true;
@@ -3435,8 +3455,12 @@
         });
       };
 
-      // Generate pairs
-      generateOptions(eachIPPT, false);
+      // Generate pairs or single based on toggle
+      if (springConfig === 'single') {
+        generateOptions(totalIPPT, true);
+      } else {
+        generateOptions(eachIPPT, false);
+      }
       
       // Group visually by Cycle Tier
       let tier10k = allCandidates.filter(c => c.cycles === 10000);
