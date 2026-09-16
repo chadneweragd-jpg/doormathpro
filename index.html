@@ -9550,30 +9550,75 @@ function stepVal(id, delta) {
       updateScanButtonState();
     }
 
+    function goToWizardStep(step) {
+      const s1 = document.getElementById('wizardStep1');
+      const s2 = document.getElementById('wizardStep2');
+      const s3 = document.getElementById('wizardStep3');
+      if (s1) s1.style.display = step === 1 ? 'block' : 'none';
+      if (s2) s2.style.display = step === 2 ? 'block' : 'none';
+      if (s3) s3.style.display = step === 3 ? 'block' : 'none';
+      
+      const label = document.getElementById('wizardStepLabel');
+      if (label) label.innerText = `Step ${step} of 3`;
+      
+      const bar = document.getElementById('wizardProgressBar');
+      if (bar) {
+        if (step === 1) bar.style.width = '33%';
+        else if (step === 2) bar.style.width = '66%';
+        else bar.style.width = '100%';
+      }
+    }
+
+    function cancelAiWizard() {
+      if (typeof clearPhoto === 'function') {
+        clearPhoto(1);
+        clearPhoto(2);
+        clearPhoto(3);
+      }
+      goToWizardStep(1);
+    }
+
     function updateScanButtonState() {
       const scanBtn = document.getElementById('runAiScanBtn');
       const statusText = document.getElementById('photoStatusText');
+      const next1 = document.getElementById('nextBtn1');
+      const next2 = document.getElementById('nextBtn2');
+
+      if (next1) next1.style.display = photo1Base64 ? 'block' : 'none';
+      if (next2) next2.style.display = photo2Base64 ? 'block' : 'none';
 
       if (photo1Base64 && photo2Base64) {
-        scanBtn.disabled = false;
-        scanBtn.style.opacity = '1';
-        scanBtn.innerText = '⚡ Run Dual-Vector Door Identification (High Accuracy)';
-        statusText.innerText = '2 Photos Ready: Front Face + Side Profile loaded';
+        if (scanBtn) {
+          scanBtn.disabled = false;
+          scanBtn.style.opacity = '1';
+          scanBtn.style.display = 'block';
+          scanBtn.innerText = '🔄 Run Dual-Vector Door Identification (High Accuracy)';
+        }
+        if (statusText) statusText.innerText = '2 Photos Ready: Front Face + Side Profile loaded';
       } else if (photo1Base64) {
-        scanBtn.disabled = false;
-        scanBtn.style.opacity = '1';
-        scanBtn.innerText = '⚡ Identify Door from Front Photo';
-        statusText.innerText = 'Photo 1 Ready (Photo 2 optional for higher precision)';
+        if (scanBtn) {
+          scanBtn.disabled = false;
+          scanBtn.style.opacity = '1';
+          scanBtn.style.display = 'block';
+          scanBtn.innerText = '🔍 Identify Door from Front Photo';
+        }
+        if (statusText) statusText.innerText = 'Photo 1 Ready (Photo 2 optional for higher precision)';
       } else if (photo2Base64) {
-        scanBtn.disabled = false;
-        scanBtn.style.opacity = '1';
-        scanBtn.innerText = '⚡ Identify Door from Side/Stamp Photo';
-        statusText.innerText = 'Side photo ready (Front photo recommended)';
+        if (scanBtn) {
+          scanBtn.disabled = false;
+          scanBtn.style.opacity = '1';
+          scanBtn.style.display = 'block';
+          scanBtn.innerText = '🔍 Identify Door from Side/Stamp Photo';
+        }
+        if (statusText) statusText.innerText = 'Side photo ready (Front photo recommended)';
       } else {
-        scanBtn.disabled = true;
-        scanBtn.style.opacity = '0.5';
-        scanBtn.innerText = '⚡ Identify Door with AI Vision (Snap Photo 1 to Start)';
-        statusText.innerText = 'Ready for photo';
+        if (scanBtn) {
+          scanBtn.disabled = true;
+          scanBtn.style.opacity = '0.5';
+          scanBtn.style.display = 'none';
+          scanBtn.innerText = '📷 Identify Door with AI Vision (Snap Photo 1 to Start)';
+        }
+        if (statusText) statusText.innerText = 'Ready for photo';
       }
     }
 
