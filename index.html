@@ -3124,13 +3124,14 @@ const E = 30000000;
       return drumInfo.radius / turns;
     }
 
-    // Calculate Single Spring IPPT
+    // Calculate Single Spring IPPT (with Wahl curvature correction for torsion springs)
     function calcSingleIPPT(wire, id, length) {
-      // DASMA Ground Truth: Furnished_IPPT = (E * d^4) / (10.18 * (ID + d) * N_a)
       const E = 28500000;
       const D_m = id + wire;
       const N_a = length / wire;
-      return (E * Math.pow(wire, 4)) / (10.18 * D_m * N_a);
+      const C = D_m / wire;  // spring index
+      const K_c = (4 * C - 1) / (4 * C - 4);  // curvature correction (torsion)
+      return ((E * Math.pow(wire, 4)) / (10.18 * D_m * N_a)) * K_c;
     }
 
     // Estimate Cycle Life
@@ -3138,9 +3139,10 @@ const E = 30000000;
       const D_m = id + wire;
       const N_a = length / wire;
       const E = 28500000;
-      const IPPT = providedIPPT !== null ? providedIPPT : (E * Math.pow(wire, 4)) / (10.18 * D_m * N_a);
-      
       const C = D_m / wire;
+      const K_c = (4 * C - 1) / (4 * C - 4);
+      const IPPT = providedIPPT !== null ? providedIPPT : ((E * Math.pow(wire, 4)) / (10.18 * D_m * N_a)) * K_c;
+      
       const K_w = ((4 * C - 1) / (4 * C - 4)) + (0.615 / C);
       const sigma_max = (32 * IPPT * turns) / (Math.PI * Math.pow(wire, 3)) * K_w;
       
@@ -3204,8 +3206,11 @@ const E = 30000000;
       WIRE_SPECS.forEach(w => {
         targetIDs.forEach(tid => {
           // Calculate length required to hit targetIPPTPerSpring
-          // L = (E * d^5) / (10.18 * (ID + d) * IPPT)
-          const targetL = (28500000 * Math.pow(w.wire, 5)) / (10.18 * (tid + w.wire) * targetIPPTPerSpring);
+          // L = (E * d^5 * K_c) / (10.18 * (ID + d) * IPPT)  -- K_c = (4C-1)/(4C-4), C = D_m/d
+          const D_m_w = tid + w.wire;
+          const C_w = D_m_w / w.wire;
+          const K_c_w = (4 * C_w - 1) / (4 * C_w - 4);
+          const targetL = (28500000 * Math.pow(w.wire, 5) * K_c_w) / (10.18 * D_m_w * targetIPPTPerSpring);
 
           // Only keep practical spring lengths between 18" and 60"
           if (targetL >= 18.0 && targetL <= 58.0) {
@@ -3518,14 +3523,16 @@ const E = 30000000;
 
       standardWires.forEach(function(d) {
         const D_m = targetID + d;
-        const N = (E * Math.pow(d, 4)) / (10.18 * D_m * targetIPPT_Calc);
+        const C_s = D_m / d;
+        const K_c_s = (4 * C_s - 1) / (4 * C_s - 4);
+        const N = (E * Math.pow(d, 4) * K_c_s) / (10.18 * D_m * targetIPPT_Calc);
         const rawLen = N * d;
         const L = Math.round(rawLen * 4) / 4;
         const adjN = L / d;
         const woundLength = L + (turns * d);
 
         if (L >= minLen && woundLength <= maxLen) {
-          const furnishedIPPT = (E * Math.pow(d, 4)) / (10.18 * D_m * adjN);
+          const furnishedIPPT = ((E * Math.pow(d, 4)) / (10.18 * D_m * adjN)) * K_c_s;
           const wSpec = WIRE_SPECS.find(function(w) { return Math.abs(w.wire - d) < 0.001; }) || { name: d.toFixed(3), color: "Unknown" };
           const maxLift = Math.round((furnishedIPPT * count * turns) / drumInfo.radius);
           const exactCycles = estimateCycles(d, targetID, L, turns, furnishedIPPT);
@@ -3941,8 +3948,11 @@ function stepVal(id, delta) {
 
       const results = [];
       WIRE_SPECS.forEach(w => {
-        // L = (E * d^5) / (10.18 * (ID + d) * IPPT)
-        const L = (28500000 * Math.pow(w.wire, 5)) / (10.18 * (targetID + w.wire) * targetIPPT);
+        // L = (E * d^5 * K_c) / (10.18 * (ID + d) * IPPT)
+        const D_m_di = targetID + w.wire;
+        const C_di = D_m_di / w.wire;
+        const K_c_di = (4 * C_di - 1) / (4 * C_di - 4);
+        const L = (28500000 * Math.pow(w.wire, 5) * K_c_di) / (10.18 * D_m_di * targetIPPT);
         if (L >= 18.0 && L <= 58.0) {
           const cycles = estimateCycles(w.wire, targetID, L, targetIPPT, 7.6);
           results.push({
@@ -8896,8 +8906,12 @@ function stepVal(id, delta) {
       commWires.forEach(wOut => {
         commWires.forEach(wIn => {
           if (wIn <= wOut) {
-            const ipptOut = (28500000 * Math.pow(wOut, 5)) / (10.18 * (outerID + wOut) * desiredLength);
-            const ipptIn = (28500000 * Math.pow(wIn, 5)) / (10.18 * (innerID + wIn) * desiredLength);
+            const D_m_out = outerID + wOut;
+            const K_c_out = (4 * (D_m_out / wOut) - 1) / (4 * (D_m_out / wOut) - 4);
+            const D_m_in = innerID + wIn;
+            const K_c_in = (4 * (D_m_in / wIn) - 1) / (4 * (D_m_in / wIn) - 4);
+            const ipptOut = ((28500000 * Math.pow(wOut, 5)) / (10.18 * D_m_out * desiredLength)) * K_c_out;
+            const ipptIn = ((28500000 * Math.pow(wIn, 5)) / (10.18 * D_m_in * desiredLength)) * K_c_in;
             const total = ipptOut + ipptIn;
             const diff = Math.abs(total - targetIPPT);
 
