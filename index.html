@@ -9550,6 +9550,34 @@ function stepVal(id, delta) {
       updateScanButtonState();
     }
 
+    function startAiWizard() {
+      // Reset photos
+      photo1Base64 = null;
+      photo2Base64 = null;
+      const p1w = document.getElementById('preview1Wrap');
+      const p2w = document.getElementById('preview2Wrap');
+      const p3w = document.getElementById('preview3Wrap');
+      if (p1w) p1w.style.display = 'none';
+      if (p2w) p2w.style.display = 'none';
+      if (p3w) p3w.style.display = 'none';
+
+      // Hide result card from previous scan
+      const resultCard = document.getElementById('aiResultCard');
+      if (resultCard) resultCard.style.display = 'none';
+      const previewBox = document.getElementById('aiPreviewBox');
+      if (previewBox) previewBox.style.display = 'none';
+
+      // Switch to wizard view
+      const dash = document.getElementById('aiDashboardState');
+      const wizard = document.getElementById('aiWizardState');
+      if (dash) dash.style.display = 'none';
+      if (wizard) wizard.style.display = 'block';
+
+      // Reset to step 1
+      goToWizardStep(1);
+      updateScanButtonState();
+    }
+
     function goToWizardStep(step) {
       const s1 = document.getElementById('wizardStep1');
       const s2 = document.getElementById('wizardStep2');
@@ -9570,11 +9598,20 @@ function stepVal(id, delta) {
     }
 
     function cancelAiWizard() {
-      if (typeof clearPhoto === 'function') {
-        clearPhoto(1);
-        clearPhoto(2);
-        clearPhoto(3);
-      }
+      photo1Base64 = null;
+      photo2Base64 = null;
+      const p1w = document.getElementById('preview1Wrap');
+      const p2w = document.getElementById('preview2Wrap');
+      const p3w = document.getElementById('preview3Wrap');
+      if (p1w) p1w.style.display = 'none';
+      if (p2w) p2w.style.display = 'none';
+      if (p3w) p3w.style.display = 'none';
+
+      // Return to dashboard
+      const dash = document.getElementById('aiDashboardState');
+      const wizard = document.getElementById('aiWizardState');
+      if (dash) dash.style.display = 'block';
+      if (wizard) wizard.style.display = 'none';
       goToWizardStep(1);
     }
 
