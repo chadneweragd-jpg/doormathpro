@@ -1898,11 +1898,11 @@
 
                 <div style="display: flex; gap: 10px;">
                   <label class="btn-action primary" style="flex: 1; cursor: pointer;">
-                    📸 Camera
+                    <span id="photo1CamBtnText">📷 Camera</span>
                     <input type="file" id="doorPhoto1Camera" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 1)">
                   </label>
                   <label class="btn-action" style="flex: 1; cursor: pointer;">
-                    🖼️ Gallery
+                    <span id="photo1BtnText">🖼️ Gallery</span>
                     <input type="file" id="doorPhoto1" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event, 1)">
                   </label>
                 </div>
@@ -1921,11 +1921,11 @@
 
                 <div style="display: flex; gap: 10px;">
                   <label class="btn-action primary" style="flex: 1; cursor: pointer;">
-                    📸 Camera
+                    <span id="photo2CamBtnText">📷 Camera</span>
                     <input type="file" id="doorPhoto2Camera" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 2)">
                   </label>
                   <label class="btn-action" style="flex: 1; cursor: pointer;">
-                    🖼️ Gallery
+                    <span id="photo2BtnText">🖼️ Gallery</span>
                     <input type="file" id="doorPhoto2" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event, 2)">
                   </label>
                 </div>
@@ -1947,11 +1947,11 @@
 
                 <div style="display: flex; gap: 10px;">
                   <label class="btn-action primary" style="flex: 1; cursor: pointer;">
-                    📸 Camera
+                    <span id="photo3CamBtnText">📷 Camera</span>
                     <input type="file" id="doorPhoto3Camera" accept="image/*" capture="environment" style="display: none;" onchange="handlePhotoSelect(event, 3)">
                   </label>
                   <label class="btn-action" style="flex: 1; cursor: pointer;">
-                    🖼️ Gallery
+                    <span id="photo3BtnText">🖼️ Gallery</span>
                     <input type="file" id="doorPhoto3" accept="image/*" style="display: none;" onchange="handlePhotoSelect(event, 3)">
                   </label>
                 </div>
@@ -9500,49 +9500,55 @@ function stepVal(id, delta) {
       const file = event.target.files[0];
       if (!file) return;
 
-      // v40: HEIC detection — iOS Safari converts on capture but uploaded
-      // HEIC files from Files.app may not be converted, causing silent
-      // canvas failure. Give a specific message instead of the generic one.
       if (file.name && file.name.match(/\.heic$/i) || file.type === 'image/heic' || file.type === 'image/heif') {
         alert('HEIC / HEIF format detected.\n\nUse the 📷 Take Photo button (captures as JPEG) or open the image in Photos, share it as "JPEG" first, then upload here.');
         event.target.value = '';
         return;
       }
 
-      const btnText = document.getElementById(`photo${slot}BtnText`);
-      const priorText = btnText.innerText;
-      btnText.innerText = 'Compressing...';
+      const btnTextEl = document.getElementById(`photo${slot}BtnText`);
+      const priorText = btnTextEl ? btnTextEl.innerText : '';
+      if (btnTextEl) btnTextEl.innerText = 'Compressing...';
 
       try {
         const base64 = await compressImage(file);
         if (slot === 1) {
           photo1Base64 = base64;
-          document.getElementById('preview1Img').src = base64;
-          document.getElementById('preview1Wrap').style.display = 'block';
-          btnText.innerText = '🖼️ Replace Photo';
-        } else {
+          const img1 = document.getElementById('preview1Img');
+          const wrap1 = document.getElementById('preview1Wrap');
+          if (img1) img1.src = base64;
+          if (wrap1) wrap1.style.display = 'block';
+        } else if (slot === 2) {
           photo2Base64 = base64;
-          document.getElementById('preview2Img').src = base64;
-          document.getElementById('preview2Wrap').style.display = 'block';
-          btnText.innerText = '🖼️ Replace Photo';
+          const img2 = document.getElementById('preview2Img');
+          const wrap2 = document.getElementById('preview2Wrap');
+          if (img2) img2.src = base64;
+          if (wrap2) wrap2.style.display = 'block';
+        } else if (slot === 3) {
+          // Slot 3 stores as photo2Base64 for AI use (bonus context)
+          photo2Base64 = base64;
+          const img3 = document.getElementById('preview3Img');
+          const wrap3 = document.getElementById('preview3Wrap');
+          if (img3) img3.src = base64;
+          if (wrap3) wrap3.style.display = 'block';
         }
+        if (btnTextEl) btnTextEl.innerText = '✅ Replace Photo';
 
-        // v40: run quality gate and show badge on the thumbnail
         checkImageQuality(base64).then(quality => {
-          showQualityBadge(slot, quality);
+          if (typeof showQualityBadge === 'function') showQualityBadge(slot, quality);
           if (!quality.ok) {
             const photoStatusText = document.getElementById('photoStatusText');
             if (photoStatusText) {
-              photoStatusText.innerText = `⚠️ Photo ${slot}: ${quality.issues.join(', ')} — try in better light or focus closer`;
+              photoStatusText.innerText = `⚠️ Photo ${slot}: ${quality.issues.join(', ')} — try better light or closer focus`;
               photoStatusText.style.color = '#f87171';
             }
           }
-        });
+        }).catch(() => {});
 
         updateScanButtonState();
       } catch (err) {
         console.error('Image compression error:', err);
-        btnText.innerText = priorText;
+        if (btnTextEl) btnTextEl.innerText = priorText;
         alert('Could not load that photo — try a different one, or use the 📷 Take Photo button instead.');
       }
     }
@@ -9550,16 +9556,34 @@ function stepVal(id, delta) {
     function clearPhoto(slot) {
       if (slot === 1) {
         photo1Base64 = null;
-        document.getElementById('preview1Wrap').style.display = 'none';
-        document.getElementById('photo1BtnText').innerText = '🖼️ Upload from Photos';
-        document.getElementById('doorPhoto1').value = '';
-        document.getElementById('doorPhoto1Camera').value = '';
-      } else {
+        const wrap1 = document.getElementById('preview1Wrap');
+        const txt1 = document.getElementById('photo1BtnText');
+        const inp1 = document.getElementById('doorPhoto1');
+        const cam1 = document.getElementById('doorPhoto1Camera');
+        if (wrap1) wrap1.style.display = 'none';
+        if (txt1) txt1.innerText = '🖼️ Gallery';
+        if (inp1) inp1.value = '';
+        if (cam1) cam1.value = '';
+      } else if (slot === 2) {
         photo2Base64 = null;
-        document.getElementById('preview2Wrap').style.display = 'none';
-        document.getElementById('photo2BtnText').innerText = '🖼️ Upload from Photos';
-        document.getElementById('doorPhoto2').value = '';
-        document.getElementById('doorPhoto2Camera').value = '';
+        const wrap2 = document.getElementById('preview2Wrap');
+        const txt2 = document.getElementById('photo2BtnText');
+        const inp2 = document.getElementById('doorPhoto2');
+        const cam2 = document.getElementById('doorPhoto2Camera');
+        if (wrap2) wrap2.style.display = 'none';
+        if (txt2) txt2.innerText = '🖼️ Gallery';
+        if (inp2) inp2.value = '';
+        if (cam2) cam2.value = '';
+      } else if (slot === 3) {
+        photo2Base64 = null;
+        const wrap3 = document.getElementById('preview3Wrap');
+        const txt3 = document.getElementById('photo3BtnText');
+        const inp3 = document.getElementById('doorPhoto3');
+        const cam3 = document.getElementById('doorPhoto3Camera');
+        if (wrap3) wrap3.style.display = 'none';
+        if (txt3) txt3.innerText = '🖼️ Gallery';
+        if (inp3) inp3.value = '';
+        if (cam3) cam3.value = '';
       }
       updateScanButtonState();
     }
