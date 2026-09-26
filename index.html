@@ -3517,6 +3517,76 @@ const E = 30000000;
       const minLen = 22.0;
       const maxLen = isSingle ? ((width * 12) / 2) - 5 : ((width * 12) / 2) - 3;
 
+      // ── Fallback engine (per the user's calculateSpringWithFallback design) ──────
+      // Tests whether a specific (wire, id, length) produces a spring that
+      // is within acceptable physics bounds: length in range AND produces
+      // a recognisable cycle-life bucket (5K–120K).
+      function testIsWithinPhysicsLimits(wire, id, testLen) {
+        if (testLen < minLen) return false;
+        const woundLen = testLen + (turns * wire);
+        if (woundLen > maxLen) return false;
+        const D_m  = id + wire;
+        const adjN = testLen / wire;
+        const C_t  = D_m / wire;
+        const K_c  = (4 * C_t - 1) / (4 * C_t - 4);
+        const ippt = ((E * Math.pow(wire, 4)) / (10.18 * D_m * adjN)) * K_c;
+        const K_w  = ((4 * C_t - 1) / (4 * C_t - 4)) + (0.615 / C_t);
+        const sig  = (32 * ippt * turns) / (Math.PI * Math.pow(wire, 3)) * K_w;
+        const cyc  = estimateCycles(wire, id, testLen, turns, ippt);
+        return cyc >= 5000 && cyc <= 120000;
+      }
+
+      // Searches outward from a mathematically ideal length in 0.25" steps
+      // (mimicking the user's -2/-4/-6/+2/+4 pattern but at finer resolution
+      // for garage-door work) to find the nearest valid spring length.
+      function findClosestValidLength(wire, id, idealLen) {
+        // Try progressively wider search bands: ±0.25 → ±12 inches
+        const stepsDown = [];
+        const stepsUp   = [];
+        for (let delta = 0.25; delta <= 12; delta += 0.25) {
+          stepsDown.push(-(delta));
+          stepsUp.push(+(delta));
+        }
+        // Interleave: try –0.25, +0.25, –0.5, +0.5 … so closest wins
+        const searchOrder = [];
+        const maxSteps = Math.max(stepsDown.length, stepsUp.length);
+        for (let i = 0; i < maxSteps; i++) {
+          if (i < stepsDown.length) searchOrder.push(stepsDown[i]);
+          if (i < stepsUp.length)   searchOrder.push(stepsUp[i]);
+        }
+        for (const delta of searchOrder) {
+          // Round to nearest 0.25" (standard cut-length step)
+          const candidate = Math.round((idealLen + delta) * 4) / 4;
+          if (candidate > 0 && testIsWithinPhysicsLimits(wire, id, candidate)) {
+            return candidate;
+          }
+        }
+        return null;
+      }
+
+      // Builds a full spring object for a (wire, id, length) triple.
+      function buildSpringObject(wire, id, len) {
+        const D_m   = id + wire;
+        const adjN  = len / wire;
+        const C_s   = D_m / wire;
+        const K_c_s = (4 * C_s - 1) / (4 * C_s - 4);
+        const furnishedIPPT = ((E * Math.pow(wire, 4)) / (10.18 * D_m * adjN)) * K_c_s;
+        const wSpec = WIRE_SPECS.find(function(w) { return Math.abs(w.wire - wire) < 0.001; }) || { name: wire.toFixed(3), color: "Unknown" };
+        const maxLift = Math.round((furnishedIPPT * count * turns) / drumInfo.radius);
+        const exactCycles = estimateCycles(wire, id, len, turns, furnishedIPPT);
+        const K_w = K_c_s + (0.615 / C_s);
+        const sigma_max = (32 * furnishedIPPT * turns) / (Math.PI * Math.pow(wire, 3)) * K_w;
+        const woundLength = len + (turns * wire);
+        return {
+          wire, name: wSpec.name, color: wSpec.color,
+          id, len, furnishedIPPT, woundLength,
+          stress: Math.round(sigma_max), isSingle,
+          maxLift, exactCycles,
+          adjusted: false, adjustedFrom: null   // set by fallback
+        };
+      }
+      // ── End fallback engine ──────────────────────────────────────────────────────
+
       let options10k = [];
       let options25k = [];
       let options50k = [];
@@ -3527,39 +3597,40 @@ const E = 30000000;
         const K_c_s = (4 * C_s - 1) / (4 * C_s - 4);
         const N = (E * Math.pow(d, 4) * K_c_s) / (10.18 * D_m * targetIPPT_Calc);
         const rawLen = N * d;
-        const L = Math.round(rawLen * 4) / 4;
-        const adjN = L / d;
-        const woundLength = L + (turns * d);
+        const idealL = Math.round(rawLen * 4) / 4;
+        const woundLength = idealL + (turns * d);
 
-        if (L >= minLen && woundLength <= maxLen) {
-          const furnishedIPPT = ((E * Math.pow(d, 4)) / (10.18 * D_m * adjN)) * K_c_s;
-          const wSpec = WIRE_SPECS.find(function(w) { return Math.abs(w.wire - d) < 0.001; }) || { name: d.toFixed(3), color: "Unknown" };
-          const maxLift = Math.round((furnishedIPPT * count * turns) / drumInfo.radius);
-          const exactCycles = estimateCycles(d, targetID, L, turns, furnishedIPPT);
-          
-          const C = D_m / d;
-          const K_w = ((4 * C - 1) / (4 * C - 4)) + (0.615 / C);
-          const sigma_max = (32 * furnishedIPPT * turns) / (Math.PI * Math.pow(d, 3)) * K_w;
+        let L = idealL;
+        let adjusted = false;
+        let adjustedFrom = null;
 
-          const spring = {
-            wire: d, name: wSpec.name, color: wSpec.color,
-            id: targetID, len: L, furnishedIPPT: furnishedIPPT,
-            stress: Math.round(sigma_max), woundLength: woundLength,
-            isSingle: isSingle, maxLift: maxLift,
-            exactCycles: exactCycles
-          };
-
-          // STRICT BOUNDARIES -- springs outside these ranges are silently discarded
-          if (exactCycles >= 5000 && exactCycles < 15000) {
-            spring.badgeText = "10K CYCLES"; spring.badgeColor = "gray";
-            options10k.push(spring);
-          } else if (exactCycles >= 15000 && exactCycles < 35000) {
-            spring.badgeText = "25K CYCLES"; spring.badgeColor = "green";
-            options25k.push(spring);
-          } else if (exactCycles >= 35000 && exactCycles <= 120000) {
-            spring.badgeText = "50K+ CYCLES"; spring.badgeColor = "purple";
-            options50k.push(spring);
+        // PRIMARY: ideal length in bounds?
+        if (!(L >= minLen && woundLength <= maxLen)) {
+          // FALLBACK: search for nearest valid length for this wire gauge
+          const fallback = findClosestValidLength(d, targetID, rawLen);
+          if (fallback) {
+            adjustedFrom = idealL;
+            L = fallback;
+            adjusted = true;
+          } else {
+            return; // no valid length found for this gauge — skip
           }
+        }
+
+        const spring = buildSpringObject(d, targetID, L);
+        spring.adjusted = adjusted;
+        spring.adjustedFrom = adjustedFrom;
+
+        // Sort into cycle-life buckets
+        if (spring.exactCycles >= 5000 && spring.exactCycles < 15000) {
+          spring.badgeText = "10K CYCLES"; spring.badgeColor = "gray";
+          options10k.push(spring);
+        } else if (spring.exactCycles >= 15000 && spring.exactCycles < 35000) {
+          spring.badgeText = "25K CYCLES"; spring.badgeColor = "green";
+          options25k.push(spring);
+        } else if (spring.exactCycles >= 35000 && spring.exactCycles <= 120000) {
+          spring.badgeText = "50K+ CYCLES"; spring.badgeColor = "purple";
+          options50k.push(spring);
         }
       });
 
@@ -3594,6 +3665,7 @@ const E = 30000000;
           <div style="font-size:16px; font-weight:800; color:var(--accent); font-family:ui-monospace, monospace; margin: 6px 0;">
             (${count}) Spring${count > 1 ? 's' : ''}: ${opt.name} (${opt.color}) x ${idLabel}" ID x ${opt.len.toFixed(2)}" L
           </div>
+          ${opt.adjusted ? `<div style="font-size:11px; color:#f59e0b; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:6px; padding:5px 8px; margin-bottom:6px;">⚠️ Length adjusted: ideal ${opt.adjustedFrom !== null ? opt.adjustedFrom.toFixed(2) + '"' : '—'} exceeded limits — nearest valid length ${opt.len.toFixed(2)}" used. Verify wound length on shaft before ordering.</div>` : ''}
           <div style="font-size:12px; color:var(--text-muted); display:flex; flex-direction:column; gap:6px;">
             <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.03); padding:4px 8px; border-radius:4px;">
               <span>Max Lift Capacity:</span>
