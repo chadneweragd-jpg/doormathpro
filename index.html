@@ -3764,7 +3764,9 @@ const E = 30000000;
       }
 
       container.innerHTML = `<div style="max-height:500px;overflow-y:auto;padding-right:8px;">${htmlCards}</div>`;
-function stepVal(id, delta) {
+    }
+
+    function stepVal(id, delta) {
       const el = document.getElementById(id);
       let val = Math.max(1, parseFloat(el.value) + delta);
       el.value = val;
